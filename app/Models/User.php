@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class User extends Authenticatable
 {
@@ -70,7 +71,12 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Lga::class);
     }
+   
     public function isVendor(){
         return $this->role === 'vendor';
+    }
+      public function subscriptions(): HasManyThrough
+    {
+        return $this->through('store')->has('subscriptions');
     }
 }

@@ -3,9 +3,11 @@
 namespace App\Services\V1\Stores;
 
 use App\Models\Store;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Dotenv\Exception\ValidationException;
+use Illuminate\Validation\ValidationException;
+use App\Notifications\V1\Stores\StoreCreatedNotification;
 
 class StoreService
 {
@@ -16,7 +18,8 @@ class StoreService
     {
         //
     }
-     public function create($request)
+
+    public function create($request)
     {
         $user = Auth::user();
      if ($user->isVendor() && $user->store) {
