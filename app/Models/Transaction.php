@@ -18,4 +18,12 @@ class Transaction extends Model
         'channel',
         'meta',
     ];
+      protected $casts = [
+        'meta' => 'array',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

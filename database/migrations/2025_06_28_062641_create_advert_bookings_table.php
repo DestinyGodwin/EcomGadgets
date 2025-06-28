@@ -22,8 +22,7 @@ return new class extends Migration
             $table->string('transaction_id')->nullable();
             $table->timestamp('starts_at');
             $table->timestamp('ends_at');
-                        $table->softDeletes();
-
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -12,7 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('transactions', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+            $table->uuid('reference')->unique();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('type'); // SUB, FEAT, ADV
+            $table->decimal('amount', 10, 2);
+            $table->string('status')->default('pending'); 
+            $table->string('channel')->nullable(); // paystack
+            $table->json('meta')->nullable(); 
+            $table->softDeletes();
             $table->timestamps();
         });
     }
