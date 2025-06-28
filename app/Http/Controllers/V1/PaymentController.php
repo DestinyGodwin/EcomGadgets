@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use App\Models\FeaturedProductPlan;
 use App\Services\V1\PaymentService;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\V1\Advert\AdvertBookingRequest;
 use App\Http\Requests\V1\Product\FeaturedProductRequest;
 use App\Http\Requests\V1\Stores\StoreSubscriptionRequest;
@@ -23,7 +24,7 @@ class PaymentController extends Controller
 
     public function subscribe(StoreSubscriptionRequest $request): JsonResponse
     {
-        $user = $request->user();
+        $user = Auth::user();
         $plan = SubscriptionPlan::findOrFail($request->plan_id);
 
         $payment = $this->paymentService->initialize([
