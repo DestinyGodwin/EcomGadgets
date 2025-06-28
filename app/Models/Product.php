@@ -49,4 +49,8 @@ protected static function booted(): void
 {
     static::addGlobalScope(new ActiveStoreScope);
 }
+public function featuredLogs()
+{
+    return $this->hasMany(FeaturedProductLog::class);
+}
 }

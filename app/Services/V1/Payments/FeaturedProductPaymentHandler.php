@@ -3,6 +3,7 @@
 namespace App\Services\V1\Payments;
 
 use App\Models\Product;
+use App\Models\FeaturedProductLog;
 
 class FeaturedProductPaymentHandler implements PaymentHandlerInterface
 {
