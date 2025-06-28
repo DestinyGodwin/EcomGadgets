@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Middleware\AlreadyLoggedIn;
+use App\Http\Middleware\EmailIsVerified;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 
@@ -17,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
        $middleware->alias([
             'role'         => RoleMiddleware::class,
             'logged.in'    => AlreadyLoggedIn::class,
+            'verified.otp' => EmailIsVerified::class,
 
 
         ]);
