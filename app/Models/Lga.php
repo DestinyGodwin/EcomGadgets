@@ -6,10 +6,11 @@ use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class State extends Model
+class Lga extends Model
 {
-    use HasUuids,  HasSlug;
+      use HasUuids,  HasSlug;
 
     protected $fillable = [
         'name' , 'slug'
@@ -26,7 +27,7 @@ class State extends Model
         return 'slug';
     }
 
-    public function lgas(): HasMany{
-        return $this->hasMany(Lga::class);
+    public function state(): BelongsTo{
+        return $this->belongsTo(State::class);
     }
 }
