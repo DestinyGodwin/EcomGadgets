@@ -34,5 +34,12 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'paystack' => [
+    'secret_key' => env('PAYSTACK_SECRET_KEY'),
+    'public_key' => env('PAYSTACK_PUBLIC_KEY'),
+    'payment_url' => env('PAYSTACK_PAYMENT_URL'), 
+    'callback_url' => env('PAYSTACK_CALLBACK_URL'),
+ 
 
+],
 ];
