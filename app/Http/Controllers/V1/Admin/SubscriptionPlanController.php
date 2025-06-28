@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\V1\Admin;
 
-use Illuminate\Http\Request;
 use App\Models\SubscriptionPlan;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\SubscriptionPlanResource;
