@@ -10,7 +10,7 @@ class StoreSubscription extends Model
 {
        use HasUuids, SoftDeletes;
 
-       protected $fillable = ['store_id', 'amount', 'starts_at', 'ends_at', 'transaction_id'];
+       protected $fillable = ['store_id', 'amount', 'starts_at', 'status', 'reference', 'ends_at', 'transaction_id'];
 
        protected $hidden =[
               'laravel_through_key', 'deleted_at', 'updated_at'

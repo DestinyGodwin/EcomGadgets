@@ -12,7 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('store_subscriptions', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('store_id')->constrained()->onDelete('cascade');
+            $table->decimal('amount', 10, 2);
+            $table->timestamp('starts_at')->nullable();;
+            $table->timestamp('ends_at')->nullable();;
+            $table->string('transaction_id')->nullable();
+            $table->foreignId('plan_id')->constrained('subscription_plans');
+            $table->string('reference')->unique();         
+            $table->enum('status', ['active', 'expired'])->default('active');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
