@@ -12,8 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->id();
+           $table->uuid('id')->primary();
+            $table->foreignUuid('store_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('category_id')->constrained()->onDelete('restrict');
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->text('description')->nullable();
+            $table->json('specifications')->nullable();
+            $table->string('brand')->nullable();
+            $table->decimal('price', 10, 2);
+            $table->decimal('wholesale_price', 10, 2);
+            $table->boolean('is_featured')->default(false);
+           $table->timestamp('featured_expires_at')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
