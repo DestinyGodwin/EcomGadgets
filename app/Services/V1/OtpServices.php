@@ -5,6 +5,7 @@ namespace App\Services\V1;
 use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use App\Notifications\V1\Auth\SendOtpNotification;
 
 class OtpServices
 {
