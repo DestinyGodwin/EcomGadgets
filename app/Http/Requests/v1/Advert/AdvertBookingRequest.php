@@ -23,7 +23,7 @@ class AdvertBookingRequest extends FormRequest
     {
         return [
             'plan_id' => ['required','exists:advert_plans,id'],
-            'state_id' => ['required','|exists:states,id'],
+            'state_id' => ['required','exists:states,id'],
         ];
     }
 }
