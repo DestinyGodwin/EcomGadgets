@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\V1\CategoryController;
+use App\Http\Controllers\V1\Auth\AuthController;
 use App\Http\Controllers\V1\Stores\StoreController;
 use App\Http\Controllers\V1\Product\ProductController;
 
