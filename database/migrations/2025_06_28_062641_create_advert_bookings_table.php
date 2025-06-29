@@ -17,7 +17,6 @@ return new class extends Migration
             $table->decimal('amount', 10, 2);
             $table->foreignId('state_id');
             $table->foreignId('plan_id')->constrained('advert_plans');
-            $table->decimal('amount', 10, 2);
             $table->string('reference')->unique();
             $table->string('transaction_id')->nullable();
             $table->timestamp('starts_at');
