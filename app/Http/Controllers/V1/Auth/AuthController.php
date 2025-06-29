@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Services\V1\AuthServices;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\Auth\LoginRequest;
+use App\Http\Resources\V1\Auth\UserResource;
 use App\Http\Requests\V1\Auth\VerifyEmailRequest;
 use App\Http\Requests\V1\Auth\RegisterUserRequest;
 use App\Http\Requests\V1\Auth\ResetPasswordRequest;
