@@ -4,7 +4,7 @@ namespace App\Services\V1\Payments;
 
 use App\Models\Product;
 use App\Models\FeaturedProductLog;
-use Illuminate\Support\Facades\Log;
+
 
 class FeaturedProductPaymentHandler implements PaymentHandlerInterface
 {
@@ -36,8 +36,8 @@ class FeaturedProductPaymentHandler implements PaymentHandlerInterface
             'store_id' => $meta['store_id'],
             'plan_id' => $meta['plan_id'],
             'reference' => $meta['reference'],
-            'starts_at' => now(),
-            'ends_at' => now()->addDays($meta['duration_days']),
+            'starts_at' => $currentExpiry,
+            'ends_at' => $newExpiry,
         ]);
     }
 }
