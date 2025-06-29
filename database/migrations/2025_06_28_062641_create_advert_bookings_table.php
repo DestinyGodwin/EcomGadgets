@@ -15,8 +15,8 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignId('store_id')->constrained()->onDelete('cascade');
             $table->decimal('amount', 10, 2);
-            $table->foreignId('state_id');
-            $table->foreignId('plan_id')->constrained('advert_plans');
+            $table->foreignUuid('state_id');
+            $table->foreignUuid('plan_id')->constrained('advert_plans');
             $table->string('reference')->unique();
             $table->string('transaction_id')->nullable();
             $table->timestamp('starts_at')->nullable();

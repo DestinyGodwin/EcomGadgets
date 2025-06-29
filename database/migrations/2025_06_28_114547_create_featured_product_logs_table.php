@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('featured_product_logs', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->foreignId('store_id')->constrained()->onDelete('cascade');
-            $table->foreignId('plan_id')->constrained('featured_product_plans');
+            $table->foreignUuid('product_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('store_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('plan_id')->constrained('featured_product_plans');
             $table->string('reference')->unique();
             $table->timestamp('starts_at');
             $table->timestamp('ends_at');
