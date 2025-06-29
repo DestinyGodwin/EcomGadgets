@@ -5,9 +5,11 @@ namespace App\Http\Controllers\V1\Stores;
 use App\Models\Store;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Services\V1\Stores\StoreService;
 use App\Http\Resources\V1\Stores\StoreResource;
 use App\Http\Requests\V1\Stores\CreateStoreRequest;
+use App\Http\Requests\V1\Stores\StoreSearchRequest;
 use App\Http\Requests\V1\Stores\UpdateStoreRequest;
 
 class StoreController extends Controller
