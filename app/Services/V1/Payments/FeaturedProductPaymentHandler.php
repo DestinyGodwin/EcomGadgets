@@ -24,7 +24,7 @@ class FeaturedProductPaymentHandler implements PaymentHandlerInterface
         // Log the feature
         FeaturedProductLog::create([
             'product_id' => $product->id,
-            'user_id' => $meta['user_id'],
+            'store_id' => $meta['store_id'],
             'plan_id' => $meta['plan_id'],
             'starts_at' => now(),
             'ends_at' => now()->addDays($meta['duration_days']),
