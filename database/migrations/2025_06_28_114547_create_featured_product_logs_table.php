@@ -17,8 +17,8 @@ return new class extends Migration
             $table->foreignUuid('store_id')->constrained()->onDelete('cascade');
             $table->foreignUuid('plan_id')->constrained('featured_product_plans');
             $table->string('reference')->unique();
-            $table->timestamp('starts_at');
-            $table->timestamp('ends_at');
+            $table->timestamp('starts_at')->nullable();
+            $table->timestamp('ends_at')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

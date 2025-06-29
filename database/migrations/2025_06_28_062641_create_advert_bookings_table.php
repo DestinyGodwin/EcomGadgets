@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('advert_bookings', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('store_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('store_id')->constrained()->onDelete('cascade');
             $table->decimal('amount', 10, 2);
             $table->foreignUuid('state_id');
             $table->foreignUuid('plan_id')->constrained('advert_plans');
