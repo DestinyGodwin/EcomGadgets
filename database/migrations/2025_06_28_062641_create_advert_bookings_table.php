@@ -19,8 +19,8 @@ return new class extends Migration
             $table->foreignId('plan_id')->constrained('advert_plans');
             $table->string('reference')->unique();
             $table->string('transaction_id')->nullable();
-            $table->timestamp('starts_at');
-            $table->timestamp('ends_at');
+            $table->timestamp('starts_at')->nullable();
+            $table->timestamp('ends_at')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
