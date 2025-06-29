@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\V1\CategoryController;
-use App\Http\Controllers\V1\Auth\AuthController;
+use App\Http\Controllers\V1\LocationController;
 use App\Http\Controllers\V1\Stores\StoreController;
 use App\Http\Controllers\V1\Product\ProductController;
 
@@ -54,8 +54,8 @@ Route::prefix('v1/')->group(function () {
 
     });
     Route::middleware('auth:sanctum')->group(function () {
-        // Route::post('/paystack/initialize', [PaystackController::class, 'initialize']);
-        // Route::get('/paystack/transaction/verify/{reference}', [PaystackController::class, 'verifyPayment']);
+        Route::post('/paystack/initialize', [PaystackController::class, 'initialize']);
+        Route::get('/paystack/transaction/verify/{reference}', [PaystackController::class, 'verifyPayment']);
         Route::controller(StoreController::class)->group(function () {
             Route::post('stores', 'store');
             Route::get('mystore', 'mystore');
