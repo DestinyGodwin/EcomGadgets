@@ -11,7 +11,7 @@ class Transaction extends Model
        use HasUuids, SoftDeletes;
        protected $fillable = [
         'reference',
-        'user_id',
+        'store_id',
         'type',
         'amount',
         'status',
@@ -22,8 +22,10 @@ class Transaction extends Model
         'meta' => 'array',
     ];
 
-    public function user()
+    public function store()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Store::class);
     }
+
+    
 }

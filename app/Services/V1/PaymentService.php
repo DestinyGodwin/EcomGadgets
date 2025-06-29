@@ -26,7 +26,7 @@ class PaymentService
             'meta'      => $data['metadata'],
         ]);
 
-        // dd($data);
+        dd($data);
         // Hit Paystack
         $response = Http::withToken(config('services.paystack.secret_key'))
             ->post('https://api.paystack.co/transaction/initialize', [
