@@ -8,6 +8,7 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\CategorySeeder;
 use Database\Seeders\SubscriptionPlanSeeder;
 use Database\Seeders\NigeriaStatesLgasSeeder;
+use Database\Seeders\FeaturedProductPlanSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -26,6 +27,7 @@ class DatabaseSeeder extends Seeder
         NigeriaStatesLgasSeeder::class,
         SubscriptionPlanSeeder::class,
         CategorySeeder::class,
+        FeaturedProductPlanSeeder::class,
     ]);
     }
 }
