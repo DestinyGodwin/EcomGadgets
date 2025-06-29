@@ -26,7 +26,7 @@ class ProductService
                 'name' => $data['name'],
                 'description' => $data['description'],
                 'specifications' => $data['specifications'] ?? null,
-                'brand' => $data['brand'],
+                'brand' => $data['brand'] ?? null,
                 'price' => $data['price'],
                 'wholesale_price' => $data['wholesale_price'],
             ]);
