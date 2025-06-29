@@ -43,16 +43,16 @@ class PaymentController extends Controller
 
     public function featureProduct(FeaturedProductRequest $request): JsonResponse
     {
-        $user = $request->user();
+        $store = Auth::user()->store;
         $plan = FeaturedProductPlan::findOrFail($request->plan_id);
 
         $payment = $this->paymentService->initialize([
-            'user_id' => $user->id,
-            'email' => $user->email,
+            'store_id' => $store->id,
+            'email' => $store->email,
             'amount' => $plan->price,
             'type' => 'FEAT',
             'metadata' => [
-                'user_id' => $user->id,
+                'store_id' => $store->id,
                 'product_id' => $request->product_id,
                 'plan_id' => $plan->id,
             ],
@@ -63,17 +63,16 @@ class PaymentController extends Controller
 
     public function bookAdvert(AdvertBookingRequest $request): JsonResponse
     {
-        $user = Auth::user();
+        $store = Auth::user()->store;
         $plan = AdvertPlan::findOrFail($request->plan_id);
 
         $payment = $this->paymentService->initialize([
-            'user_id' => $user->id,
-            'email' => $user->email,
+            'store_id' => $store->id,
+            'email' => $store->email,
             'amount' => $plan->price,
             'type' => 'ADV',
             'metadata' => [
-                'user_id' => $user->id,
-                'store_id' => $request->store_id,
+                'store_id' => $store->id,
                 'state_id' => $request->state_id,
                 'plan_id' => $plan->id,
             ],
