@@ -24,17 +24,16 @@ class PaymentController extends Controller
 
     public function subscribe(StoreSubscriptionRequest $request): JsonResponse
     {
-        $user = Auth::user();
+        $store = Auth::user()->store;
         $plan = SubscriptionPlan::findOrFail($request->plan_id);
 
         $payment = $this->paymentService->initialize([
-            'store_id' => $user->store->id,
-            'email' => $user->email,
+            'store_id' => $store->id,
+            'email' => $store->email,
             'amount' =>$plan->price,
             'type' => 'SUB',
             'metadata' => [
-                'user_id' => $user->id,
-                'store_id' => $request->store_id,
+                'store_id' => $store->id,
                 'plan_id' => $plan->id,
             ],
         ]);
