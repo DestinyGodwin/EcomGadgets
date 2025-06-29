@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Models\Category;
 use App\Http\Controllers\Controller;
 use App\Services\V1\CategoryService;
+use App\Http\Resources\V1\CategoryResource;
 
 class CategoryController extends Controller
 {  protected CategoryService $categoryService;
