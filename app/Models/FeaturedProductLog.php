@@ -10,5 +10,6 @@ class FeaturedProductLog extends Model
 {
    use HasUuids, SoftDeletes;
 
+   protected $fillable = ['product_id', 'plan_id', 'store_id', 'reference', 'starts_at', 'ends_at'];
 
 }

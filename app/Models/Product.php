@@ -44,6 +44,8 @@ class Product extends Model
     }
     protected $casts = [
     'specifications' => 'array',
+        'featured_expires_at' => 'datetime',
+
 ];
 protected static function booted(): void
 {
@@ -53,4 +55,5 @@ public function featuredLogs()
 {
     return $this->hasMany(FeaturedProductLog::class);
 }
+
 }
