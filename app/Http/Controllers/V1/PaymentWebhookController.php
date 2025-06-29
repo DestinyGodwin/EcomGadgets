@@ -19,7 +19,7 @@ class PaymentWebhookController extends Controller
    public function handle(Request $request)
     {
         $signature = $request->header('X-Paystack-Signature');
-        $secret = config('services.paystack.secret');
+        $secret = config('services.paystack.secret_key');
         $computed = hash_hmac('sha512', $request->getContent(), $secret);
 
         if ($signature !== $computed) {
@@ -67,7 +67,7 @@ class PaymentWebhookController extends Controller
         return response()->json(['status' => 'success']);
     }
 
-    protected function getExpectedAmount(string $type, int $planId): float
+    protected function getExpectedAmount(string $type, string $planId): float
     {
         return match ($type) {
             'SUB' => SubscriptionPlan::findOrFail($planId)->price,
@@ -77,7 +77,7 @@ class PaymentWebhookController extends Controller
         };
     }
 
-    protected function getDurationDays(string $type, int $planId): int
+    protected function getDurationDays(string $type, string $planId): int
     {
         return match ($type) {
             'SUB' => SubscriptionPlan::findOrFail($planId)->duration_days,
