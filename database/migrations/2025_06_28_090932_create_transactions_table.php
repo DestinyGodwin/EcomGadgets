@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('reference')->unique();
-            $table->foreignUuid('user_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('store_id')->constrained()->onDelete('cascade');
             $table->string('type'); // SUB, FEAT, ADV
             $table->decimal('amount', 10, 2);
             $table->string('status')->default('pending'); 
