@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\V1\PaymentController;
 use App\Http\Controllers\V1\CategoryController;
 use App\Http\Controllers\V1\LocationController;
 use App\Http\Controllers\V1\Auth\AuthController;
@@ -57,6 +58,8 @@ Route::prefix('v1/')->group(function () {
 
     });
     Route::middleware('auth:sanctum')->group(function () {
+
+        
         Route::post('/paystack/initialize', [PaystackController::class, 'initialize']);
         Route::get('/paystack/transaction/verify/{reference}', [PaystackController::class, 'verifyPayment']);
         Route::controller(StoreController::class)->group(function () {
@@ -107,4 +110,11 @@ Route::prefix('v1/')->group(function () {
 
     Route::get('states', [LocationController::class, 'getStates']);
     Route::get('states/{state}/lgas', [LocationController::class, 'getStateLgas']);
+
+    Route::prefix('/payments')->middleware('auth:sanctum')->group(function () {
+    Route::post('/subscribe', [PaymentController::class, 'subscribe']);
+    Route::post('/feature-product', [PaymentController::class, 'featureProduct']);
+    Route::post('/book-advert', [PaymentController::class, 'bookAdvert']);
+});
+
 });

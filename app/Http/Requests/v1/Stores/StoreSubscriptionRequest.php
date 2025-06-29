@@ -22,7 +22,7 @@ class StoreSubscriptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-             'plan_id' => ['require','exists:subscription_plans,id'],
+             'plan_id' => ['required','exists:subscription_plans,id'],
         ];
     }
 }

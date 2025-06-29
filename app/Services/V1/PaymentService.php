@@ -11,7 +11,7 @@ class PaymentService
     /**
      * Create a new class instance.
      */
-     public function initialize(array $data): array
+    public function initialize(array $data): array
     {
         $reference = 'PS_' . Str::uuid();
 
@@ -26,11 +26,12 @@ class PaymentService
             'meta'      => $data['metadata'],
         ]);
 
+        // dd($data);
         // Hit Paystack
-        $response = Http::withToken(config('services.paystack.secret'))
+        $response = Http::withToken(config('services.paystack.secret_key'))
             ->post('https://api.paystack.co/transaction/initialize', [
                 'email' => $data['email'],
-                'amount' => $data['amount'] * 100,
+                'amount' =>(int)$data['amount'] * 100,
                 'reference' => $reference,
                 'metadata' => array_merge($data['metadata'], [
                     'reference' => $reference,

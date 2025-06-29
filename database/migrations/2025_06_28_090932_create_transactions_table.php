@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('reference')->unique();
+            $table->string('reference')->unique();
             $table->foreignUuid('user_id')->constrained()->onDelete('cascade');
             $table->string('type'); // SUB, FEAT, ADV
             $table->decimal('amount', 10, 2);

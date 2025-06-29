@@ -30,7 +30,7 @@ class PaymentController extends Controller
         $payment = $this->paymentService->initialize([
             'user_id' => $user->id,
             'email' => $user->email,
-            'amount' => $plan->price,
+            'amount' =>$plan->price,
             'type' => 'SUB',
             'metadata' => [
                 'user_id' => $user->id,
@@ -64,7 +64,7 @@ class PaymentController extends Controller
 
     public function bookAdvert(AdvertBookingRequest $request): JsonResponse
     {
-        $user = $request->user();
+        $user = Auth::user();
         $plan = AdvertPlan::findOrFail($request->plan_id);
 
         $payment = $this->paymentService->initialize([
