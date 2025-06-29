@@ -28,7 +28,7 @@ class PaymentController extends Controller
         $plan = SubscriptionPlan::findOrFail($request->plan_id);
 
         $payment = $this->paymentService->initialize([
-            'user_id' => $user->id,
+            'store_id' => $user->store->id,
             'email' => $user->email,
             'amount' =>$plan->price,
             'type' => 'SUB',

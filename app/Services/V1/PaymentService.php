@@ -18,7 +18,7 @@ class PaymentService
         // Create pending transaction
         Transaction::create([
             'reference' => $reference,
-            'user_id'   => $data['user_id'],
+            'store_id'   => $data['store_id'],
             'type'      => $data['type'],
             'amount'    => $data['amount'],
             'status'    => 'pending',
