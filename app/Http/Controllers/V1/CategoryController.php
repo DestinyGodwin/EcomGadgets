@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
+use App\Services\V1\CategoryService;
 
 class CategoryController extends Controller
 {  protected CategoryService $categoryService;
