@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamp('starts_at')->nullable();;
             $table->timestamp('ends_at')->nullable();;
             $table->string('transaction_id')->nullable();
-            $table->foreignId('plan_id')->constrained('subscription_plans');
+            $table->foreignUuid('plan_id')->constrained('subscription_plans');
             $table->string('reference')->unique();         
             $table->enum('status', ['active', 'expired'])->default('active');
             $table->softDeletes();

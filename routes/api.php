@@ -4,8 +4,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\V1\CategoryController;
 use App\Http\Controllers\V1\LocationController;
+use App\Http\Controllers\V1\Auth\AuthController;
+use App\Http\Controllers\V1\Admin\UserController;
 use App\Http\Controllers\V1\Stores\StoreController;
 use App\Http\Controllers\V1\Product\ProductController;
+use App\Http\Controllers\V1\Admin\SubscriptionPlanController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();

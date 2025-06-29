@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
-use App\V1\Services\Admin\UserService;
+use App\Services\V1\Admin\UserService;
 use App\Http\Resources\V1\Auth\UserResource;
+use App\Http\Requests\V1\Admin\SearchUserRequest;
 
 class UserController extends Controller
 {
