@@ -13,7 +13,9 @@ class AdvertBooking extends Model
 
        protected $fillable = ['store_id', 
        'state_id',
-        'plan_id', 'amount', 'starts_at', 'status', 'reference', 'ends_at', 'transaction_id'];
+        'plan_id', 
+        'amount',
+         'starts_at', 'link', 'title', 'image', 'status', 'reference', 'ends_at', 'transaction_id'];
 
        public function store():BelongsTo
        {
