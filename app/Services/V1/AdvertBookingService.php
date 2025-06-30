@@ -3,6 +3,7 @@
 namespace App\Services\V1;
 
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use App\Models\AdvertBooking;
 use Illuminate\Validation\ValidationException;
 
@@ -37,6 +38,14 @@ class AdvertBookingService
                 'starts_at' => ['No available slots for this date range in the selected state.']
             ]);
         }
+        $imagePath = null;
+        if (!empty($data['image']) && $data['image']->isValid()) {
+            $imagePath = $data['image']->storeAs(
+                'advert_images',
+                Str::uuid() . '.' . $data['image']->getClientOriginalExtension(),
+                'public'
+            );
+        }
 
         return [
             'store_id' => $data['store_id'],
@@ -46,7 +55,7 @@ class AdvertBookingService
             'duration_days' => $plan->duration_days,
             'title' => $data['title'],
             'link' => $data['link'],
-            'image' => $data['image'],
+            'image' => $imagePath,
         ];
     }
 }
