@@ -24,6 +24,7 @@ class AdvertBookingRequest extends FormRequest
         return [
             'plan_id' => ['required','exists:advert_plans,id'],
             'state_id' => ['required','exists:states,id'],
+            'starts_at' => ['required', 'date', 'after_or_equal:today'],       
         ];
     }
 }
