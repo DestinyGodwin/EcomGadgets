@@ -70,23 +70,6 @@ class PaymentController extends Controller
 
     public function bookAdvert(AdvertBookingRequest $request): JsonResponse
     {
-    //     $store = Auth::user()->store;
-    //     $plan = AdvertPlan::findOrFail($request->plan_id);
-
-    //     $payment = $this->paymentService->initialize([
-    //         'store_id' => $store->id,
-    //         'email' => $store->email,
-    //         'amount' => $plan->price,
-    //         'type' => 'ADV',
-    //         'metadata' => [
-    //             'store_id' => $store->id,
-    //             'state_id' => $request->state_id,
-    //             'plan_id' => $plan->id,
-    //         ],
-    //     ]);
-
-    //     return response()->json($payment);
-
     $store = Auth::user()->store;
         $plan = AdvertPlan::findOrFail($request->plan_id);
 
