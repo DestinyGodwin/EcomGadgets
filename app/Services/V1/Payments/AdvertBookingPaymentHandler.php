@@ -13,15 +13,16 @@ class AdvertBookingPaymentHandler implements PaymentHandlerInterface
     {
         //
     }
-    
+
     public function handleSuccessfulPayment(array $meta): void
     {
         AdvertBooking::create([
-            'user_id' => $meta['user_id'],
             'store_id' => $meta['store_id'],
+            'amount'  => $meta['amount'],
             'state_id' => $meta['state_id'],
             'plan_id' => $meta['plan_id'],
-            'starts_at' => now(),
+           'reference' => $meta['reference'],
+          'starts_at' => now(),
             'ends_at' => now()->addDays($meta['duration_days']),
         ]);
     }

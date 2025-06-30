@@ -10,6 +10,6 @@ class AdvertBooking extends Model
 {
      use HasUuids, SoftDeletes;
 
-       protected $fillable = ['store_id', 'amount', 'starts_at', 'status', 'reference', 'ends_at', 'transaction_id'];
+       protected $fillable = ['store_id', 'state_id', 'plan_id', 'amount', 'starts_at', 'status', 'reference', 'ends_at', 'transaction_id'];
 
 }
