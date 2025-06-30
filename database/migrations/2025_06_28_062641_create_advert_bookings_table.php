@@ -18,6 +18,9 @@ return new class extends Migration
             $table->foreignUuid('state_id');
             $table->foreignUuid('plan_id')->constrained('advert_plans');
             $table->string('reference')->unique();
+            $table->string('title');
+            $table->string('link')->nullable();
+            $table->string('image')->nullable();
             $table->string('transaction_id')->nullable();
             $table->timestamp('starts_at')->nullable();
             $table->timestamp('ends_at')->nullable();
