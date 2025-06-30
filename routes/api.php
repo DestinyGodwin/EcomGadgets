@@ -7,6 +7,7 @@ use App\Http\Controllers\V1\CategoryController;
 use App\Http\Controllers\V1\LocationController;
 use App\Http\Controllers\V1\Auth\AuthController;
 use App\Http\Controllers\V1\Admin\UserController;
+use App\Http\Controllers\V1\NotificationController;
 use App\Http\Controllers\V1\Stores\StoreController;
 use App\Http\Controllers\V1\PaymentWebhookController;
 use App\Http\Controllers\V1\Admin\NotifyingController;
@@ -82,12 +83,12 @@ Route::prefix('v1/')->group(function () {
             Route::get('products/user-lga', 'userLga');
         });
         Route::prefix('notifications')->group(function () {
-            // Route::controller(NotificationController::class)->group(function () {
-            //     Route::get('/', 'index');
-            //     Route::post('/mark-as-read', 'markAllAsRead');
-            //     Route::post('/{id}/mark-as-read', 'markAsRead');
-            //     Route::delete('/{id}', 'destroy');
-            // });
+            Route::controller(NotificationController::class)->group(function () {
+                Route::get('/', 'index');
+                Route::post('/mark-as-read', 'markAllAsRead');
+                Route::post('/{id}/mark-as-read', 'markAsRead');
+                Route::delete('/{id}', 'destroy');
+            });
         });
     });
     Route::controller(ProductController::class)->group(function () {
