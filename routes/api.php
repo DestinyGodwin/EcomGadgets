@@ -10,6 +10,7 @@ use App\Http\Controllers\V1\Admin\UserController;
 use App\Http\Controllers\V1\Stores\StoreController;
 use App\Http\Controllers\V1\PaymentWebhookController;
 use App\Http\Controllers\V1\Product\ProductController;
+use App\Http\Controllers\V1\PaymentVerificationController;
 use App\Http\Controllers\V1\Admin\SubscriptionPlanController;
 
 Route::get('/user', function (Request $request) {
@@ -102,8 +103,6 @@ Route::prefix('v1/')->group(function () {
     Route::get('stores/{store}', [StoreController::class, 'show']);
     Route::get('categories', [CategoryController::class, 'index']);
 
-    // Route::post('/paystack/webhook', [PaystackController::class, 'webhook']);
-    // Route::get('/paystack/callback', [PaystackController::class, 'callback']);
     Route::get('subscriptions', [SubscriptionPlanController::class, 'index']);
     Route::get('subscriptions/{subscription_plan}', [SubscriptionPlanController::class, 'show']);
 
@@ -116,4 +115,6 @@ Route::prefix('v1/')->group(function () {
         Route::post('/book-advert', [PaymentController::class, 'bookAdvert']);
     });
     Route::post('/paystack/webhook', [PaymentWebhookController::class, 'handle']);
+    Route::get('payments/verify/{reference}', [PaymentVerificationController::class, 'verify']);
+
 });

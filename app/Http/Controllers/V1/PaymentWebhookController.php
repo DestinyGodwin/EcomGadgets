@@ -16,7 +16,7 @@ use App\Services\V1\Payments\StoreSubscriptionPaymentHandler;
 
 class PaymentWebhookController extends Controller
 {
-   public function handle(Request $request)
+    public function handle(Request $request)
     {
         $signature = $request->header('X-Paystack-Signature');
         $secret = config('services.paystack.secret_key');
@@ -60,12 +60,11 @@ class PaymentWebhookController extends Controller
         // Execute handler
         $handler = $this->getHandler($type);
         if ($handler instanceof PaymentHandlerInterface) {
-            // $meta['duration_days'] = $this->getDurationDays($type, $meta['plan_id']);
-            // $handler->handleSuccessfulPayment($meta);
-               $meta['duration_days'] = $this->getDurationDays($type, $meta['plan_id']);
-    $meta['amount'] = $data['amount'] / 100; // convert from kobo
-    $meta['transaction_id'] = $data['id'];   // Paystack transaction ID
-    $handler->handleSuccessfulPayment($meta);
+
+            $meta['duration_days'] = $this->getDurationDays($type, $meta['plan_id']);
+            $meta['amount'] = $data['amount'] / 100;
+            $meta['transaction_id'] = $data['id'];
+            $handler->handleSuccessfulPayment($meta);
         }
 
         return response()->json(['status' => 'success']);
