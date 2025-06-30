@@ -14,6 +14,7 @@ use App\Http\Controllers\V1\Product\ProductController;
 use App\Http\Controllers\V1\Admin\AdminCategoryController;
 use App\Http\Controllers\V1\PaymentVerificationController;
 use App\Http\Controllers\V1\Admin\SubscriptionPlanController;
+use App\Http\Controllers\V1\Stores\StoreSubscriptionController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -50,11 +51,11 @@ Route::prefix('v1/')->group(function () {
             Route::put('categories/{category}', 'update');
             Route::delete('categories/{category}', 'destroy');
         });
-        // Route::controller(StoreSubscriptionController::class)->group(function () {
-        //     Route::get('store-subscriptions', 'adminSubscriptions');
-        //     Route::get('store-subscriptions/{subscriptionId}', 'adminSubscription');
-        //     Route::get('store-subs', 'getAll');
-        // });
+        Route::controller(StoreSubscriptionController::class)->group(function () {
+            Route::get('store-subscriptions', 'adminSubscriptions');
+            Route::get('store-subscriptions/{subscriptionId}', 'adminSubscription');
+            Route::get('store-subs', 'getAll');
+        });
         Route::post('send-notifications', [NotifyingController::class, 'send']);
         Route::get('stores/state/{stateId}', [StoreController::class, 'getStoresByState']);
         Route::get('stores/lga/{lgaId}', [StoreController::class, 'getStoresByLga']);
@@ -116,5 +117,4 @@ Route::prefix('v1/')->group(function () {
     });
     Route::post('/paystack/webhook', [PaymentWebhookController::class, 'handle']);
     Route::get('payments/verify/{reference}', [PaymentVerificationController::class, 'verify']);
-
 });
