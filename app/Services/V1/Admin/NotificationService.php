@@ -4,6 +4,7 @@ namespace App\Services\V1\Admin;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Notification;
+use App\Notifications\V1\Admin\GeneralNotification;
 
 class NotificationService
 {
