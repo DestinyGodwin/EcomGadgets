@@ -28,7 +28,7 @@ class FeaturedProductPaymentHandler implements PaymentHandlerInterface
         }
 
         $newExpiry = $currentExpiry && $currentExpiry->isFuture()
-            ? $currentExpiry->copy()->addDays($meta['duration_days']) // ← FIXED
+            ? $currentExpiry->copy()->addDays($meta['duration_days']) 
             : now()->addDays($meta['duration_days']);
 
         FeaturedProductLog::create([
