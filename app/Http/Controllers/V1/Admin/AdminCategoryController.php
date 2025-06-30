@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1\Admin;
 use App\Http\Controllers\Controller;
 use App\Services\V1\CategoryService;
 use App\Http\Requests\V1\Admin\StoreCategoryRequest;
+use App\Http\Requests\V1\Admin\UpdateCategoryRequest;
 
 
 class AdminCategoryController extends Controller
