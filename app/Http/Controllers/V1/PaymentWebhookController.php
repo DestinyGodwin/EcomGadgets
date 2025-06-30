@@ -60,8 +60,12 @@ class PaymentWebhookController extends Controller
         // Execute handler
         $handler = $this->getHandler($type);
         if ($handler instanceof PaymentHandlerInterface) {
-            $meta['duration_days'] = $this->getDurationDays($type, $meta['plan_id']);
-            $handler->handleSuccessfulPayment($meta);
+            // $meta['duration_days'] = $this->getDurationDays($type, $meta['plan_id']);
+            // $handler->handleSuccessfulPayment($meta);
+               $meta['duration_days'] = $this->getDurationDays($type, $meta['plan_id']);
+    $meta['amount'] = $data['amount'] / 100; // convert from kobo
+    $meta['transaction_id'] = $data['id'];   // Paystack transaction ID
+    $handler->handleSuccessfulPayment($meta);
         }
 
         return response()->json(['status' => 'success']);
