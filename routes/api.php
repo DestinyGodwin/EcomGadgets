@@ -10,6 +10,7 @@ use App\Http\Controllers\V1\Admin\UserController;
 use App\Http\Controllers\V1\Stores\StoreController;
 use App\Http\Controllers\V1\PaymentWebhookController;
 use App\Http\Controllers\V1\Product\ProductController;
+use App\Http\Controllers\V1\Admin\AdminCategoryController;
 use App\Http\Controllers\V1\PaymentVerificationController;
 use App\Http\Controllers\V1\Admin\SubscriptionPlanController;
 
@@ -43,11 +44,11 @@ Route::prefix('v1/')->group(function () {
             Route::get('vendors', 'getVendors');
             Route::get('users/search', 'search');
         });
-        // Route::controller(AdminCategoryController::class)->group(function () {
-        //     Route::post('categories', 'store');
-        //     Route::put('categories/{category}', 'update');
-        //     Route::delete('categories/{category}', 'destroy');
-        // });
+        Route::controller(AdminCategoryController::class)->group(function () {
+            Route::post('categories', 'store');
+            Route::put('categories/{category}', 'update');
+            Route::delete('categories/{category}', 'destroy');
+        });
         // Route::controller(StoreSubscriptionController::class)->group(function () {
         //     Route::get('store-subscriptions', 'adminSubscriptions');
         //     Route::get('store-subscriptions/{subscriptionId}', 'adminSubscription');
@@ -61,8 +62,6 @@ Route::prefix('v1/')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
 
 
-        // Route::post('/paystack/initialize', [PaystackController::class, 'initialize']);
-        // Route::get('/paystack/transaction/verify/{reference}', [PaystackController::class, 'verifyPayment']);
         Route::controller(StoreController::class)->group(function () {
             Route::post('stores', 'store');
             Route::get('mystore', 'mystore');
