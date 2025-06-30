@@ -9,6 +9,7 @@ use App\Http\Controllers\V1\Auth\AuthController;
 use App\Http\Controllers\V1\Admin\UserController;
 use App\Http\Controllers\V1\Stores\StoreController;
 use App\Http\Controllers\V1\PaymentWebhookController;
+use App\Http\Controllers\V1\Admin\NotifyingController;
 use App\Http\Controllers\V1\Product\ProductController;
 use App\Http\Controllers\V1\Admin\AdminCategoryController;
 use App\Http\Controllers\V1\PaymentVerificationController;
@@ -54,7 +55,7 @@ Route::prefix('v1/')->group(function () {
         //     Route::get('store-subscriptions/{subscriptionId}', 'adminSubscription');
         //     Route::get('store-subs', 'getAll');
         // });
-        // Route::post('send-notifications', [NotifyingController::class, 'send']);
+        Route::post('send-notifications', [NotifyingController::class, 'send']);
         Route::get('stores/state/{stateId}', [StoreController::class, 'getStoresByState']);
         Route::get('stores/lga/{lgaId}', [StoreController::class, 'getStoresByLga']);
         Route::get('stores/{storeId}/stor', [StoreController::class, 'getStore']);
