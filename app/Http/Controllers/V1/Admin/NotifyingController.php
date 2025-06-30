@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\V1\Admin\NotificationService;
+use App\Http\Requests\V1\Admin\SendNotificationRequest;
 
 class NotifyingController extends Controller
 {
