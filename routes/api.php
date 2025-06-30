@@ -70,10 +70,10 @@ Route::prefix('v1/')->group(function () {
             Route::put('stores/{store}', 'update');
             Route::delete('stores/{store}', 'destroy');
         });
-        // Route::controller(StoreSubscriptioncontroller::class)->group(function () {
-        //     Route::get('my-subscriptions', 'storeSubscriptions');
-        //     Route::get('my-subscriptions/{subscriptionId}', 'storeSubscription');
-        // });
+        Route::controller(StoreSubscriptioncontroller::class)->group(function () {
+            Route::get('my-subscriptions', 'storeSubscriptions');
+            Route::get('my-subscriptions/{subscriptionId}', 'storeSubscription');
+        });
         Route::controller(ProductController::class)->group(function () {
             Route::post('products', 'store');
             Route::put('products/{product}', 'update');
