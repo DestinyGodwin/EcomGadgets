@@ -15,7 +15,7 @@ class AdvertBooking extends Model
        'state_id',
         'plan_id', 
         'amount',
-         'starts_at', 'link', 'title', 'image', 'status', 'reference', 'ends_at', 'transaction_id'];
+         'starts_at', 'link', 'title', 'image', 'status', 'reference', 'is_dummy', 'ends_at', 'transaction_id'];
 
        public function store():BelongsTo
        {
