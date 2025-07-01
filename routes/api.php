@@ -9,6 +9,7 @@ use App\Http\Controllers\V1\Auth\AuthController;
 use App\Http\Controllers\V1\Admin\UserController;
 use App\Http\Controllers\V1\NotificationController;
 use App\Http\Controllers\V1\Stores\StoreController;
+use App\Http\Controllers\V1\AdvertBookingController;
 use App\Http\Controllers\V1\PaymentWebhookController;
 use App\Http\Controllers\V1\Admin\NotifyingController;
 use App\Http\Controllers\V1\Product\ProductController;

@@ -1,11 +1,11 @@
 <?php
-
 namespace App\Http\Controllers\V1;
 
-use App\Models\AdvertBooking;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\V1\Advert\UpdateAdvertBookingRequest;
+use App\Models\AdvertBooking;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class AdvertBookingController extends Controller
 {
@@ -18,14 +18,14 @@ class AdvertBookingController extends Controller
     public function show($id)
     {
         $storeId = Auth::user()->store->id;
-        $advert = AdvertBooking::where('id', $id)->where('store_id', $storeId)->firstOrFail();
+        $advert  = AdvertBooking::where('id', $id)->where('store_id', $storeId)->firstOrFail();
 
         return response()->json($advert);
     }
 
     public function update(UpdateAdvertBookingRequest $request, $id)
     {
-        $store = Auth::user()->store;
+        $store  = Auth::user()->store;
         $advert = AdvertBooking::where('id', $id)->where('store_id', $store->id)->firstOrFail();
 
         if ($advert->ends_at && now()->gt($advert->ends_at)) {
@@ -44,37 +44,37 @@ class AdvertBookingController extends Controller
     }
 
     public function getDummyAdverts(): JsonResponse
-{
-    $ads = AdvertBooking::where('is_dummy', true)
-        ->whereDate('ends_at', '>=', now())
-        ->orderBy('starts_at')
-        ->get();
-
-    return response()->json(['data' => $ads]);
-}
-public function getAdvertsByState($stateId): JsonResponse
-{
-    $activeAds = AdvertBooking::where('state_id', $stateId)
-        ->whereDate('ends_at', '>=', now())
-        ->where('is_dummy', false)
-        ->orderBy('starts_at')
-        ->get();
-
-    if ($activeAds->count() < 5) {
-        $remaining = 5 - $activeAds->count();
-        $dummyAds = AdvertBooking::where('state_id', $stateId)
-            ->where('is_dummy', true)
+    {
+        $ads = AdvertBooking::where('is_dummy', true)
             ->whereDate('ends_at', '>=', now())
             ->orderBy('starts_at')
-            ->take($remaining)
             ->get();
 
-        $ads = $activeAds->concat($dummyAds);
-    } else {
-        $ads = $activeAds;
+        return response()->json(['data' => $ads]);
     }
+    public function getAdvertsByState($stateId): JsonResponse
+    {
+        $activeAds = AdvertBooking::where('state_id', $stateId)
+            ->whereDate('ends_at', '>=', now())
+            ->where('is_dummy', false)
+            ->orderBy('starts_at')
+            ->get();
 
-    return response()->json(['data' => $ads]);
-}
+        if ($activeAds->count() < 5) {
+            $remaining = 5 - $activeAds->count();
+            $dummyAds  = AdvertBooking::where('state_id', $stateId)
+                ->where('is_dummy', true)
+                ->whereDate('ends_at', '>=', now())
+                ->orderBy('starts_at')
+                ->take($remaining)
+                ->get();
+
+            $ads = $activeAds->concat($dummyAds);
+        } else {
+            $ads = $activeAds;
+        }
+
+        return response()->json(['data' => $ads]);
+    }
 
 }
