@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1;
 use App\Models\AdvertBooking;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\V1\Advert\UpdateAdvertBookingRequest;
 
 class AdvertBookingController extends Controller
 {
@@ -41,4 +42,14 @@ class AdvertBookingController extends Controller
 
         return response()->json(['message' => 'Updated', 'data' => $advert]);
     }
+
+    public function getDummyAdverts(): JsonResponse
+{
+    $ads = AdvertBooking::where('is_dummy', true)
+        ->whereDate('ends_at', '>=', now())
+        ->orderBy('starts_at')
+        ->get();
+
+    return response()->json(['data' => $ads]);
+}
 }

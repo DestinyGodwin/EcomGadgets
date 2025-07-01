@@ -113,6 +113,8 @@ Route::prefix('v1/')->group(function () {
 
     Route::get('states', [LocationController::class, 'getStates']);
     Route::get('states/{state}/lgas', [LocationController::class, 'getStateLgas']);
+    Route::get('adverts/dummy', [AdvertBookingController::class, 'getDummyAdverts']);
+
 
     Route::prefix('/payments')->middleware('auth:sanctum')->group(function () {
         Route::post('/subscribe', [PaymentController::class, 'subscribe']);
