@@ -16,6 +16,9 @@ class Store extends Model
 
 {
     use HasUuids, SoftDeletes, HasSlug, HasFactory;
+
+    protected $perPage = 16;
+    
     protected $fillable = [
         'store_name',
         'slug',
