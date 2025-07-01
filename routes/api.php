@@ -15,6 +15,7 @@ use App\Http\Controllers\V1\Product\ProductController;
 use App\Http\Controllers\V1\Admin\AdminCategoryController;
 use App\Http\Controllers\V1\PaymentVerificationController;
 use App\Http\Controllers\V1\Admin\SubscriptionPlanController;
+use App\Http\Controllers\V1\Admin\DummyAdvertBookingController;
 use App\Http\Controllers\V1\Stores\StoreSubscriptionController;
 
 Route::get('/user', function (Request $request) {
@@ -57,6 +58,8 @@ Route::prefix('v1/')->group(function () {
             Route::get('store-subscriptions/{subscriptionId}', 'adminSubscription');
             Route::get('store-subs', 'getAll');
         });
+        Route::apiResource('dummy-advert-bookings', DummyAdvertBookingController::class);
+
         Route::post('send-notifications', [NotifyingController::class, 'send']);
         Route::get('stores/state/{stateId}', [StoreController::class, 'getStoresByState']);
         Route::get('stores/lga/{lgaId}', [StoreController::class, 'getStoresByLga']);
