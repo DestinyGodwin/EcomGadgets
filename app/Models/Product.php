@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Product extends Model
 {
     use HasUuids, SoftDeletes, HasSlug ;
-
+protected $perPage = 16;
     protected $fillable = ['category_id', 'name', 'slug', 'description', 'specifications', 'brand', 'price', 'wholesale_price', 'is_featured', 'featured_expires_at'];
     public function store(): BelongsTo{
         return $this->belongsTo(Store::class);
