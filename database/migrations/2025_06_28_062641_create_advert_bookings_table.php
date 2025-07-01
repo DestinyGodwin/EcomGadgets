@@ -13,17 +13,18 @@ return new class extends Migration
     {
         Schema::create('advert_bookings', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('store_id')->constrained()->onDelete('cascade');
-            $table->decimal('amount', 10, 2);
-            $table->foreignUuid('state_id');
-            $table->foreignUuid('plan_id')->constrained('advert_plans');
-            $table->string('reference')->unique();
+            $table->foreignUuid('store_id')->nullable()->constrained()->onDelete('cascade');
+            $table->decimal('amount', 10, 2)->default(0);
+            $table->foreignUuid('state_id')->constrained();
+            $table->foreignUuid('plan_id')->nullable()->constrained('advert_plans')->nullOnDelete();
+            $table->string('reference')->unique()->nullable();
             $table->string('title');
             $table->string('link')->nullable();
             $table->string('image')->nullable();
             $table->string('transaction_id')->nullable();
             $table->timestamp('starts_at')->nullable();
             $table->timestamp('ends_at')->nullable();
+            $table->boolean('is_dummy')->default(false);
             $table->softDeletes();
             $table->timestamps();
         });
