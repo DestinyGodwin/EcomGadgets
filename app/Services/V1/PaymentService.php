@@ -31,7 +31,7 @@ class PaymentService
         $response = Http::withToken(config('services.paystack.secret_key'))
             ->post('https://api.paystack.co/transaction/initialize', [
                 'email' => $data['email'],
-                'amount' =>(int)$data['amount'] * 100,
+                'amount' =>round($data['amount'] * 100),
                 'reference' => $reference,
                 'metadata' => array_merge($data['metadata'], [
                     'reference' => $reference,
