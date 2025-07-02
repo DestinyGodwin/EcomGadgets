@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Services\V1\Stores\StoreService;
 use App\Http\Resources\V1\Stores\StoreResource;
+use App\Http\Resources\V1\Stores\MyStoreResource;
 use App\Http\Requests\V1\Stores\CreateStoreRequest;
 use App\Http\Requests\V1\Stores\StoreSearchRequest;
 use App\Http\Requests\V1\Stores\UpdateStoreRequest;
@@ -41,9 +42,9 @@ public function destroy(Store $store)
     return response()->json(['message' => 'Store deleted successfully.'], 200);
 }
 
-     public function mystore(){
+    public function mystore(){
         $store = Auth::user()->store;
-        return response()->json($store);
+        return new MyStoreResource($store);;
      }
 
     
