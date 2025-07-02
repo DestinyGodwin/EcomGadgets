@@ -94,6 +94,7 @@ Route::prefix('v1/')->group(function () {
                 Route::delete('/{id}', 'destroy');
             });
         });
+            Route::get('/user/dummy-adverts', [AdvertBookingController::class, 'getDummyAdvertsForUserState']);
         Route::prefix('my-adverts')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [AdvertBookingController::class, 'myBookings']);
     Route::get('{id}', [AdvertBookingController::class, 'show']);
