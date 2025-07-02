@@ -49,13 +49,13 @@ public function login(LoginRequest $request)
     }
 
     public function completeProfile(CompleteProfileRequest $request){
-      $this->authServices->completeProfile($request->validated());
-      return response()->json('Registration completed successfully');
+      $user = $this->authServices->completeProfile($request->validated());
+      return response()->json($user);
     }
 
     public function updateProfile(UpdateProfileRequest $request){
-        $this->authServices->updateProfile($request->validated());
-        return response()->json('Profile updated successfully');
+       $user = $this->authServices->updateProfile($request->validated());
+        return response()->json($user);
     }
     
     public function changePassword(ChangePasswordRequest $request){
