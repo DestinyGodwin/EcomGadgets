@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Resources\V1\Auth\UserResource;
 
 class AuthServices
 {
@@ -73,6 +74,7 @@ class AuthServices
     $user->update($data);
     return [
         'success' => true,
+       'user' => new UserResource($user),
         'message' => 'Profile completed successfully'
     ];
 }
@@ -98,6 +100,7 @@ public function updateProfile(array $validated)
     $user->save();
     return [
         'success' => true,
+       'user' => new UserResource($user),
         'message' => 'Profile updated successfully'
     ];
 }
