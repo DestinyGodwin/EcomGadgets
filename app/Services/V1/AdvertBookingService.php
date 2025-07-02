@@ -1,9 +1,10 @@
 <?php
 namespace App\Services\V1;
 
-use App\Models\AdvertBooking;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use App\Models\AdvertBooking;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
 class AdvertBookingService
@@ -57,5 +58,68 @@ class AdvertBookingService
             'link'          => $data['link'],
             'image'         => $imagePath,
         ];
+    }
+
+    public function getStoreBookings()
+    {
+        $storeId = Auth::user()->store->id;
+        return AdvertBooking::where('store_id', $storeId)->latest()->get();
+    }
+
+    public function getStoreAdvert($id)
+    {
+        $storeId = Auth::user()->store->id;
+        return AdvertBooking::where('id', $id)->where('store_id', $storeId)->firstOrFail();
+    }
+
+    public function updateAdvert($request, $id)
+    {
+        $store = Auth::user()->store;
+        $advert = AdvertBooking::where('id', $id)->where('store_id', $store->id)->firstOrFail();
+
+        if ($advert->ends_at && now()->gt($advert->ends_at)) {
+            return ['error' => true, 'message' => 'This advert has expired and cannot be updated'];
+        }
+
+        $data = $request->validated();
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('advert_images', 'public');
+        }
+
+        $advert->update($data);
+        return ['error' => false, 'advert' => $advert];
+    }
+
+    public function getDummyAdverts()
+    {
+        return AdvertBooking::where('is_dummy', true)
+            ->whereDate('ends_at', '>=', now())
+            ->orderBy('starts_at')
+            ->get();
+    }
+
+    public function getAdvertsByStateWithFallback($stateId, $limit = 5)
+    {
+        $realAds = AdvertBooking::where('state_id', $stateId)
+            ->where('is_dummy', false)
+            ->whereDate('ends_at', '>=', now())
+            ->orderBy('starts_at')
+            ->get();
+
+        if ($realAds->count() < $limit) {
+            $remaining = $limit - $realAds->count();
+
+            $dummyAds = AdvertBooking::where('state_id', $stateId)
+                ->where('is_dummy', true)
+                ->whereDate('ends_at', '>=', now())
+                ->orderBy('starts_at')
+                ->take($remaining)
+                ->get();
+
+            return $realAds->concat($dummyAds);
+        }
+
+        return $realAds;
     }
 }
