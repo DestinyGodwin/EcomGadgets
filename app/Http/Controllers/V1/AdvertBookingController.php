@@ -77,20 +77,64 @@ class AdvertBookingController extends Controller
         return response()->json(['data' => $ads]);
     }
 
-    public function getDummyAdvertsForUserState(): JsonResponse
+    public function getUserStateAdverts(): JsonResponse
 {
     $user = Auth::user();
-    $now = now();
-    $adverts = AdvertBooking::where('state_id', $user->state_id)
-        ->where('is_dummy', true)
-        ->where(function ($q) use ($now) {
-            $q->whereNull('ends_at')->orWhere('ends_at', '>', $now);
-        })
-        ->orderBy('starts_at', 'asc')
+    $stateId = $user->state_id;
+
+
+    $activeAds = AdvertBooking::where('state_id', $stateId)
+        ->whereDate('ends_at', '>=', now())
+        ->where('is_dummy', false)
+        ->orderBy('starts_at')
         ->get();
+
+    if ($activeAds->count() < 5) {
+        $remaining = 5 - $activeAds->count();
+
+        $dummyAds = AdvertBooking::where('state_id', $stateId)
+            ->where('is_dummy', true)
+            ->whereDate('ends_at', '>=', now())
+            ->orderBy('starts_at')
+            ->take($remaining)
+            ->get();
+
+        $ads = $activeAds->concat($dummyAds);
+    } else {
+        $ads = $activeAds;
+    }
+
+    return response()->json(['data' => $ads]);
+}
+
+
+public function getAdvertsFromUserState(): JsonResponse
+{
+  
+    $user = Auth::user();
+    $stateId = $user->state_id;
+    $adLimit = 5;
+    $realAds = AdvertBooking::where('state_id', $stateId)
+        ->where('is_dummy', false)
+        ->whereDate('ends_at', '>=', now())
+        ->orderBy('starts_at')
+        ->get();
+    if ($realAds->count() < $adLimit) {
+        $remaining = $adLimit - $realAds->count();
+
+        $dummyAds = AdvertBooking::where('state_id', $stateId)
+            ->where('is_dummy', true)
+            ->whereDate('ends_at', '>=', now())
+            ->orderBy('starts_at')
+            ->take($remaining)
+            ->get();
+
+        $ads = $realAds->concat($dummyAds);
+    } else {
+        $ads = $realAds;
+    }
     return response()->json([
-        'status' => 'success',
-        'data' => $adverts,
+        'data' => $ads
     ]);
 }
 }

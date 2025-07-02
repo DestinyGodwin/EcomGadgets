@@ -94,8 +94,8 @@ Route::prefix('v1/')->group(function () {
                 Route::delete('/{id}', 'destroy');
             });
         });
-            Route::get('/user/dummy-adverts', [AdvertBookingController::class, 'getDummyAdvertsForUserState']);
-        Route::prefix('my-adverts')->middleware('auth:sanctum')->group(function () {
+            Route::get('/user/dummy-adverts', [AdvertBookingController::class, 'getUserStateAdverts']);
+        Route::prefix('my-adverts')->middleware('auth:sanctum')->group(callback: function () {
     Route::get('/', [AdvertBookingController::class, 'myBookings']);
     Route::get('{id}', [AdvertBookingController::class, 'show']);
     Route::put('{id}', [AdvertBookingController::class, 'update']);
@@ -122,6 +122,7 @@ Route::prefix('v1/')->group(function () {
     Route::get('states/{state}/lgas', [LocationController::class, 'getStateLgas']);
     Route::get('adverts/dummy', [AdvertBookingController::class, 'getDummyAdverts']);
     Route::get('adverts/state/{state}', [AdvertBookingController::class, 'getAdvertsByState']);
+    Route::get('adverts', [AdvertBookingController::class, 'getAdvertsFromUserState']);
 
 
     Route::prefix('/payments')->middleware('auth:sanctum')->group(function () {
