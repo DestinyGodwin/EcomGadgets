@@ -30,6 +30,7 @@ class ProductResource extends JsonResource
                 'name' => $this->store->store_name,
                 'slug' =>$this->store->slug,
                 'store_lga' =>  $this->store->lga->name,
+               'store_image' => asset('storage/' . $this->store_image),             
                 'store_state' => $this->store->state->name,
                 'phone_number' => $this->store->phone,
 
