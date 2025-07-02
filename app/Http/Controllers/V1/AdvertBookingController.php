@@ -77,4 +77,20 @@ class AdvertBookingController extends Controller
         return response()->json(['data' => $ads]);
     }
 
+    public function getDummyAdvertsForUserState(): JsonResponse
+{
+    $user = Auth::user();
+    $now = now();
+    $adverts = AdvertBooking::where('state_id', $user->state_id)
+        ->where('is_dummy', true)
+        ->where(function ($q) use ($now) {
+            $q->whereNull('ends_at')->orWhere('ends_at', '>', $now);
+        })
+        ->orderBy('starts_at', 'asc')
+        ->get();
+    return response()->json([
+        'status' => 'success',
+        'data' => $adverts,
+    ]);
+}
 }

@@ -19,7 +19,7 @@ class StoreController extends Controller
 
     public function store(CreateStoreRequest $request){
        $store =  $this->storeService->create($request);
-       return new StoreResource($store);
+       return new MyStoreResource($store);
     }
      public function show(Store $store)
     {
