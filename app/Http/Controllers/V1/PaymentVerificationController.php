@@ -25,7 +25,7 @@ class PaymentVerificationController extends Controller
         }
 
         if ($transaction->status === 'success') {
-            return response()->json(['message' => 'Transaction already processed.']);
+            return response()->json(['message' => 'Transaction already processed and was successful.']);
         }
 
         $response = Http::withToken(config('services.paystack.secret_key'))
