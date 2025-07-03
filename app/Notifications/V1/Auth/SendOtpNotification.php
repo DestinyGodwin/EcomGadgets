@@ -2,10 +2,10 @@
 
 namespace App\Notifications\V1\Auth;
 
+use App\Mail\V1\Auth\OtpMail;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 class SendOtpNotification extends Notification implements ShouldQueue
 {
@@ -33,12 +33,10 @@ class SendOtpNotification extends Notification implements ShouldQueue
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail(object $notifiable): MailMessage
+    public function toMail(object $notifiable): OtpMail
     {
-        return (new MailMessage)
-         ->subject('Your OTP Code')
-            ->line("Your OTP code is: **{$this->otp}**")
-            ->line('This code will expire in 10 minutes.');
+               return new OtpMail($this->otp, $notifiable);
+
     }
 
     /**
