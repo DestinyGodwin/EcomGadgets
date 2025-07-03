@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Services\V1\AdvertBookingService;
+use App\Http\Resources\V1\AdvertBookingResource;
 use App\Http\Requests\V1\Advert\UpdateAdvertBookingRequest;
 
 class AdvertBookingController extends Controller

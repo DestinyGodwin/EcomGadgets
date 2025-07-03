@@ -96,6 +96,7 @@ class AdvertBookingService
         return AdvertBooking::where('is_dummy', true)
             ->whereDate('ends_at', '>=', now())
             ->orderBy('starts_at')
+             ->limit(5)
             ->get();
     }
 
