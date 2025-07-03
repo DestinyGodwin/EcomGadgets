@@ -3,6 +3,7 @@ namespace App\Http\Controllers\V1;
 
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Services\V1\AdvertBookingService;
 use App\Http\Resources\V1\AdvertBookingResource;
 use App\Http\Requests\V1\Advert\UpdateAdvertBookingRequest;
@@ -56,14 +57,14 @@ class AdvertBookingController extends Controller
 
     public function getUserStateAdverts(): JsonResponse
     {
-        $stateId = auth()->user()->state_id;
+        $stateId = Auth::user()->state_id;
         $ads = $this->advertService->getAdvertsByStateWithFallback($stateId);
         return response()->json(['data' => AdvertBookingResource::collection($ads)]);
     }
 
     public function getAdvertsFromUserState(): JsonResponse
     {
-        $stateId = auth()->user()->state_id;
+        $stateId = Auth::user()->state_id;
         $ads = $this->advertService->getAdvertsByStateWithFallback($stateId);
         return response()->json(['data' => AdvertBookingResource::collection($ads)]);
     }
