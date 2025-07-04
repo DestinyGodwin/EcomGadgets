@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Setting;
 use Illuminate\Database\Seeder;
 
 class SettingSeeder extends Seeder
@@ -13,7 +14,7 @@ class SettingSeeder extends Seeder
     {
         Setting::create([
             'key' => 'store_subscription_duration',
-            'value' => '3 months', // or 'none'
+            'value' => '3 months', 
         ]);
     }
 }

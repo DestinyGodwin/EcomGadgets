@@ -10,5 +10,10 @@ class Setting extends Model
     use HasUuids;
 
     protected $fillable = ['key', 'value'];
-    
+
+    public static function get(string $key, mixed $default = null): mixed
+    {
+        return static::query()->where('key', $key)->value('value') ?? $default;
+    }
+
 }

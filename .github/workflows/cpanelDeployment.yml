@@ -25,5 +25,6 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          port: 1624
           # local-dir: ./build   # if you have a build step
           dangerous-clean-slate: false  # optional
