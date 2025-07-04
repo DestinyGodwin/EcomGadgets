@@ -12,8 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('settings', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        $table->uuid('id')->primary();
+        $table->string('key')->unique();
+        $table->string('value');
+        $table->timestamps();
         });
     }
 
