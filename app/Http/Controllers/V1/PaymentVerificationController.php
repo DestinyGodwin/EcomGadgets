@@ -71,7 +71,7 @@ class PaymentVerificationController extends Controller
 
     protected function getExpectedAmount(string $type, string $planId): float
     {
-        return match ($type) {
+    return match ($type) {
             'SUB' => SubscriptionPlan::findOrFail($planId)->price,
             'FEAT' => FeaturedProductPlan::findOrFail($planId)->price,
             'ADV' => AdvertPlan::findOrFail($planId)->price,
