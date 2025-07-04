@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Mail\V1\Auth;
 
 use Illuminate\Bus\Queueable;
@@ -20,13 +19,15 @@ class OtpMail extends Mailable implements ShouldQueue
     public $otp;
     public $user;
 
-    public function __construct($otp, $user = null)
+    public function __construct($otp, $user)
     {
         $this->otp = $otp;
         $this->user = $user;
+
+        $this->to($user->email);
     }
 
-       public function envelope(): Envelope
+    public function envelope(): Envelope
     {
         return new Envelope(
             subject: 'Your OTP Code',
@@ -38,10 +39,10 @@ class OtpMail extends Mailable implements ShouldQueue
         return new Content(
             view: 'emails.auth.otp',
             with: [
-                'otp' => $this->otp,
-                 'user' => $this->user,
+                'otp'  => $this->otp,
+                'user' => $this->user,
             ],
         );
     }
-  
+
 }
