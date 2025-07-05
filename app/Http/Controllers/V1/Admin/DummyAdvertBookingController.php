@@ -36,15 +36,15 @@ class DummyAdvertBookingController extends Controller
         return new DummyAdvertResource($advert);
     }
 
-    public function show(AdvertBooking $advertBooking)
+    public function show(AdvertBooking $dummy_advert_booking)
     {
-        abort_unless($advertBooking->is_dummy, 404);
-        return new DummyAdvertResource($advertBooking);
+        abort_unless($dummy_advert_booking->is_dummy, 404);
+        return new DummyAdvertResource($dummy_advert_booking);
     }
 
-    public function update(UpdateDummyAdvertRequest $request, AdvertBooking $advertBooking)
+    public function update(UpdateDummyAdvertRequest $request, AdvertBooking $dummy_advert_booking)
     {
-        abort_unless($advertBooking->is_dummy, 404);
+        abort_unless($dummy_advert_booking->is_dummy, 404);
 
         $data = $request->validated();
 
@@ -56,14 +56,14 @@ class DummyAdvertBookingController extends Controller
             );
         }
 
-        $advertBooking->update($data);
-        return new DummyAdvertResource($advertBooking);
+        $dummy_advert_booking->update($data);
+        return new DummyAdvertResource($dummy_advert_booking);
     }
 
-    public function destroy(AdvertBooking $advertBooking)
+    public function destroy(AdvertBooking $dummy_advert_booking)
     {
-        abort_unless($advertBooking->is_dummy, 404);
-        $advertBooking->delete();
+        abort_unless($dummy_advert_booking->is_dummy, 404);
+        $dummy_advert_booking->delete();
         return response()->json(['message' => 'Deleted']);
     }
 }
