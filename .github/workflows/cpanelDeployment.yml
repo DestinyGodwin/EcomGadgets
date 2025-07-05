@@ -30,13 +30,29 @@
 #           dangerous-clean-slate: false  # optional
 
 
-deployment:
-  tasks:
-    - export DEPLOYPATH=/home/gkzxhmso/repositories/EcomGadgets
-    - /bin/cp -R .vscode $DEPLOYPATH
-    - /bin/cp -R assets $DEPLOYPATH
-    - /bin/cp -R css $DEPLOYPATH
-    - /bin/cp -R fonts $DEPLOYPATH
-    - /bin/cp -R img $DEPLOYPATH
-    - /bin/cp -R js $DEPLOYPATH
-    - /bin/cp index.html $DEPLOYPATH
+name: Deploy to cPanel
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set DEPLOYPATH variable
+        run: echo "DEPLOYPATH=/home/gkzxhmso/repositories/EcomGadgets" >> $GITHUB_ENV
+
+      - name: Copy files to DEPLOYPATH
+        run: |
+          /bin/cp -R .vscode $DEPLOYPATH
+          /bin/cp -R assets $DEPLOYPATH
+          /bin/cp -R css $DEPLOYPATH
+          /bin/cp -R fonts $DEPLOYPATH
+          /bin/cp -R img $DEPLOYPATH
+          /bin/cp -R js $DEPLOYPATH
+          /bin/cp index.html $DEPLOYPATH
