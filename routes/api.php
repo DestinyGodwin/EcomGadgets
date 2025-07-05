@@ -112,9 +112,10 @@ Route::prefix('v1/')->group(function () {
         });
 
         Route::controller(WishlistController::class)->group( function (){
-            Route::get('wishlist', 'index');
-            Route::get('wishlist', 'show');
-            Route::delete('/wishlist/{productId}', 'destroy');
+             Route::get('/wishlist',  'index');
+    Route::post('/wishlist',  'store');
+    Route::get('/wishlist/{productId}',  'show');
+    Route::delete('/wishlist/{productId}',  'destroy');
 
         });
     });
