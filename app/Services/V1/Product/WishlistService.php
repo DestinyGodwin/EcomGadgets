@@ -15,25 +15,25 @@ class WishlistService
         //
     }
 
-    public function add(int $productId): Wishlist
-    {
-        return Wishlist::firstOrCreate([
-            'user_id' => Auth::id(),
-            'product_id' => $productId,
-        ]);
-    }
+    public function add(array $data): Wishlist
+{
+    return Wishlist::firstOrCreate([
+        'user_id' => Auth::id(),
+        'product_id' => $data['product_id'],
+    ]);
+}
 
-    public function remove(int $productId): void
-    {
-        Wishlist::where('user_id', Auth::id())
-            ->where('product_id', $productId)
-            ->delete();
-    }
+    public function remove(int $productId): bool
+{
+    return Wishlist::where('user_id', Auth::id())
+        ->where('product_id', $productId)
+        ->delete() > 0;
+}
 
     public function list()
     {
         return Wishlist::with('product')
             ->where('user_id', Auth::id())
-            ->get();
+            ->paginate();
     }
 }
