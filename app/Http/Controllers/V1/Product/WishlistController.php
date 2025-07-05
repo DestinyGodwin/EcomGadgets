@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\V1\Product;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Services\V1\Product\WishlistService;
@@ -27,6 +26,7 @@ class WishlistController extends Controller
         return WishlistResource::collection($wishlist);
     }
 
+
     /**
      * Add a product to the wishlist.
      */
@@ -39,14 +39,25 @@ class WishlistController extends Controller
     /**
      * Remove a product from the wishlist.
      */
-   public function destroy(int $productId): JsonResponse
-{
-    $deleted = $this->wishlistService->remove($productId);
+    public function destroy(int $productId): JsonResponse
+    {
+        $deleted = $this->wishlistService->remove($productId);
 
-    if (! $deleted) {
-        return response()->json(['message' => 'Wishlist item not found'], 404);
+        if (! $deleted) {
+            return response()->json(['message' => 'Wishlist item not found'], 404);
+        }
+
+        return response()->json(['message' => 'Product removed from wishlist']);
     }
 
-    return response()->json(['message' => 'Product removed from wishlist']);
-}
+    public function show(int $productId): WishlistResource|JsonResponse
+    {
+        $wishlistItem = $this->wishlistService->show($productId);
+
+        if (! $wishlistItem) {
+            return response()->json(['message' => 'Wishlist item not found'], 404);
+        }
+
+        return new WishlistResource($wishlistItem);
+    }
 }
