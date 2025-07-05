@@ -3,6 +3,7 @@
 namespace App\Services\V1\Stores;
 
 use App\Models\Store;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -11,6 +12,8 @@ use App\Notifications\V1\Stores\StoreCreatedNotification;
 
 class StoreService
 {
+
+    
     /**
      * Create a new class instance.
      */
@@ -18,6 +21,7 @@ class StoreService
     {
         //
     }
+    
 
     public function create($request)
     {
@@ -27,6 +31,9 @@ class StoreService
         'store' => ['You already have a store and cannot create another.'],
     ]);
 }
+    $durationDays = (int) Setting::get('store_subscription_duration', 0);
+
+    $expiresAt = $durationDays > 0 ? now()->addDays($durationDays) : null;
         $imagePath = $request->file('store_image')->store('stores', 'public');
 
         $store = $user->store()->create([
@@ -38,7 +45,7 @@ class StoreService
             'store_name' => $request->store_name,
             'store_description' => $request->store_description,
             'store_image' => $imagePath,
-            'subscription_expires_at' => now()->addMonth(),
+            'subscription_expires_at' => $expiresAt,
         ]);
         $user->role = 'vendor';
         $user->save();
