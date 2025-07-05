@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Database\Seeders\SettingSeeder;
 use Database\Seeders\CategorySeeder;
 use Database\Seeders\AdvertPlanSeeder;
 use Database\Seeders\SubscriptionPlanSeeder;
@@ -30,6 +31,7 @@ class DatabaseSeeder extends Seeder
         CategorySeeder::class,
         FeaturedProductPlanSeeder::class,
         AdvertPlanSeeder::class,
+        SettingSeeder::class,
         
     ]);
     }
