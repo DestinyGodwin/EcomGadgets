@@ -9,6 +9,8 @@ use App\Services\V1\TransactionService;
 use App\Http\Resources\V1\TransactionResource;
 use App\Http\Requests\V1\TransactionFilterRequest;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use App\Http\Controllers\V1\TransactionController as BaseTransactionController;
+
 
 class TransactionController extends BaseTransactionController
 {
@@ -47,7 +49,7 @@ class TransactionController extends BaseTransactionController
         return TransactionResource::collection($transactions);
     }
 
-    public function byType(TransactionFilterRequest $request, string $type): AnonymousResourceCollection
+    public function byType(TransactionFilterRequest $request, string $type)
     {
         // Validate the type parameter
         $transactionType = TransactionType::tryFrom($type);
