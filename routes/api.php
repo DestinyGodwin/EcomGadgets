@@ -14,6 +14,7 @@ use App\Http\Controllers\V1\Admin\SettingsController;
 use App\Http\Controllers\V1\PaymentWebhookController;
 use App\Http\Controllers\V1\Admin\NotifyingController;
 use App\Http\Controllers\V1\Product\ProductController;
+use App\Http\Controllers\V1\Product\WishlistController;
 use App\Http\Controllers\V1\Admin\AdminCategoryController;
 use App\Http\Controllers\V1\PaymentVerificationController;
 use App\Http\Controllers\V1\Admin\SubscriptionPlanController;
@@ -108,6 +109,13 @@ Route::prefix('v1/')->group(function () {
             Route::get('/', [AdvertBookingController::class, 'myBookings']);
             Route::get('{id}', [AdvertBookingController::class, 'show']);
             Route::put('{id}', [AdvertBookingController::class, 'update']);
+        });
+
+        Route::controller(WishlistController::class)->group( function (){
+            Route::get('wishlist', 'index');
+            Route::get('wishlist', 'show');
+            Route::delete('/wishlist/{productId}', 'destroy');
+
         });
     });
     Route::controller(ProductController::class)->group(function () {

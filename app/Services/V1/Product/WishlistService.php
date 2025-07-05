@@ -36,4 +36,12 @@ class WishlistService
             ->where('user_id', Auth::id())
             ->paginate();
     }
+    public function show(int $productId)
+{
+    return Wishlist::with('product')
+        ->where('user_id', Auth::id())
+        ->where('product_id', $productId)
+        ->first();
+}
+
 }
