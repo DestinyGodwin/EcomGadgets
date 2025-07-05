@@ -10,6 +10,7 @@ use App\Http\Controllers\V1\Admin\UserController;
 use App\Http\Controllers\V1\NotificationController;
 use App\Http\Controllers\V1\Stores\StoreController;
 use App\Http\Controllers\V1\AdvertBookingController;
+use App\Http\Controllers\V1\Admin\SettingsController;
 use App\Http\Controllers\V1\PaymentWebhookController;
 use App\Http\Controllers\V1\Admin\NotifyingController;
 use App\Http\Controllers\V1\Product\ProductController;
@@ -43,6 +44,13 @@ Route::prefix('v1/')->group(function () {
             Route::post('subscriptions', 'store');
             Route::put('subscriptions/{subscription_plan}', 'update');
             Route::delete('subscriptions/{subscription_plan}', 'destroy');
+        });
+        Route::prefix('settings')->group(function () {
+            Route::get('/', [SettingsController::class, 'index']);
+            Route::post('/', [SettingsController::class, 'store']);
+            Route::get('/{key}', [SettingsController::class, 'show']);
+            Route::put('/{key}', [SettingsController::class, 'update']);
+            Route::delete('/{key}', [SettingsController::class, 'destroy']);
         });
         Route::controller(UserController::class)->group(function () {
             Route::get('users', 'index');
@@ -94,13 +102,13 @@ Route::prefix('v1/')->group(function () {
                 Route::delete('/{id}', 'destroy');
             });
         });
-            Route::get('adverts', [AdvertBookingController::class, 'getAdvertsFromUserState']);
-            Route::get('/user/dummy-adverts', [AdvertBookingController::class, 'getUserStateAdverts']);
+        Route::get('adverts', [AdvertBookingController::class, 'getAdvertsFromUserState']);
+        Route::get('/user/dummy-adverts', [AdvertBookingController::class, 'getUserStateAdverts']);
         Route::prefix('my-adverts')->middleware('auth:sanctum')->group(callback: function () {
-    Route::get('/', [AdvertBookingController::class, 'myBookings']);
-    Route::get('{id}', [AdvertBookingController::class, 'show']);
-    Route::put('{id}', [AdvertBookingController::class, 'update']);
-});
+            Route::get('/', [AdvertBookingController::class, 'myBookings']);
+            Route::get('{id}', [AdvertBookingController::class, 'show']);
+            Route::put('{id}', [AdvertBookingController::class, 'update']);
+        });
     });
     Route::controller(ProductController::class)->group(function () {
         Route::get('products/search', 'search');
