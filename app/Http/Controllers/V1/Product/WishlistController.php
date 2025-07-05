@@ -26,7 +26,6 @@ class WishlistController extends Controller
         return WishlistResource::collection($wishlist);
     }
 
-
     /**
      * Add a product to the wishlist.
      */
@@ -39,7 +38,7 @@ class WishlistController extends Controller
     /**
      * Remove a product from the wishlist.
      */
-    public function destroy(int $productId): JsonResponse
+    public function destroy($productId): JsonResponse
     {
         $deleted = $this->wishlistService->remove($productId);
 
@@ -50,7 +49,7 @@ class WishlistController extends Controller
         return response()->json(['message' => 'Product removed from wishlist']);
     }
 
-    public function show(int $productId): WishlistResource|JsonResponse
+    public function show($productId): WishlistResource|JsonResponse
     {
         $wishlistItem = $this->wishlistService->show($productId);
 

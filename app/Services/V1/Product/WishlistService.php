@@ -23,7 +23,7 @@ class WishlistService
     ]);
 }
 
-    public function remove(int $productId): bool
+    public function remove($productId): bool
 {
     return Wishlist::where('user_id', Auth::id())
         ->where('product_id', $productId)
@@ -36,7 +36,7 @@ class WishlistService
             ->where('user_id', Auth::id())
             ->paginate();
     }
-    public function show(int $productId)
+    public function show($productId)
 {
     return Wishlist::with('product')
         ->where('user_id', Auth::id())
