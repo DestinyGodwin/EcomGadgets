@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Enums\V1\TransactionType;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\V1\TransactionResource;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 
