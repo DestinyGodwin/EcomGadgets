@@ -3,6 +3,7 @@
 namespace App\Services\V1;
 use App\Models\Transaction;
 use Illuminate\Database\Eloquent\Builder;
+use App\Http\Controllers\V1\TransactionController;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 
@@ -67,4 +68,47 @@ class TransactionService
                 ->whereHas('store', fn($q) => $q->where('user_id', $user->id))
                 ->latest()->paginate(20);
     }
+
+    public function userByStatus(string $status, $user): LengthAwarePaginator
+{
+    return Transaction::where('status', $status)
+        ->whereHas('store', fn($q) => $q->where('user_id', $user->id))
+        ->latest()->paginate(20);
+}
+public function byStatus(string $status): LengthAwarePaginator
+{
+    return Transaction::where('status', $status)->latest()->paginate(20);
+}
+
+public function filter(array $filters):LengthAwarePaginator
+{
+    return Transaction::when($filters['type'] ?? null, fn($q, $type) => $q->where('type', $type))
+        ->when($filters['status'] ?? null, fn($q, $status) => $q->where('status', $status))
+        ->when($filters['q'] ?? null, function ($q, $search) {
+            $q->where(function ($query) use ($search) {
+                $query->where('reference', 'like', "%$search%")
+                      ->orWhere('type', 'like', "%$search%")
+                      ->orWhere('status', 'like', "%$search%");
+            });
+        })
+        ->latest()
+        ->paginate(20);
+}
+
+public function userFilter(array $filters, $user): LengthAwarePaginator
+{
+    return Transaction::whereHas('store', fn($q) => $q->where('user_id', $user->id))
+        ->when($filters['type'] ?? null, fn($q, $type) => $q->where('type', $type))
+        ->when($filters['status'] ?? null, fn($q, $status) => $q->where('status', $status))
+        ->when($filters['q'] ?? null, function ($q, $search) {
+            $q->where(function ($query) use ($search) {
+                $query->where('reference', 'like', "%$search%")
+                      ->orWhere('type', 'like', "%$search%")
+                      ->orWhere('status', 'like', "%$search%");
+            });
+        })
+        ->latest()
+        ->paginate(20);
+}
+
 }

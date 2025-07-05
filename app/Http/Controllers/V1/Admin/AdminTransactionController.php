@@ -11,10 +11,10 @@ class AdminTransactionController extends Controller
 {
     public function __construct(protected TransactionService $service) {}
 
-    public function index()
-    {
-        return TransactionResource::collection($this->service->all());
-    }
+    public function index(Request $request)
+{
+    return TransactionResource::collection($this->service->filter($request->only('type', 'status', 'q')));
+}
 
     public function show(string $id)
     {
@@ -36,4 +36,8 @@ class AdminTransactionController extends Controller
         $term = $request->get('q');
         return TransactionResource::collection($this->service->search($term));
     }
+    public function status(string $status)
+{
+    return TransactionResource::collection($this->service->byStatus($status));
+}
 }

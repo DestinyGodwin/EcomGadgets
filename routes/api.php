@@ -7,6 +7,7 @@ use App\Http\Controllers\V1\CategoryController;
 use App\Http\Controllers\V1\LocationController;
 use App\Http\Controllers\V1\Auth\AuthController;
 use App\Http\Controllers\V1\Admin\UserController;
+use App\Http\Controllers\V1\TransactionController;
 use App\Http\Controllers\V1\NotificationController;
 use App\Http\Controllers\V1\Stores\StoreController;
 use App\Http\Controllers\V1\AdvertBookingController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\V1\Product\ProductController;
 use App\Http\Controllers\V1\Product\WishlistController;
 use App\Http\Controllers\V1\Admin\AdminCategoryController;
 use App\Http\Controllers\V1\PaymentVerificationController;
+use App\Http\Controllers\V1\Admin\AdminTransactionController;
 use App\Http\Controllers\V1\Admin\SubscriptionPlanController;
 use App\Http\Controllers\V1\Admin\DummyAdvertBookingController;
 use App\Http\Controllers\V1\Stores\StoreSubscriptionController;
@@ -58,6 +60,14 @@ Route::prefix('v1/')->group(function () {
             Route::get('vendors', 'getVendors');
             Route::get('users/search', 'search');
         });
+        Route::prefix('/transactions')->group(function () {
+    Route::get('/', [AdminTransactionController::class, 'index']);
+    Route::get('/{id}', [AdminTransactionController::class, 'show']);
+    Route::get('/store/{storeId}', [AdminTransactionController::class, 'storeTransactions']);
+    Route::get('/type/{type}', [AdminTransactionController::class, 'type']);
+      Route::get('/status/{status}', [AdminTransactionController::class, 'status']);
+    Route::get('/search', [AdminTransactionController::class, 'search']);
+});
         Route::controller(AdminCategoryController::class)->group(function () {
             Route::post('categories', 'store');
             Route::put('categories/{category}', 'update');
@@ -88,6 +98,13 @@ Route::prefix('v1/')->group(function () {
             Route::get('my-subscriptions', 'storeSubscriptions');
             Route::get('my-subscriptions/{subscriptionId}', 'storeSubscription');
         });
+        Route::prefix('user/transactions')->group(function () {
+    Route::get('/', [TransactionController::class, 'index']);
+    Route::get('/{id}', [TransactionController::class, 'show']);
+    Route::get('/type/{type}', [TransactionController::class, 'type']);
+      Route::get('/status/{status}', [TransactionController::class, 'status']); 
+    Route::get('/search', [TransactionController::class, 'search']);
+});
         Route::controller(ProductController::class)->group(function () {
             Route::post('products', 'store');
             Route::put('products/{product}', 'update');
@@ -144,7 +161,7 @@ Route::prefix('v1/')->group(function () {
     });
 
 
-    Route::prefix('/payments')->middleware('auth:sanctum')->group(function () {
+    Route::prefix('/payments')->middleware(['auth:sanctum', 'role:vendor,admin'])->group(function () {
         Route::post('/subscribe', [PaymentController::class, 'subscribe']);
         Route::post('/feature-product', [PaymentController::class, 'featureProduct']);
         Route::post('/book-advert', [PaymentController::class, 'bookAdvert']);

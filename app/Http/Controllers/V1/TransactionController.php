@@ -11,10 +11,13 @@ class TransactionController extends Controller
 {
    public function __construct(protected TransactionService $service) {}
 
-    public function index(Request $request)
-    {
-        return TransactionResource::collection($this->service->userStoreTransactions($request->user()));
-    }
+  public function index(Request $request)
+{
+    return TransactionResource::collection($this->service->userFilter(
+        $request->only('type', 'status', 'q'),
+        $request->user()
+    ));
+}
 
     public function show(string $id, Request $request)
     {
@@ -31,4 +34,8 @@ class TransactionController extends Controller
         $term = $request->get('q');
         return TransactionResource::collection($this->service->userSearch($term, $request->user()));
     }
+    public function status(string $status, Request $request)
+{
+    return TransactionResource::collection($this->service->userByStatus($status, $request->user()));
+}
 }
