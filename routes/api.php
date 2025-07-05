@@ -111,12 +111,11 @@ Route::prefix('v1/')->group(function () {
             Route::put('{id}', [AdvertBookingController::class, 'update']);
         });
 
-        Route::controller(WishlistController::class)->group( function (){
-             Route::get('/wishlist',  'index');
-    Route::post('/wishlist',  'store');
-    Route::get('/wishlist/{productId}',  'show');
-    Route::delete('/wishlist/{productId}',  'destroy');
-
+        Route::controller(WishlistController::class)->group(function () {
+            Route::get('/wishlist',  'index');
+            Route::post('/wishlist',  'store');
+            Route::get('/wishlist/{productId}',  'show');
+            Route::delete('/wishlist/{productId}',  'destroy');
         });
     });
     Route::controller(ProductController::class)->group(function () {
@@ -140,6 +139,9 @@ Route::prefix('v1/')->group(function () {
     Route::get('states/{state}/lgas', [LocationController::class, 'getStateLgas']);
     Route::get('adverts/dummy', [AdvertBookingController::class, 'getDummyAdverts']);
     Route::get('adverts/state/{state}', [AdvertBookingController::class, 'getAdvertsByState']);
+    Route::prefix('user')->middleware(['auth:sanctum'])->group(function () {
+      
+    });
 
 
     Route::prefix('/payments')->middleware('auth:sanctum')->group(function () {

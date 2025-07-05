@@ -14,26 +14,16 @@ class TransactionResource extends JsonResource
      */
      public function toArray($request)
     {
-        return [
+     return [
             'id' => $this->id,
             'reference' => $this->reference,
             'store_id' => $this->store_id,
-            'store_name' => $this->whenLoaded('store', $this->store?->name),
-            'type' => $this->type->value,
-            'type_label' => $this->type->label(),
+            'type' => $this->type,
             'amount' => $this->amount,
-            'formatted_amount' => number_format($this->amount, 2),
-            'status' => $this->status->value,
-            'status_label' => $this->status->label(),
-            'status_color' => $this->status->color(),
+            'status' => $this->status,
             'channel' => $this->channel,
             'meta' => $this->meta,
-            'is_pending' => $this->isPending(),
-            'is_completed' => $this->isCompleted(),
-            'is_failed' => $this->isFailed(),
-            'is_cancelled' => $this->isCancelled(),
-            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
-            'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
+            'created_at' => $this->created_at,
         ];
     }
 }
