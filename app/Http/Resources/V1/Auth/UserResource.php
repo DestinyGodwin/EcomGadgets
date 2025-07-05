@@ -20,6 +20,8 @@ class UserResource extends JsonResource
             'last_name' => $this->last_name,
             'email' => $this->email,
             'phone' => $this->phone,
+            'state_id' => $this->state_id,
+            'lga_id' => $this->lga_id,
             'profile_picture' => $this->profile_picture ? asset('storage/' . $this->profile_picture) : null,
         ];
     }
