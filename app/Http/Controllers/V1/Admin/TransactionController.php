@@ -5,9 +5,9 @@ namespace App\Http\Controllers\V1\Admin;
 use Illuminate\Http\Request;
 use App\Enums\V1\TransactionType;
 use Illuminate\Http\JsonResponse;
-use App\Http\Controllers\Controller;
 use App\Services\V1\TransactionService;
 use App\Http\Resources\V1\TransactionResource;
+use App\Http\Requests\V1\TransactionFilterRequest;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class TransactionController extends BaseTransactionController
