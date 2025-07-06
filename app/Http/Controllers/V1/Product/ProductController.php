@@ -5,7 +5,7 @@ namespace App\Http\Controllers\V1\Product;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use App\Services\V1\Product\ProductService;
 use App\Http\Resources\V1\Product\ProductResource;
 use App\Http\Resources\V1\Product\MyProductResource;
@@ -41,13 +41,14 @@ class ProductController extends Controller
 
     public function update(UpdateProductRequest $request, Product $product)
     {
-            $this->authorize('update', $product);
+                Gate::authorize('update', $product);
         $product = $this->productService->update($product, $request->validated());
         return new ProductResource($product);
     }
 
     public function destroy(Product $product)
     {
+                        Gate::authorize('delete', $product);
         $this->productService->delete($product);
         return response()->json(['message' => 'Product deleted successfully.']);
     }
