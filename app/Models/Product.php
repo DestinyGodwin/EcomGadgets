@@ -14,7 +14,12 @@ class Product extends Model
 {
     use HasUuids, SoftDeletes, HasSlug ;
 protected $perPage = 16;
-    protected $fillable = ['category_id', 'name', 'slug', 'description', 'specifications', 'brand', 'price', 'wholesale_price', 'is_featured', 'featured_expires_at'];
+    protected $fillable = ['category_id',
+     'name', 'slug', 'description', 
+     'specifications', 'brand', 'price', 
+     'wholesale_price', 'is_featured', 
+     'featured_expires_at'];
+
     public function store(): BelongsTo{
         return $this->belongsTo(Store::class);
     }
@@ -36,15 +41,13 @@ protected $perPage = 16;
         return $this->belongsTo(Category::class);
     }
 
-    
-
     public function images()
     {
         return $this->hasMany(ProductImage::class);
     }
     protected $casts = [
     'specifications' => 'array',
-        'featured_expires_at' => 'datetime',
+    'featured_expires_at' => 'datetime',
 
 ];
 protected static function booted(): void

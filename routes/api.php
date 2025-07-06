@@ -107,6 +107,7 @@ Route::prefix('v1/')->group(function () {
 });
         Route::controller(ProductController::class)->group(function () {
             Route::post('products', 'store');
+            Route::get('my-products', 'myProducts');
             Route::put('products/{product}', 'update');
             Route::delete('products/{product}', 'destroy');
             Route::get('products/user-state', 'userState');

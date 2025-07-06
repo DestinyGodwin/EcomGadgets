@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1\Product;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Services\V1\Product\ProductService;
 use App\Http\Resources\V1\Product\ProductResource;
 use App\Http\Requests\V1\Product\StoreProductRequest;
@@ -101,5 +102,10 @@ public function byLga(Request $request)
     $products = $this->productService->getByLga($request->lga_id);
     return ProductResource::collection($products);
 }
+
+    public function myProducts(){
+        return Auth::user()->store->products;
+        // return $products->get();
+    }
 
 }

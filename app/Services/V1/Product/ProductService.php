@@ -77,7 +77,6 @@ class ProductService
             if ($product->images()->count() < 1) {
                 throw new \Exception('A product must have at least one image.');
             }
-
             return $product->load('images', 'store');
         });
     }
