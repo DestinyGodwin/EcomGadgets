@@ -17,6 +17,8 @@ class AdvertBookingResource extends JsonResource
             'id'        => $this->id,
             'store_id'  => $this->store_id,
             'state_id'  => $this->state_id,
+            'title'     => $this->title,
+            'link'      => $this->link,
             'starts_at' => $this->starts_at,
             'ends_at'   => $this->ends_at,
             'image'     => asset('storage/' . $this->image),
