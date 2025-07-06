@@ -1,27 +1,29 @@
 <?php
 
-use App\Http\Controllers\V1\Admin\AdminCategoryController;
-use App\Http\Controllers\V1\Admin\AdminTransactionController;
-use App\Http\Controllers\V1\Admin\DummyAdvertBookingController;
-use App\Http\Controllers\V1\Admin\NotifyingController;
-use App\Http\Controllers\V1\Admin\SettingsController;
-use App\Http\Controllers\V1\Admin\SubscriptionPlanController;
-use App\Http\Controllers\V1\Admin\UserController;
-use App\Http\Controllers\V1\AdvertBookingController;
-use App\Http\Controllers\V1\Auth\AuthController;
-use App\Http\Controllers\V1\CategoryController;
-use App\Http\Controllers\V1\LocationController;
-use App\Http\Controllers\V1\NotificationController;
-use App\Http\Controllers\V1\PaymentController;
-use App\Http\Controllers\V1\PaymentVerificationController;
-use App\Http\Controllers\V1\PaymentWebhookController;
-use App\Http\Controllers\V1\Product\ProductController;
-use App\Http\Controllers\V1\Product\WishlistController;
-use App\Http\Controllers\V1\Stores\StoreController;
-use App\Http\Controllers\V1\Stores\StoreSubscriptionController;
-use App\Http\Controllers\V1\TransactionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\V1\PaymentController;
+use App\Http\Controllers\V1\CategoryController;
+use App\Http\Controllers\V1\LocationController;
+use App\Http\Controllers\V1\Auth\AuthController;
+use App\Http\Controllers\V1\Admin\UserController;
+use App\Http\Controllers\V1\TransactionController;
+use App\Http\Controllers\V1\NotificationController;
+use App\Http\Controllers\V1\Stores\StoreController;
+use App\Http\Controllers\V1\AdvertBookingController;
+use App\Http\Controllers\V1\Admin\SettingsController;
+use App\Http\Controllers\V1\PaymentWebhookController;
+use App\Http\Controllers\V1\Admin\NotifyingController;
+use App\Http\Controllers\V1\Product\ProductController;
+use App\Http\Controllers\V1\Admin\AdvertPlanController;
+use App\Http\Controllers\V1\Product\WishlistController;
+use App\Http\Controllers\V1\Admin\AdminCategoryController;
+use App\Http\Controllers\V1\PaymentVerificationController;
+use App\Http\Controllers\V1\Admin\AdminTransactionController;
+use App\Http\Controllers\V1\Admin\SubscriptionPlanController;
+use App\Http\Controllers\V1\Admin\DummyAdvertBookingController;
+use App\Http\Controllers\V1\Stores\StoreSubscriptionController;
+use App\Http\Controllers\V1\Admin\ProductController as AdminProductController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -60,6 +62,11 @@ Route::prefix('v1/')->group(function () {
             Route::get('vendors', 'getVendors');
             Route::get('users/search', 'search');
         });
+        Route::prefix('/products')->group(function () {
+    Route::get('/', [AdminProductController::class, 'index']);
+    Route::get('/filter', [AdminProductController::class, 'filter']); 
+    Route::get('/{product}', [AdminProductController::class, 'show']);
+});
         Route::prefix('/transactions')->group(function () {
             Route::get('/', [AdminTransactionController::class, 'index']);
             Route::get('/{id}', [AdminTransactionController::class, 'show']);
