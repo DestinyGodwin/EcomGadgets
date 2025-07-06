@@ -62,7 +62,7 @@ class ProductService
                 $toDelete = $product->images()->whereIn('id', $imagesToRemove)->get();
 
                 if (($remainingImageCount - $toDelete->count()) + count($data['images'] ?? []) < 1) {
-                    throw new \Exception('A product must have at least one image.');
+                    throw new Exception('A product must have at least one image.');
                 }
 
                 foreach ($toDelete as $image) {
@@ -165,7 +165,7 @@ class ProductService
                     break;
             }
         } else {
-            $query->->orderByDesc('is_featured')->orderByDesc('featured_expires_at')->latest();
+            $query->orderByDesc('is_featured')->orderByDesc('featured_expires_at')->latest();
         
         }
 
