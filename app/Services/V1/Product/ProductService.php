@@ -2,6 +2,7 @@
 
 namespace App\Services\V1\Product;
 
+use Exception;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -76,7 +77,7 @@ class ProductService
                 }
             }
             if ($product->images()->count() < 1) {
-                throw new \Exception('A product must have at least one image.');
+                throw new Exception('A product must have at least one image.');
             }
             return $product->load('images', 'store');
         });
@@ -92,7 +93,8 @@ class ProductService
 
     public function getAll(): LengthAwarePaginator
     {
-        return Product::with(['images', 'store'])->latest()->paginate();
+        return Product::with(['images', 'store'])->orderByDesc('is_featured')
+        ->orderByDesc('featured_expires_at')->latest()->paginate();
     }
 
     public function getByCategory(string $categoryId, ?string $stateId = null, ?string $lgaId = null): LengthAwarePaginator
@@ -107,17 +109,16 @@ class ProductService
                 if ($lgaId) {
                     $query->where('lga_id', $lgaId);
                 }
-            })
-            ->latest()
-            ->paginate();
+            })->orderByDesc('is_featured')
+        ->orderByDesc('featured_expires_at')->latest()->paginate();
     }
 
     public function getByBrand(string $brand)
     {
         return Product::with(['images', 'store'])
             ->where('brand', $brand)
-            ->latest()
-            ->paginate();
+            ->orderByDesc('is_featured')
+        ->orderByDesc('featured_expires_at')->latest()->paginate();
     }
 
     public function search(array $filters): LengthAwarePaginator
@@ -164,7 +165,8 @@ class ProductService
                     break;
             }
         } else {
-            $query->latest();
+            $query->->orderByDesc('is_featured')->orderByDesc('featured_expires_at')->latest();
+        
         }
 
         return $query->paginate();
@@ -175,9 +177,8 @@ class ProductService
         return Product::with(['images', 'store'])
             ->whereHas('store', function ($query) use ($user) {
                 $query->where('state_id', $user->state_id);
-            })
-            ->latest()
-            ->paginate();
+            })->orderByDesc('is_featured')
+        ->orderByDesc('featured_expires_at')->latest()->paginate();
     }
 
     public function getByUserLga(): LengthAwarePaginator
@@ -186,9 +187,8 @@ class ProductService
         return Product::with(['images', 'store'])
             ->whereHas('store', function ($query) use ($user) {
                 $query->where('lga_id', $user->lga_id);
-            })
-            ->latest()
-            ->paginate();
+            })->orderByDesc('is_featured')
+        ->orderByDesc('featured_expires_at')->latest()->paginate();
     }
 
     public function getByState($stateId): LengthAwarePaginator
@@ -196,32 +196,51 @@ class ProductService
         return Product::with(['images', 'store'])
             ->whereHas('store', function ($query) use ($stateId) {
                 $query->where('state_id', $stateId);
-            })
-            ->latest()
-            ->paginate();
+            })->orderByDesc('is_featured')
+        ->orderByDesc('featured_expires_at')->latest()->paginate();
     }
     public function getByLga($lgaId): LengthAwarePaginator
     {
         return Product::with(['images', 'store'])
             ->whereHas('store', function ($query) use ($lgaId) {
                 $query->where('lga_id', $lgaId);
-            })
-            ->latest()
-            ->paginate();
+            })->orderByDesc('is_featured')
+        ->orderByDesc('featured_expires_at')->latest()->paginate();
     }
 
       public function myProducts(): LengthAwarePaginator
+{
+    return Auth::user() ->products() ->latest()->paginate(20);
+}
+
+    public function find(string $product): Product
     {
-        return Product::with(['store', 'category'])
-            ->whereHas('store', fn($q) => $q->where('user_id', Auth::id()))
-            ->latest()
-            ->paginate(20);
+         return Auth::user()->products()->findOrFail($product);   
     }
 
-    public function find(string $id): Product
+     public function all(): LengthAwarePaginator
     {
-        return Product::with(['store', 'category'])
-            ->whereHas('store', fn($q) => $q->where('user_id', Auth::id()))
-            ->findOrFail($id);
+        return Product::with('store')->orderByDesc('is_featured')
+        ->orderByDesc('featured_expires_at')->latest()->paginate();;
     }
+
+    public function filter(array $filters): LengthAwarePaginator
+    {
+        return Product::with('store')
+            ->when($filters['state_id'] ?? null, function ($q, $stateId) {
+                $q->whereHas('store', fn($sq) => $sq->where('state_id', $stateId));
+            })
+            ->when($filters['lga_id'] ?? null, function ($q, $lgaId) {
+                $q->whereHas('store', fn($sq) => $sq->where('lga_id', $lgaId));
+            })
+            ->when(isset($filters['is_featured']), function ($q) use ($filters) {
+                $q->where('is_featured', (bool) $filters['is_featured']);
+            })->orderByDesc('is_featured')
+        ->orderByDesc('featured_expires_at')->latest()->paginate();;
+    }
+
+    // public function find(string $id): Product
+    // {
+    //     return Product::with(['store', 'category'])->findOrFail($id);
+    // }
 }

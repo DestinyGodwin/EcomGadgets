@@ -108,9 +108,9 @@ public function byLga(Request $request)
        $products =  $this->productService->myProducts();
        return MyProductResource::collection($products);
     }
-    public function showMy(string $id)
+    public function showMy(string $productId)
     {
-        return new ProductResource($this->productService->find($id));
+        return new MyProductResource($this->productService->find($productId));
     }
 
 }
