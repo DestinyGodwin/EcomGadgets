@@ -239,8 +239,8 @@ class ProductService
         ->orderByDesc('featured_expires_at')->latest()->paginate();;
     }
 
-    // public function find(string $id): Product
-    // {
-    //     return Product::with(['store', 'category'])->findOrFail($id);
-    // }
+    public function findOne(string $product): Product
+    {
+        return Product::with(['store', 'category'])->findOrFail($product);
+    }
 }
