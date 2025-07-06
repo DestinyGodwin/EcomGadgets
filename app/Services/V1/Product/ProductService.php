@@ -1,13 +1,12 @@
 <?php
-
 namespace App\Services\V1\Product;
 
-use Exception;
 use App\Models\Product;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Exception;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ProductService
 {
@@ -22,14 +21,14 @@ class ProductService
     public function create(array $data): Product
     {
         return DB::transaction(function () use ($data) {
-            $store = Auth::user()->store;
+            $store   = Auth::user()->store;
             $product = $store->products()->create([
-                'category_id' => $data['category_id'],
-                'name' => $data['name'],
-                'description' => $data['description'],
-                'specifications' => $data['specifications'] ?? null,
-                'brand' => $data['brand'] ?? null,
-                'price' => $data['price'],
+                'category_id'     => $data['category_id'],
+                'name'            => $data['name'],
+                'description'     => $data['description'],
+                'specifications'  => $data['specifications'] ?? null,
+                'brand'           => $data['brand'] ?? null,
+                'price'           => $data['price'],
                 'wholesale_price' => $data['wholesale_price'],
             ]);
 
@@ -46,19 +45,19 @@ class ProductService
     {
         return DB::transaction(function () use ($product, $data) {
             $product->update([
-                'category_id' => $data['category_id'] ?? $product->category_id,
-                'name' => $data['name'] ?? $product->name,
-                'description' => $data['description'] ?? $product->description,
-                'specifications' => $data['specifications'] ?? $product->specifications,
-                'brand' => $data['brand'] ?? $product->brand,
-                'price' => $data['price'] ?? $product->price,
+                'category_id'     => $data['category_id'] ?? $product->category_id,
+                'name'            => $data['name'] ?? $product->name,
+                'description'     => $data['description'] ?? $product->description,
+                'specifications'  => $data['specifications'] ?? $product->specifications,
+                'brand'           => $data['brand'] ?? $product->brand,
+                'price'           => $data['price'] ?? $product->price,
                 'wholesale_price' => $data['wholesale_price'] ?? $product->wholesale_price,
             ]);
 
             $remainingImageCount = $product->images()->count();
-            $imagesToRemove = $data['removed_images'] ?? [];
+            $imagesToRemove      = $data['removed_images'] ?? [];
 
-            if (!empty($imagesToRemove)) {
+            if (! empty($imagesToRemove)) {
                 $toDelete = $product->images()->whereIn('id', $imagesToRemove)->get();
 
                 if (($remainingImageCount - $toDelete->count()) + count($data['images'] ?? []) < 1) {
@@ -70,7 +69,7 @@ class ProductService
                     $image->delete();
                 }
             }
-            if (!empty($data['images'])) {
+            if (! empty($data['images'])) {
                 foreach ($data['images'] as $image) {
                     $path = $image->store('products', 'public');
                     $product->images()->create(['image_path' => $path]);
@@ -94,7 +93,7 @@ class ProductService
     public function getAll(): LengthAwarePaginator
     {
         return Product::with(['images', 'store'])->orderByDesc('is_featured')
-        ->orderByDesc('featured_expires_at')->latest()->paginate();
+            ->orderByDesc('featured_expires_at')->latest()->paginate();
     }
 
     public function getByCategory(string $categoryId, ?string $stateId = null, ?string $lgaId = null): LengthAwarePaginator
@@ -110,7 +109,7 @@ class ProductService
                     $query->where('lga_id', $lgaId);
                 }
             })->orderByDesc('is_featured')
-        ->orderByDesc('featured_expires_at')->latest()->paginate();
+            ->orderByDesc('featured_expires_at')->latest()->paginate();
     }
 
     public function getByBrand(string $brand)
@@ -118,14 +117,14 @@ class ProductService
         return Product::with(['images', 'store'])
             ->where('brand', $brand)
             ->orderByDesc('is_featured')
-        ->orderByDesc('featured_expires_at')->latest()->paginate();
+            ->orderByDesc('featured_expires_at')->latest()->paginate();
     }
 
     public function search(array $filters): LengthAwarePaginator
     {
         $query = Product::with(['images', 'store']);
 
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $query->where(function ($q) use ($filters) {
                 $q->where('name', 'LIKE', '%' . $filters['search'] . '%')
                     ->orWhere('description', 'LIKE', '%' . $filters['search'] . '%')
@@ -133,23 +132,27 @@ class ProductService
             });
         }
 
-        if (!empty($filters['category_id'])) {
+        if (! empty($filters['category_id'])) {
             $query->where('category_id', $filters['category_id']);
         }
 
-        if (!empty($filters['brand'])) {
+        if (! empty($filters['brand'])) {
             $query->where('brand', $filters['brand']);
         }
 
-        if (!empty($filters['min_price'])) {
+        if (! empty($filters['min_price'])) {
             $query->where('price', '>=', $filters['min_price']);
         }
 
-        if (!empty($filters['max_price'])) {
+        if (! empty($filters['max_price'])) {
             $query->where('price', '<=', $filters['max_price']);
         }
-
-        if (!empty($filters['sort_by'])) {
+        if (! empty($filters['state_id'])) {
+            $query->whereHas('store', function ($q) use ($filters) {
+                $q->where('state_id', $filters['state_id']);
+            });
+        }
+        if (! empty($filters['sort_by'])) {
             switch ($filters['sort_by']) {
                 case 'price_asc':
                     $query->orderBy('price', 'asc');
@@ -166,7 +169,7 @@ class ProductService
             }
         } else {
             $query->orderByDesc('is_featured')->orderByDesc('featured_expires_at')->latest();
-        
+
         }
 
         return $query->paginate();
@@ -178,7 +181,7 @@ class ProductService
             ->whereHas('store', function ($query) use ($user) {
                 $query->where('state_id', $user->state_id);
             })->orderByDesc('is_featured')
-        ->orderByDesc('featured_expires_at')->latest()->paginate();
+            ->orderByDesc('featured_expires_at')->latest()->paginate();
     }
 
     public function getByUserLga(): LengthAwarePaginator
@@ -188,7 +191,7 @@ class ProductService
             ->whereHas('store', function ($query) use ($user) {
                 $query->where('lga_id', $user->lga_id);
             })->orderByDesc('is_featured')
-        ->orderByDesc('featured_expires_at')->latest()->paginate();
+            ->orderByDesc('featured_expires_at')->latest()->paginate();
     }
 
     public function getByState($stateId): LengthAwarePaginator
@@ -197,7 +200,7 @@ class ProductService
             ->whereHas('store', function ($query) use ($stateId) {
                 $query->where('state_id', $stateId);
             })->orderByDesc('is_featured')
-        ->orderByDesc('featured_expires_at')->latest()->paginate();
+            ->orderByDesc('featured_expires_at')->latest()->paginate();
     }
     public function getByLga($lgaId): LengthAwarePaginator
     {
@@ -205,23 +208,23 @@ class ProductService
             ->whereHas('store', function ($query) use ($lgaId) {
                 $query->where('lga_id', $lgaId);
             })->orderByDesc('is_featured')
-        ->orderByDesc('featured_expires_at')->latest()->paginate();
+            ->orderByDesc('featured_expires_at')->latest()->paginate();
     }
 
-      public function myProducts(): LengthAwarePaginator
-{
-    return Auth::user() ->products() ->latest()->paginate(20);
-}
+    public function myProducts(): LengthAwarePaginator
+    {
+        return Auth::user()->products()->latest()->paginate(20);
+    }
 
     public function find(string $product): Product
     {
-         return Auth::user()->products()->findOrFail($product);   
+        return Auth::user()->products()->findOrFail($product);
     }
 
-     public function all(): LengthAwarePaginator
+    public function all(): LengthAwarePaginator
     {
         return Product::with('store')->orderByDesc('is_featured')
-        ->orderByDesc('featured_expires_at')->latest()->paginate();;
+            ->orderByDesc('featured_expires_at')->latest()->paginate();
     }
 
     public function filter(array $filters): LengthAwarePaginator
@@ -236,7 +239,7 @@ class ProductService
             ->when(isset($filters['is_featured']), function ($q) use ($filters) {
                 $q->where('is_featured', (bool) $filters['is_featured']);
             })->orderByDesc('is_featured')
-        ->orderByDesc('featured_expires_at')->latest()->paginate();;
+            ->orderByDesc('featured_expires_at')->latest()->paginate();
     }
 
     public function findOne(string $product): Product
