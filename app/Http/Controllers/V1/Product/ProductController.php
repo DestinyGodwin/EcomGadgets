@@ -104,8 +104,8 @@ public function byLga(Request $request)
 }
 
     public function myProducts(){
-        return Auth::user()->store->products;
-        // return $products->get();
+       $products =  $this->productService->myProducts();
+       return ProductResource::collection($products);
     }
 
 }

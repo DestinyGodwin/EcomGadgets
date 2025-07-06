@@ -6,6 +6,7 @@ use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ProductService
 {
@@ -89,27 +90,27 @@ class ProductService
         });
     }
 
-    public function getAll()
+    public function getAll(): LengthAwarePaginator
     {
         return Product::with(['images', 'store'])->latest()->paginate();
     }
 
-   public function getByCategory(string $categoryId, ?string $stateId = null, ?string $lgaId = null)
-{
-    return Product::with(['images', 'store'])
-        ->where('category_id', $categoryId)
-        ->whereHas('store', function ($query) use ($stateId, $lgaId) {
-            if ($stateId) {
-                $query->where('state_id', $stateId);
-            }
+    public function getByCategory(string $categoryId, ?string $stateId = null, ?string $lgaId = null): LengthAwarePaginator
+    {
+        return Product::with(['images', 'store'])
+            ->where('category_id', $categoryId)
+            ->whereHas('store', function ($query) use ($stateId, $lgaId) {
+                if ($stateId) {
+                    $query->where('state_id', $stateId);
+                }
 
-            if ($lgaId) {
-                $query->where('lga_id', $lgaId);
-            }
-        })
-        ->latest()
-        ->paginate();
-}
+                if ($lgaId) {
+                    $query->where('lga_id', $lgaId);
+                }
+            })
+            ->latest()
+            ->paginate();
+    }
 
     public function getByBrand(string $brand)
     {
@@ -119,7 +120,7 @@ class ProductService
             ->paginate();
     }
 
-    public function search(array $filters)
+    public function search(array $filters): LengthAwarePaginator
     {
         $query = Product::with(['images', 'store']);
 
@@ -168,7 +169,7 @@ class ProductService
 
         return $query->paginate();
     }
-    public function getByUserState()
+    public function getByUserState(): LengthAwarePaginator
     {
         $user = Auth::user();
         return Product::with(['images', 'store'])
@@ -179,7 +180,7 @@ class ProductService
             ->paginate();
     }
 
-    public function getByUserLga()
+    public function getByUserLga(): LengthAwarePaginator
     {
         $user = Auth::user();
         return Product::with(['images', 'store'])
@@ -189,24 +190,38 @@ class ProductService
             ->latest()
             ->paginate();
     }
-    
-public function getByState($stateId)
-{
-    return Product::with(['images', 'store'])
-        ->whereHas('store', function ($query) use ($stateId) {
-            $query->where('state_id', $stateId);
-        })
-        ->latest()
-        ->paginate();
-}
 
-public function getByLga($lgaId)
-{
-    return Product::with(['images', 'store'])
-        ->whereHas('store', function ($query) use ($lgaId) {
-            $query->where('lga_id', $lgaId);
-        })
-        ->latest()
-        ->paginate();
-}
+    public function getByState($stateId): LengthAwarePaginator
+    {
+        return Product::with(['images', 'store'])
+            ->whereHas('store', function ($query) use ($stateId) {
+                $query->where('state_id', $stateId);
+            })
+            ->latest()
+            ->paginate();
+    }
+    public function getByLga($lgaId): LengthAwarePaginator
+    {
+        return Product::with(['images', 'store'])
+            ->whereHas('store', function ($query) use ($lgaId) {
+                $query->where('lga_id', $lgaId);
+            })
+            ->latest()
+            ->paginate();
+    }
+
+      public function myProducts(): LengthAwarePaginator
+    {
+        return Product::with(['store', 'category'])
+            ->whereHas('store', fn($q) => $q->where('user_id', Auth::id()))
+            ->latest()
+            ->paginate(20);
+    }
+
+    public function find(string $id): Product
+    {
+        return Product::with(['store', 'category'])
+            ->whereHas('store', fn($q) => $q->where('user_id', Auth::id()))
+            ->findOrFail($id);
+    }
 }
