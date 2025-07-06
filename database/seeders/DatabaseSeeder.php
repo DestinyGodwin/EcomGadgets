@@ -8,6 +8,7 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\SettingSeeder;
 use Database\Seeders\CategorySeeder;
 use Database\Seeders\AdvertPlanSeeder;
+use Database\Seeders\DummyAdvertSeeder;
 use Database\Seeders\SubscriptionPlanSeeder;
 use Database\Seeders\NigeriaStatesLgasSeeder;
 use Database\Seeders\FeaturedProductPlanSeeder;
@@ -29,6 +30,7 @@ class DatabaseSeeder extends Seeder
         NigeriaStatesLgasSeeder::class,
         SubscriptionPlanSeeder::class,
         CategorySeeder::class,
+        DummyAdvertSeeder::class,
         FeaturedProductPlanSeeder::class,
         AdvertPlanSeeder::class,
         SettingSeeder::class,
