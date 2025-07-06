@@ -1,15 +1,14 @@
 <?php
-
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
@@ -21,7 +20,7 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-       protected $fillable = [
+    protected $fillable = [
         'first_name',
         'last_name',
         'email',
@@ -51,7 +50,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password'          => 'hashed',
         ];
     }
     public function store()
@@ -71,12 +70,17 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Lga::class);
     }
-   
-    public function isVendor(){
+
+    public function isVendor()
+    {
         return $this->role === 'vendor';
     }
-      public function subscriptions(): HasManyThrough
+    public function subscriptions(): HasManyThrough
     {
         return $this->through('store')->has('subscriptions');
+    }
+    public function products()
+    {
+        return $this->hasManyThrough(Product::class, Store::class);
     }
 }
