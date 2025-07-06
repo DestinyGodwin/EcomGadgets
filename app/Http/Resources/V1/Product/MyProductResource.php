@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Http\Resources\V1\Product;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class MyProductResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+         return [
+            'id' => $this->id,
+            'category_id' => $this->category_id,
+            'name' => $this->name,
+            'slug' => $this->slug,
+            'description' => $this->description,
+            // 'specifications' => $this->specifications,
+            // 'brand' => $this->brand,
+            'price' => $this->price,
+            'wholesale_price' => $this->wholesale_price,
+            'is_featured' => $this->is_featured,
+            'featured_expires_at' => $this->featured_expires_at,
+            'images' => ProductImageResource::collection($this->images),
+            'created_at' => $this->created_at->toDateTimeString(),
+            'updated_at'
+        ];
+    }
+}

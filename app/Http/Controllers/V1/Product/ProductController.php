@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Services\V1\Product\ProductService;
 use App\Http\Resources\V1\Product\ProductResource;
+use App\Http\Resources\V1\Product\MyProductResource;
 use App\Http\Requests\V1\Product\StoreProductRequest;
 use App\Http\Requests\V1\Product\SearchProductRequest;
 use App\Http\Requests\V1\Product\UpdateProductRequest;
@@ -105,7 +106,7 @@ public function byLga(Request $request)
 
     public function myProducts(){
        $products =  $this->productService->myProducts();
-       return ProductResource::collection($products);
+       return MyProductResource::collection($products);
     }
 
 }
