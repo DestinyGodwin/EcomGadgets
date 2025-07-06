@@ -28,7 +28,7 @@ class MyProductResource extends JsonResource
             'featured_expires_at' => $this->featured_expires_at,
             'images' => ProductImageResource::collection($this->images),
             'created_at' => $this->created_at->toDateTimeString(),
-            'updated_at'
+            'updated_at' => $this->updated_at->toDateTimeString(),
         ];
     }
 }
