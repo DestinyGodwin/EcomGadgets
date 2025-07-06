@@ -25,9 +25,9 @@ class StoreDummyAdvertRequest extends FormRequest
             'state_id' => ['required', 'exists:states,id'],
             'title' => ['required', 'string', 'max:255'],
             'link' => ['nullable', 'url', 'max:255'],
-            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
-            'starts_at' => ['required', 'date'],
-            'ends_at' => ['required', 'date', 'after:starts_at'],
+            'image' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'starts_at' => ['required', 'date', 'date_format:Y-m-d H:i:s'],
+            'ends_at' => ['required', 'date', 'after:starts_at', 'date_format:Y-m-d H:i:s'],
         ];
     }
 }
