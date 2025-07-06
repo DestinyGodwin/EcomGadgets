@@ -167,6 +167,7 @@ Route::prefix('v1/')->group(function () {
     Route::prefix('user')->middleware(['auth:sanctum'])->group(function () {
 
     });
+    Route::get('advert-plans', [AdvertPlanController::class, 'index']);
 
     Route::prefix('/payments')->middleware(['auth:sanctum', 'role:vendor,admin'])->group(function () {
         Route::post('/subscribe', [PaymentController::class, 'subscribe']);
