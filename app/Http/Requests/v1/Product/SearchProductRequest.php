@@ -23,6 +23,7 @@ class SearchProductRequest extends FormRequest
     {
        return [
             'search' => ['nullable', 'string', 'max:255'],
+            'state_id' => ['nullable', 'exists:states,id'],
             'category_id' => ['nullable', 'exists:categories,id'],
             'brand' => ['nullable', 'string', 'max:255'],
             'min_price' => ['nullable', 'numeric', 'min:0'],
