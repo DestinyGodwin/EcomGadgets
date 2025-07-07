@@ -30,7 +30,7 @@ class CategoryService
 
     public function all()
     {
-        return Category::all();
+      return Category::orderBy('name', 'asc')->get();
     }
 
     public function find(Category $category): Category
