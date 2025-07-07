@@ -99,28 +99,29 @@ class AdvertBookingService
              ->limit(5)
             ->get();
     }
-
     public function getAdvertsByStateWithFallback($stateId, $limit = 5)
-    {
-        $realAds = AdvertBooking::where('state_id', $stateId)
-            ->where('is_dummy', false)
-            ->whereDate('ends_at', '>=', now())
+{
+    $now = now();
+    $realAds = AdvertBooking::where('state_id', $stateId)
+        ->where('is_dummy', false)
+        ->where('starts_at', '<=', $now)
+        ->where('ends_at', '>=', $now)
+        ->orderBy('starts_at')
+        ->take($limit)
+        ->get();
+    $realCount = $realAds->count();
+    if ($realCount < $limit) {
+        $remaining = $limit - $realCount;
+        $dummyAds = AdvertBooking::where('state_id', $stateId)
+            ->where('is_dummy', true)
+            ->where('starts_at', '<=', $now)
+            ->where('ends_at', '>=', $now)
             ->orderBy('starts_at')
+            ->take($remaining)
             ->get();
-
-        if ($realAds->count() < $limit) {
-            $remaining = $limit - $realAds->count();
-
-            $dummyAds = AdvertBooking::where('state_id', $stateId)
-                ->where('is_dummy', true)
-                ->whereDate('ends_at', '>=', now())
-                ->orderBy('starts_at')
-                ->take($remaining)
-                ->get();
-
-            return $realAds->concat($dummyAds);
-        }
-
-        return $realAds;
+        return $realAds->concat($dummyAds);
     }
+    return $realAds;
+}
+
 }
