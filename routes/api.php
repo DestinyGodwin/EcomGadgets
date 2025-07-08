@@ -23,11 +23,10 @@ use App\Http\Controllers\V1\Admin\AdminTransactionController;
 use App\Http\Controllers\V1\Admin\SubscriptionPlanController;
 use App\Http\Controllers\V1\Admin\DummyAdvertBookingController;
 use App\Http\Controllers\V1\Stores\StoreSubscriptionController;
+use App\Http\Controllers\V1\Admin\FeaturedProductPlanController;
 use App\Http\Controllers\V1\Admin\ProductController as AdminProductController;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+
 Route::prefix('v1/')->group(function () {
     Route::prefix('auth')->group(function () {
         Route::controller(AuthController::class)->group(function () {
@@ -49,6 +48,9 @@ Route::prefix('v1/')->group(function () {
             Route::post('subscriptions', 'store');
             Route::put('subscriptions/{subscription_plan}', 'update');
             Route::delete('subscriptions/{subscription_plan}', 'destroy');
+        });
+        Route::controller(FeaturedProductPlanController::class)->group( function (){
+            Route::post('/featured-plans', 'store');
         });
         Route::prefix('settings')->group(function () {
             Route::get('/', [SettingsController::class, 'index']);
@@ -168,6 +170,7 @@ Route::prefix('v1/')->group(function () {
 
     });
     Route::get('advert-plans', [AdvertPlanController::class, 'index']);
+    Route::get('/featured-plans', [FeaturedProductPlanController::class, 'index']);
 
     Route::prefix('/payments')->middleware(['auth:sanctum', 'role:vendor,admin'])->group(function () {
         Route::post('/subscribe', [PaymentController::class, 'subscribe']);
