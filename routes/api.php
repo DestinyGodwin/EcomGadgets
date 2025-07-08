@@ -34,10 +34,10 @@ Route::prefix('v1/')->group(function () {
             Route::post('login', 'login')->middleware('logged.in');
             Route::post('verify-email', 'verifyEmail')->middleware('auth:sanctum');
             Route::get('resend-otp', 'resendOtp')->middleware('auth:sanctum');
-            Route::post('complete-profile', 'completeProfile')->middleware(['auth:sanctum', 'verified.otp']);
-            Route::post('update-profile', 'updateProfile')->middleware(['auth:sanctum', 'verified.otp']);
-            Route::post('change-password', 'changePassword')->middleware(['auth:sanctum', 'verified.otp']);
-            Route::get('get-profile', 'getProfile')->middleware(['auth:sanctum', 'verified.otp']);
+            Route::post('complete-profile', 'completeProfile')->middleware(['auth:sanctum']);
+            Route::post('update-profile', 'updateProfile')->middleware(['auth:sanctum']);
+            Route::post('change-password', 'changePassword')->middleware(['auth:sanctum']);
+            Route::get('get-profile', 'getProfile')->middleware(['auth:sanctum']);
             Route::post('forgot-password', 'forgotPassword');
             Route::post('reset-password', 'resetPassword');
             Route::post('logout', 'logout')->middleware(['auth:sanctum']);
