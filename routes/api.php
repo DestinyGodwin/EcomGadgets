@@ -51,6 +51,8 @@ Route::prefix('v1/')->group(function () {
         });
         Route::controller(FeaturedProductPlanController::class)->group( function (){
             Route::post('/featured-plans', 'store');
+            Route::put('/featured-plans/{featuredProductPlan}', 'update');
+            Route::delete('/featured-plans/{featuredProductPlan}', 'destroy');
         });
         Route::prefix('settings')->group(function () {
             Route::get('/', [SettingsController::class, 'index']);
@@ -166,9 +168,9 @@ Route::prefix('v1/')->group(function () {
     Route::get('states/{state}/lgas', [LocationController::class, 'getStateLgas']);
     Route::get('adverts/dummy', [AdvertBookingController::class, 'getDummyAdverts']);
     Route::get('adverts/state/{state}', [AdvertBookingController::class, 'getAdvertsByState']);
-    Route::prefix('user')->middleware(['auth:sanctum'])->group(function () {
+    // Route::prefix('user')->middleware(['auth:sanctum'])->group(function () {
 
-    });
+    // });
     Route::get('advert-plans', [AdvertPlanController::class, 'index']);
     Route::get('/featured-plans', [FeaturedProductPlanController::class, 'index']);
 
