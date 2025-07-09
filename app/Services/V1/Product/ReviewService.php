@@ -37,4 +37,18 @@ class ReviewService
         $review = Review::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
         $review->delete();
     }
+
+    public function update($id, $request)
+{
+    $review = Review::where('id', $id)
+        ->where('user_id', Auth::id())
+        ->firstOrFail();
+
+    $review->update([
+        'rating' => $request->rating,
+        'comment' => $request->comment,
+    ]);
+
+    return $review->fresh('user'); 
+}
 }
