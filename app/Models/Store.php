@@ -24,6 +24,8 @@ class Store extends Model
         'slug',
         'store_description',
         'store_image',
+        'store_cac_image',
+        'store_id_image',
         'phone',
         'email',
         'state_id',
