@@ -7,6 +7,7 @@ use App\Models\Setting;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Notifications\Notification;
 use Illuminate\Validation\ValidationException;
 use App\Notifications\V1\Stores\StoreCreatedNotification;
 
@@ -23,45 +24,54 @@ class StoreService
     }
     
 
-    public function create($request)
-    {
-        $user = Auth::user();
-     if ($user->isVendor() && $user->store) {
-    throw ValidationException::withMessages([
-        'store' => ['You already have a store and cannot create another.'],
-    ]);
-}
-    $durationDays = (int) Setting::get('store_subscription_duration', 0);
+   public function create($request)
+{
+    $user = Auth::user();
 
-    $expiresAt = $durationDays > 0 ? now()->addDays($durationDays) : null;
-        $imagePath = $request->file('store_image')->store('stores', 'public');
-
-        $store = $user->store()->create([
-            'lga_id' => $request->lga_id,
-            'state_id' => $request->state_id,
-            'address' => $request->address,
-            'phone' => $request->phone,
-            'email' => $request->email,
-            'store_name' => $request->store_name,
-            'store_description' => $request->store_description,
-            'store_image' => $imagePath,
-            
-            'subscription_expires_at' => $expiresAt,
+    if ($user->isVendor() && $user->store) {
+        throw ValidationException::withMessages([
+            'store' => ['You already have a store and cannot create another.'],
         ]);
-        $user->role = 'vendor';
-        $user->save();
-        try {
-
-            $user->notify((new StoreCreatedNotification($store))->delay(now()->addSeconds(5)));
-        } catch (\Throwable $e) {
-
-            Log::error('Failed to send store creation notification: ' . $e->getMessage(), [
-                'store_id' => $store->id,
-                'user_id' => $user->id,
-            ]);
-        }
-        return $store;
     }
+
+    $durationDays = (int) Setting::get('store_subscription_duration', 0);
+    $expiresAt = $durationDays > 0 ? now()->addDays($durationDays) : null;
+
+    $storeImagePath = $request->file('store_image')->store('stores', 'public');
+    $cacImagePath = $request->file('store_cac_image')->store('stores/cac', 'public');
+    $idImagePath = $request->file('store_id_image')->store('stores/id', 'public');
+
+    $store = $user->store()->create([
+        'lga_id' => $request->lga_id,
+        'state_id' => $request->state_id,
+        'address' => $request->address,
+        'phone' => $request->phone,
+        'email' => $request->email,
+        'store_name' => $request->store_name,
+        'store_description' => $request->store_description,
+        'store_image' => $storeImagePath,
+        'store_cac_image' => $cacImagePath,
+        'store_id_image' => $idImagePath,
+        'subscription_expires_at' => $expiresAt,
+        'is_active' => false,
+    ]);
+
+    $user->role = 'vendor';
+    $user->save();
+
+    // Notify admin
+    try {
+        Notification::route('mail', config('mail.admin_email'))
+            ->notify(new NewStoreAwaitingApprovalNotification($store));
+    } catch (\Throwable $e) {
+        Log::error('Failed to notify admin about new store: ' . $e->getMessage(), [
+            'store_id' => $store->id,
+        ]);
+    }
+
+    return $store;
+}
+
     public function update($request, $store)
 {
     $user = Auth::user();
