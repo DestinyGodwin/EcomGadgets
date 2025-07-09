@@ -12,6 +12,7 @@ use App\Http\Resources\V1\Product\MyProductResource;
 use App\Http\Requests\V1\Product\StoreProductRequest;
 use App\Http\Requests\V1\Product\SearchProductRequest;
 use App\Http\Requests\V1\Product\UpdateProductRequest;
+use App\Http\Resources\V1\Product\ViewProductResource;
 
 class ProductController extends Controller
 {
@@ -30,7 +31,9 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
-        return new ProductResource($product->load('images', 'store'));
+       $product->load(['images', 'store', 'reviews.user']);
+
+       return new ViewProductResource($product);
     }
 
     public function store(StoreProductRequest $request)
