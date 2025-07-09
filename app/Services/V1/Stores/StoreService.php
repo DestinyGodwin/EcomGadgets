@@ -45,6 +45,7 @@ class StoreService
             'store_name' => $request->store_name,
             'store_description' => $request->store_description,
             'store_image' => $imagePath,
+            
             'subscription_expires_at' => $expiresAt,
         ]);
         $user->role = 'vendor';

@@ -30,6 +30,8 @@ class CreateStoreRequest extends FormRequest
             'state_id' => ['required', 'exists:states,id'],
             'lga_id' => ['required', 'exists:lgas,id'],
             'address' => ['required', 'string', 'max:255'],
+            'store_cac_image' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'store_id_image' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
     }
 }
