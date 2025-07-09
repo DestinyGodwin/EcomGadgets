@@ -26,7 +26,7 @@ use App\Http\Controllers\V1\Admin\DummyAdvertBookingController;
 use App\Http\Controllers\V1\Stores\StoreSubscriptionController;
 use App\Http\Controllers\V1\Admin\FeaturedProductPlanController;
 use App\Http\Controllers\V1\Admin\ProductController as AdminProductController;
-
+use App\Http\Controllers\V1\Admin\StoreController as AdminStoreController
 
 Route::prefix('v1/')->group(function () {
     Route::prefix('auth')->group(function () {
@@ -55,6 +55,8 @@ Route::prefix('v1/')->group(function () {
             Route::put('/featured-plans/{featuredProductPlan}', 'update');
             Route::delete('/featured-plans/{featuredProductPlan}', 'destroy');
         });
+          Route::post('/stores/{store}/approve', [AdminStoreController::class, 'approve']);
+          Route::post('/stores/{store}/decline', [AdminStoreController::class, 'decline']);
         Route::prefix('settings')->group(function () {
             Route::get('/', [SettingsController::class, 'index']);
             Route::post('/', [SettingsController::class, 'store']);
@@ -150,6 +152,8 @@ Route::prefix('v1/')->group(function () {
          Route::prefix('reviews')->group(function () {
             Route::post('/', [ReviewController::class, 'store']);
             Route::delete('/{id}', [ReviewController::class, 'destroy']);
+            Route::put('/reviews/{id}', [ReviewController::class, 'update']);
+
         });
     });
     Route::controller(ProductController::class)->group(function () {

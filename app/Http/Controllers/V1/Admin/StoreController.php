@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\V1\Admin;
 
 use App\Models\Store;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Notifications\V1\Stores\StoreApprovedNotification;
 
@@ -13,7 +12,7 @@ class StoreController extends Controller
 {
     $store->update(['is_active' => true]);
 
-    // Optionally notify the vendor
+ 
     $store->user->notify(new StoreApprovedNotification($store));
 
     return response()->json(['message' => 'Store approved successfully.']);
@@ -21,7 +20,7 @@ class StoreController extends Controller
 
 public function decline(Store $store)
 {
-    $store->delete(); // or mark as declined
+    $store->delete(); 
     return response()->json(['message' => 'Store declined and removed.']);
 }
 
