@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1\Admin;
 use App\Models\Store;
 use App\Http\Controllers\Controller;
 use App\Notifications\V1\Stores\StoreApprovedNotification;
+use App\Notifications\V1\Stores\StoreDeclinedNotification;
 
 class StoreController extends Controller
 {
@@ -20,6 +21,8 @@ class StoreController extends Controller
 
 public function decline(Store $store)
 {
+     $store->user->notify(new StoreDeclinedNotification($store));
+
     $store->delete(); 
     return response()->json(['message' => 'Store declined and removed.']);
 }

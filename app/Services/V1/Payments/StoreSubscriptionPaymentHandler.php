@@ -28,12 +28,6 @@ class StoreSubscriptionPaymentHandler implements PaymentHandlerInterface
         $startsAt = ($currentExpiry && $currentExpiry->isFuture()) ? $currentExpiry : now();
         $endsAt = $startsAt->copy()->addDays($meta['duration_days']);
 
-        // StoreSubscription::create([
-        //     'store_id' => $store->id,
-        //     'plan_id' => $meta['plan_id'],
-        //     'starts_at' => $startsAt,
-        //     'ends_at' => $endsAt,
-        // ]);
 
         StoreSubscription::create([
             'store_id'       => $store->id,

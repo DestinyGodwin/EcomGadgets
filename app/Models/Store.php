@@ -33,6 +33,7 @@ class Store extends Model
         'address',
         'subscription_expires_at',
         'is_active',
+        'status',
     ];
 
     protected $hidden = ['deleted_at'];
