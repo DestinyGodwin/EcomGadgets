@@ -17,5 +17,6 @@ class MyStoreResource extends JsonResource
        return array_merge(parent::toArray($request), [
             'store_image' => asset('storage/' . $this->store_image),
         ]);
+    
     }
 }

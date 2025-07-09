@@ -43,7 +43,14 @@ public function destroy(Store $store)
 }
 
     public function mystore(){
+        
         $store = Auth::user()->store;
+        //  if (!$store) {
+        // return response()->json(['message' => 'Store not found.'], 404);
+        if (!$store) {
+        return response()->json([]);
+    
+    }
         return new MyStoreResource($store);;
      }
 

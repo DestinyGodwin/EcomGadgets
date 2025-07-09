@@ -100,7 +100,7 @@ Route::prefix('v1/')->group(function () {
 
         Route::controller(StoreController::class)->group(function () {
             Route::post('stores', 'store');
-            Route::get('mystore', 'mystore');
+            Route::get('mystore', 'mystore')->middleware('role:vendor');
             Route::put('stores/{store}', 'update');
             Route::delete('stores/{store}', 'destroy');
         });
