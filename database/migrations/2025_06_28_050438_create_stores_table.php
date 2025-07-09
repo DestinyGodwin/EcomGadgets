@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('store_description');
             $table->string('store_image')->nullable();
+            $table->string('store_cac_image')->nullable();
+            $table->string('store_id_image')->nullable();
             $table->string('phone');
             $table->string('email');
             $table->foreignUuid('state_id')->nullable()->constrained()->nullOnDelete();

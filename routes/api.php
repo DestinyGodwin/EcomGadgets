@@ -26,7 +26,7 @@ use App\Http\Controllers\V1\Admin\DummyAdvertBookingController;
 use App\Http\Controllers\V1\Stores\StoreSubscriptionController;
 use App\Http\Controllers\V1\Admin\FeaturedProductPlanController;
 use App\Http\Controllers\V1\Admin\ProductController as AdminProductController;
-use App\Http\Controllers\V1\Admin\StoreController as AdminStoreController
+use App\Http\Controllers\V1\Admin\StoreController as AdminStoreController;
 
 Route::prefix('v1/')->group(function () {
     Route::prefix('auth')->group(function () {
