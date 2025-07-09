@@ -35,7 +35,30 @@ class Store extends Model
         'is_active',
         'status',
     ];
+    const STATUS_PENDING = 'pending';
+    const STATUS_APPROVED = 'approved';
+    const STATUS_DECLINED = 'declined';
+    const STATUS_BANNED = 'banned';
 
+    public function isApproved(): bool
+    {
+        return $this->status === self::STATUS_APPROVED;
+    }
+
+    public function isPending(): bool
+    {
+        return $this->status === self::STATUS_PENDING;
+    }
+
+    public function isDeclined(): bool
+    {
+        return $this->status === self::STATUS_DECLINED;
+    }
+
+    public function isBanned(): bool
+    {
+        return $this->status === self::STATUS_BANNED;
+    }
     protected $hidden = ['deleted_at'];
     public function user()
     {
