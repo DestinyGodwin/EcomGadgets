@@ -33,7 +33,7 @@ class StoreApprovedNotification extends Notification
             ->subject('Your Store Has Been Approved')
             ->greeting("Hello {$notifiable->name},")
             ->line("Your store \"{$this->store->store_name}\" has been reviewed and approved.")
-            ->action('Visit Your Store', url("/vendor/store/{$this->store->id}"))
+            ->action('Visit Your Store', url("/vendor/store/{$this->store->slug}"))
             ->line('Thank you for using our platform!');
     }
 }
