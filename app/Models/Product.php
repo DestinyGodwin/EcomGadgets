@@ -49,7 +49,7 @@ protected $perPage = 16;
     public function reviews(){
         return $this->hasMany(Review::class);
     }
-    
+
     protected $casts = [
     'specifications' => 'array',
     'featured_expires_at' => 'datetime',
@@ -62,6 +62,11 @@ protected static function booted(): void
 public function featuredLogs()
 {
     return $this->hasMany(FeaturedProductLog::class);
+}
+
+public function averageRating()
+{
+    return $this->reviews()->avg('rating');
 }
 
 }
