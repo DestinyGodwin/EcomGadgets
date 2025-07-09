@@ -26,6 +26,7 @@ class MyProductResource extends JsonResource
             'wholesale_price' => $this->wholesale_price,
             'is_featured' => $this->is_featured,
             'featured_expires_at' => $this->featured_expires_at,
+            'average_rating'  => round($this->reviews->avg('rating'), 1),
             'images' => ProductImageResource::collection($this->images),
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),

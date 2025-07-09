@@ -25,6 +25,8 @@ class ProductResource extends JsonResource
             'price' => $this->price,
             'is_featured' => $this->is_featured,
             'wholesale_price' => $this->wholesale_price,
+            'average_rating'  => round($this->reviews->avg('rating'), 1),
+
             'images' => ProductImageResource::collection($this->images),
             'store' => [
                 'id' => $this->store->id,
