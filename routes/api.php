@@ -13,6 +13,7 @@ use App\Http\Controllers\V1\Stores\StoreController;
 use App\Http\Controllers\V1\AdvertBookingController;
 use App\Http\Controllers\V1\Admin\SettingsController;
 use App\Http\Controllers\V1\PaymentWebhookController;
+use App\Http\Controllers\V1\Product\ReviewController;
 use App\Http\Controllers\V1\Admin\NotifyingController;
 use App\Http\Controllers\V1\Product\ProductController;
 use App\Http\Controllers\V1\Admin\AdvertPlanController;
@@ -145,6 +146,10 @@ Route::prefix('v1/')->group(function () {
             Route::post('/wishlist', 'store');
             Route::get('/wishlist/{productId}', 'show');
             Route::delete('/wishlist/{productId}', 'destroy');
+        });
+         Route::prefix('reviews')->group(function () {
+            Route::post('/', [ReviewController::class, 'store']);
+            Route::delete('/{id}', [ReviewController::class, 'destroy']);
         });
     });
     Route::controller(ProductController::class)->group(function () {
