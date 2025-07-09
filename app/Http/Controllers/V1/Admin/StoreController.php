@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1\Admin;
 use App\Models\Store;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Notifications\V1\Stores\StoreApprovedNotification;
 
 class StoreController extends Controller
 {
