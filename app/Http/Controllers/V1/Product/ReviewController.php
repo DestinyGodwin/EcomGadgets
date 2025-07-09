@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\V1\Product;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\V1\Products\StoreReviewRequest;
 
 class ReviewController extends Controller
 {
