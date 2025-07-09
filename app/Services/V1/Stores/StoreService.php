@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Validation\ValidationException;
 use App\Notifications\V1\Stores\StoreCreatedNotification;
+use App\Notifications\V1\Admin\NewStoreAwaitingApprovalNotification;
 
 class StoreService
 {
