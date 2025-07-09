@@ -45,6 +45,10 @@ protected $perPage = 16;
     {
         return $this->hasMany(ProductImage::class);
     }
+
+    public function reviews(){
+        return $this->hasMany(Review::class);
+    }
     protected $casts = [
     'specifications' => 'array',
     'featured_expires_at' => 'datetime',
