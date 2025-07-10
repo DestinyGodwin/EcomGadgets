@@ -106,6 +106,7 @@ Route::prefix('v1/')->group(function () {
             Route::get('mystore', 'mystore');
             Route::put('stores/{store}', 'update');
             Route::delete('stores/{store}', 'destroy');
+            Route::post('stores/{store}/resubmit', 'resubmit');
         });
         Route::controller(StoreSubscriptioncontroller::class)->group(function () {
             Route::get('my-subscriptions', 'storeSubscriptions');
