@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Store;
 
-class StoreUnderReviewMail extends Mailable
+class StoreUnderReviewMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -23,7 +23,7 @@ class StoreUnderReviewMail extends Mailable
     public function __construct(Store $store)
     {
         $this->store = $store;
-        $this->storeOwnerName = $store->user->name;
+        $this->storeOwnerName = $store->user->first_name;
     }
 
     /**

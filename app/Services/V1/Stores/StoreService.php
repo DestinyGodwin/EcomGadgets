@@ -1,14 +1,16 @@
 <?php
 namespace App\Services\V1\Stores;
 
-use App\Models\Setting;
 use App\Models\Store;
-use App\Notifications\V1\Admin\NewStoreAwaitingApprovalNotification;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use App\Mail\V1\Stores\StoreUnderReviewMail;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
+use App\Notifications\V1\Admin\NewStoreAwaitingApprovalNotification;
 
 class StoreService
 {
@@ -59,11 +61,14 @@ class StoreService
         try {
             Notification::route('mail', config('mail.admin_email'))
                 ->notify(new NewStoreAwaitingApprovalNotification($store));
+            Mail::to($user->email)->send(new StoreUnderReviewMail($store));
+
         } catch (\Throwable $e) {
             Log::error('Failed to notify admin about new store: ' . $e->getMessage(), [
                 'store_id' => $store->id,
             ]);
         }
+        
 
         return $store;
     }
