@@ -4,11 +4,12 @@ namespace App\Notifications\V1\Stores;
 
 use App\Models\Store;
 use Illuminate\Bus\Queueable;
+use App\Mail\V1\Stores\StoreApprovedMail;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class StoreApprovedNotification extends Notification
+class StoreApprovedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -24,16 +25,23 @@ class StoreApprovedNotification extends Notification
 
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     public function toMail($notifiable)
     {
-        return (new MailMessage)
-            ->subject('Your Store Has Been Approved')
-            ->greeting("Hello {$notifiable->name},")
-            ->line("Your store \"{$this->store->store_name}\" has been reviewed and approved.")
-            ->action('Visit Your Store', url("/vendor/store/{$this->store->slug}"))
-            ->line('Thank you for using our platform!');
+           return (new StoreApprovedMail($this->store))->to($notifiable->email);
+
+    }
+
+       public function toDatabase($notifiable)
+    {
+        return [
+            'store_id' => $this->store->id,
+            'store_name' => $this->store->store_name,
+            'slug' => $this->store->slug,
+            'message' => "Your store \"{$this->store->store_name}\" has been approved.",
+            'url' => url("/store/{$this->store->slug}"),
+        ];
     }
 }
