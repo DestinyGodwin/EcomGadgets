@@ -1,25 +1,21 @@
 <?php
-
 namespace App\Mail\V1\Stores;
 
+use App\Models\Store;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class StoreDeclinedMail extends Mailable implements ShouldQueue
+class StoreDeclinedMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct(
+        public Store $store,
+        public string $reason
+    ) {}
 
     /**
      * Get the message envelope.
@@ -27,7 +23,7 @@ class StoreDeclinedMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Store Declined Mail',
+            subject: 'Your Store Registration Was Declined',
         );
     }
 
@@ -37,15 +33,16 @@ class StoreDeclinedMail extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'emails.stores.declined',
+            with: [
+                'storeOwner' => $this->store->user->first_name ?? 'Vendor',
+                'store'      => $this->store,
+                'reason'     => $this->reason,
+                'ctaUrl'     => url("/store/edit/{$this->store->slug}"),
+            ]
         );
     }
 
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
     public function attachments(): array
     {
         return [];
