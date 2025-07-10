@@ -30,7 +30,7 @@
 #           dangerous-clean-slate: false  # optional
 
 
-name: Deploy to cPanel
+name: Deploy Laravel App to cPanel
 
 on:
   push:
@@ -40,18 +40,42 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set DEPLOYPATH variable
+      - name: Set DEPLOYPATH
         run: echo "DEPLOYPATH=/home/gkzxhmso/repositories/EcomGadgets" >> $GITHUB_ENV
 
-      - name: Copy files to DEPLOYPATH
-        run: |
-          /bin/cp -R assets $DEPLOYPATH
-          /bin/cp -R css $DEPLOYPATH
-          /bin/cp -R fonts $DEPLOYPATH
-          /bin/cp -R img $DEPLOYPATH
-          /bin/cp -R js $DEPLOYPATH
-          /bin/cp index.html $DEPLOYPATH
+      - name: Copy project files to cPanel (via FTP or SSH)
+        uses: SamKirkland/FTP-Deploy-Action@v4
+        with:
+           server: ${{ secrets.CPANEL_FTP_SERVER }}
+           username: ${{ secrets.CPANEL_FTP_USERNAME }}
+           password: ${{ secrets.CPANEL_FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: ${{ env.DEPLOYPATH }}
+          exclude: |
+            .git*
+            node_modules/
+            tests/
+            .env
+            storage/
+            vendor/
+
+      - name: SSH into server and run Laravel post-deployment commands
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+           server: ${{ secrets.CPANEL_FTP_SERVER }}
+           username: ${{ secrets.CPANEL_FTP_USERNAME }}
+           password: ${{ secrets.CPANEL_FTP_PASSWORD }}
+          port: 22
+          script: |
+            cd $DEPLOYPATH
+            cp .env.production .env
+            composer install --no-dev --optimize-autoloader
+            php artisan migrate --force
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache

@@ -1,12 +1,11 @@
 <?php
-
 namespace App\Notifications\V1\Stores;
 
 use App\Models\Store;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class StoreDeactivatedNotification extends Notification implements ShouldQueue
 {
@@ -15,14 +14,13 @@ class StoreDeactivatedNotification extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      */
-    public function __construct(protected Store $store,protected string $message) {}
+    public function __construct(protected Store $store, protected string $message)
+    {}
 
     public function via($notifiable)
     {
         return ['mail'];
     }
-
-   
 
     /**
      * Get the mail representation of the notification.
@@ -32,7 +30,7 @@ class StoreDeactivatedNotification extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject('Your Store Has Been Deactivated')
             ->greeting("Hello {$notifiable->first_name},")
-            ->line("Your store \"{$this->store->store_name}\" has been deactivated by an administrator.")
+            ->line("Your store \"{$this->store->store_name}\" has been deactivated ")
             ->line('Reason: ' . $this->message)
             ->line('If you believe this was a mistake or you need assistance, please contact support.')
             ->line('Thank you for your understanding.');
