@@ -12,6 +12,7 @@ use App\Http\Resources\V1\Stores\MyStoreResource;
 use App\Http\Requests\V1\Stores\CreateStoreRequest;
 use App\Http\Requests\V1\Stores\StoreSearchRequest;
 use App\Http\Requests\V1\Stores\UpdateStoreRequest;
+use App\Http\Requests\V1\Stores\ResubmitStoreRequest;
 
 class StoreController extends Controller
 {
@@ -84,5 +85,18 @@ public function getStore(string $storeId)
     }
 
     return response()->json($store);
+}
+
+public function resubmit(ResubmitStoreRequest $request, Store $store): MyStoreResource
+{
+    if ($store->user_id !== Auth::user()->id()) {
+        abort(403, 'Unauthorized');
+    }
+
+    $validated = $request->validated();
+
+    $resubmitted = $this->storeService->resubmit($store, $validated);
+
+    return new MyStoreResource($resubmitted);
 }
 }
