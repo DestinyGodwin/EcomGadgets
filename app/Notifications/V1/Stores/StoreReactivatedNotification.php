@@ -8,7 +8,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class StoreReactivatedNotification extends Notification implemnts ShouldQueue
+class StoreReactivatedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
