@@ -1,16 +1,15 @@
 <?php
 namespace App\Services\V1\Stores;
 
-use App\Models\Store;
-use App\Models\Setting;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
 use App\Mail\V1\Stores\StoreUnderReviewMail;
-use Illuminate\Support\Facades\Notification;
-use Illuminate\Validation\ValidationException;
+use App\Models\Store;
 use App\Notifications\V1\Admin\NewStoreAwaitingApprovalNotification;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class StoreService
 {
@@ -32,8 +31,8 @@ class StoreService
                 'store' => ['You already have a store and cannot create another.'],
             ]);
         }
-        $durationDays = (int) Setting::get('store_subscription_duration', 0);
-        $expiresAt    = $durationDays > 0 ? now()->addDays($durationDays) : null;
+        // $durationDays = (int) Setting::get('store_subscription_duration', 0);
+        // $expiresAt    = $durationDays > 0 ? now()->addDays($durationDays) : null;
 
         $storeImagePath = $request->file('store_image')->store('stores', 'public');
         $cacImagePath   = $request->file('store_cac_image')->store('stores/cac', 'public');
@@ -50,7 +49,7 @@ class StoreService
             'store_image'             => $storeImagePath,
             'store_cac_image'         => $cacImagePath,
             'store_id_image'          => $idImagePath,
-            'subscription_expires_at' => $expiresAt,
+            'subscription_expires_at' => null,
             'is_active'               => false,
             'status'                  => "pending",
         ]);
@@ -68,7 +67,6 @@ class StoreService
                 'store_id' => $store->id,
             ]);
         }
-        
 
         return $store;
     }
@@ -140,32 +138,32 @@ class StoreService
         return Store::find($storeId);
     }
 
- public function resubmit(Store $store, array $data): Store
-{
-    $storeImagePath = $data['store_image']->store('stores', 'public');
-    $cacImagePath = $data['store_cac_image']->store('stores/cac', 'public');
-    $idImagePath = $data['store_id_image']->store('stores/id', 'public');
-    $updateData = [
-        'store_name' => $data['store_name'],
-        'store_description' => $data['store_description'],
-        'email' => $data['email'],
-        'phone' => $data['phone'],
-        'state_id' => $data['state_id'],
-        'lga_id' => $data['lga_id'],
-        'address' => $data['address'],
-        'store_image' => $storeImagePath,
-        'store_cac_image' => $cacImagePath,
-        'store_id_image' => $idImagePath,
-        'status' => 'pending',
-        'is_active' => false,
-    ];
+    public function resubmit(Store $store, array $data): Store
+    {
+        $storeImagePath = $data['store_image']->store('stores', 'public');
+        $cacImagePath   = $data['store_cac_image']->store('stores/cac', 'public');
+        $idImagePath    = $data['store_id_image']->store('stores/id', 'public');
+        $updateData     = [
+            'store_name'        => $data['store_name'],
+            'store_description' => $data['store_description'],
+            'email'             => $data['email'],
+            'phone'             => $data['phone'],
+            'state_id'          => $data['state_id'],
+            'lga_id'            => $data['lga_id'],
+            'address'           => $data['address'],
+            'store_image'       => $storeImagePath,
+            'store_cac_image'   => $cacImagePath,
+            'store_id_image'    => $idImagePath,
+            'status'            => 'pending',
+            'is_active'         => false,
+        ];
 
-    $store->update($updateData);
- Notification::route('mail', config('mail.admin_email'))
-    ->notify(new NewStoreAwaitingApprovalNotification($store));
+        $store->update($updateData);
+        Notification::route('mail', config('mail.admin_email'))
+            ->notify(new NewStoreAwaitingApprovalNotification($store));
 
-    return $store;
-   
-}
+        return $store;
+
+    }
 
 }
