@@ -55,7 +55,7 @@ Route::prefix('v1/')->group(function () {
             Route::put('/featured-plans/{featuredProductPlan}', 'update');
             Route::delete('/featured-plans/{featuredProductPlan}', 'destroy');
         });
-        Route::prefix('/stores')->controller(StoreController::class)->group(function () {
+        Route::prefix('/stores')->controller(AdminStoreController::class)->group(function () {
     Route::post('{store}/approve', 'approve');
     Route::post('{store}/decline', 'decline');
     Route::post('{store}/deactivate', 'deactivate');
