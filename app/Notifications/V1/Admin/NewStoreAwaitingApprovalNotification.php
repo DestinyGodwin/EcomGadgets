@@ -29,7 +29,7 @@ public $store;
     {
         return (new MailMessage)
             ->subject('New Store Pending Approval')
-            ->line("A new store \"{$this->store->store_name}\" has been created by a vendor.")
+            ->line("A new store \"{$this->store->store_name}\" has been created.")
             ->line("Please review the store and either approve or decline it.")
             ->action('Review Store', url("/admin/stores/{$this->store->slug}"))
             ->line('Thank you.');

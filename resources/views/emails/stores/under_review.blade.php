@@ -114,12 +114,9 @@
           Once your store is approved, you’ll be able to start posting products and reaching customers across Nigeria.
         </p>
 
-        <div>
-          <a href="https://strapre.com/dashboard" class="cta-button">Go to Dashboard</a>
-        </div>
 
         <p style="margin-top: 30px;">
-          We'll notify you as soon as your store is approved. In the meantime, feel free to explore your dashboard or contact us if you have any questions.
+          We'll notify you as soon as your store is approved. 
         </p>
 
         <p style="margin-top: 10px;">
