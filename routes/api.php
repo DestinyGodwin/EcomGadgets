@@ -58,6 +58,8 @@ Route::prefix('v1/')->group(function () {
           Route::post('/stores/{store}/approve', [AdminStoreController::class, 'approve']);
           Route::post('/stores/{store}/decline', [AdminStoreController::class, 'decline']);
           Route::post('/stores/{store}/deactivate', [AdminStoreController::class, 'deactivate']);
+          Route::post('/stores/{store}/reactivate', [AdminStoreController::class, 'reactivate']);
+
         Route::prefix('settings')->group(function () {
             Route::get('/', [SettingsController::class, 'index']);
             Route::post('/', [SettingsController::class, 'store']);
