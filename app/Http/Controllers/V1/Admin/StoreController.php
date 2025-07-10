@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Notifications\V1\Stores\StoreApprovedNotification;
 use App\Notifications\V1\Stores\StoreDeclinedNotification;
+use App\Notifications\V1\Stores\StoreDeactivatedNotification;
 
 class StoreController extends Controller
 {
