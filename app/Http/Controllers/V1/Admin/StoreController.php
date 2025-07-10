@@ -1,12 +1,13 @@
 <?php
 namespace App\Http\Controllers\V1\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Models\Store;
-use App\Notifications\V1\Stores\StoreApprovedNotification;
-use App\Notifications\V1\Stores\StoreDeactivatedNotification;
-use App\Notifications\V1\Stores\StoreDeclinedNotification;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Notifications\V1\Stores\StoreApprovedNotification;
+use App\Notifications\V1\Stores\StoreDeclinedNotification;
+use App\Notifications\V1\Stores\StoreDeactivatedNotification;
+use App\Notifications\V1\Stores\StoreReactivatedNotification;
 
 class StoreController extends Controller
 {
