@@ -56,7 +56,6 @@ class StoreService
         $user->role = 'vendor';
         $user->save();
 
-        // Notify admin
         try {
             Notification::route('mail', config('mail.admin_email'))
                 ->notify(new NewStoreAwaitingApprovalNotification($store));
@@ -135,5 +134,33 @@ class StoreService
     {
         return Store::find($storeId);
     }
+
+ public function resubmit(Store $store, array $data): Store
+{
+    $storeImagePath = $data['store_image']->store('stores', 'public');
+    $cacImagePath = $data['store_cac_image']->store('stores/cac', 'public');
+    $idImagePath = $data['store_id_image']->store('stores/id', 'public');
+    $updateData = [
+        'store_name' => $data['store_name'],
+        'store_description' => $data['store_description'],
+        'email' => $data['email'],
+        'phone' => $data['phone'],
+        'state_id' => $data['state_id'],
+        'lga_id' => $data['lga_id'],
+        'address' => $data['address'],
+        'store_image' => $storeImagePath,
+        'store_cac_image' => $cacImagePath,
+        'store_id_image' => $idImagePath,
+        'status' => 'pending',
+        'is_active' => false,
+    ];
+
+    $store->update($updateData);
+ Notification::route('mail', config('mail.admin_email'))
+    ->notify(new NewStoreAwaitingApprovalNotification($store));
+
+    return $store;
+   
+}
 
 }
