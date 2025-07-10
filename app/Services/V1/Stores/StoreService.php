@@ -30,7 +30,6 @@ class StoreService
                 'store' => ['You already have a store and cannot create another.'],
             ]);
         }
-
         $durationDays = (int) Setting::get('store_subscription_duration', 0);
         $expiresAt    = $durationDays > 0 ? now()->addDays($durationDays) : null;
 
@@ -51,6 +50,7 @@ class StoreService
             'store_id_image'          => $idImagePath,
             'subscription_expires_at' => $expiresAt,
             'is_active'               => false,
+            'status'                  => "pending",
         ]);
 
         $user->role = 'vendor';

@@ -49,7 +49,6 @@ jobs:
 
       - name: Copy files to DEPLOYPATH
         run: |
-          /bin/cp -R .vscode $DEPLOYPATH
           /bin/cp -R assets $DEPLOYPATH
           /bin/cp -R css $DEPLOYPATH
           /bin/cp -R fonts $DEPLOYPATH

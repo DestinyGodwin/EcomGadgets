@@ -25,6 +25,8 @@ class StoreFactory extends Factory
             'slug' => Str::slug($this->faker->company . '-' . Str::uuid()),
             'store_description' => $this->faker->paragraph,
             'store_image' => $this->faker->imageUrl(640, 480, 'business'),
+            'store_cac' => $this->faker->imageUrl(640, 480, 'business'),
+            'store_id' => $this->faker->imageUrl(640, 480, 'business'),
             'phone' => $this->faker->phoneNumber,
             'email' => $this->faker->companyEmail,
             'state_id' => '8b9a382f-f3f7-49ef-8068-20fb4e321252', 

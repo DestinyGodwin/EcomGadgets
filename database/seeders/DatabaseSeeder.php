@@ -30,10 +30,11 @@ class DatabaseSeeder extends Seeder
         NigeriaStatesLgasSeeder::class,
         SubscriptionPlanSeeder::class,
         CategorySeeder::class,
+            AdvertPlanSeeder::class,
         DummyAdvertSeeder::class,
         FeaturedProductPlanSeeder::class,
-        AdvertPlanSeeder::class,
         SettingSeeder::class,
+        ProductSeeder::class,
         
     ]);
     }

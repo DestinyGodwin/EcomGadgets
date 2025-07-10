@@ -57,6 +57,7 @@ Route::prefix('v1/')->group(function () {
         });
           Route::post('/stores/{store}/approve', [AdminStoreController::class, 'approve']);
           Route::post('/stores/{store}/decline', [AdminStoreController::class, 'decline']);
+          Route::post('/stores/{store}/deactivate', [AdminStoreController::class, 'deactivate']);
         Route::prefix('settings')->group(function () {
             Route::get('/', [SettingsController::class, 'index']);
             Route::post('/', [SettingsController::class, 'store']);
@@ -152,8 +153,9 @@ Route::prefix('v1/')->group(function () {
         });
          Route::prefix('reviews')->group(function () {
             Route::post('/', [ReviewController::class, 'store']);
+               Route::put('/{id}', [ReviewController::class, 'update']);
             Route::delete('/{id}', [ReviewController::class, 'destroy']);
-            Route::put('/reviews/{id}', [ReviewController::class, 'update']);
+         
 
         });
     });

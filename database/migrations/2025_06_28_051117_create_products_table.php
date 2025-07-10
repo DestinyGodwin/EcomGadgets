@@ -23,7 +23,7 @@ return new class extends Migration
             $table->decimal('price', 10, 2);
             $table->decimal('wholesale_price', 10, 2);
             $table->boolean('is_featured')->default(false);
-           $table->timestamp('featured_expires_at')->nullable();
+            $table->timestamp('featured_expires_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

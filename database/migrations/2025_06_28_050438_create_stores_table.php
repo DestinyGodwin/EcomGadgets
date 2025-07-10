@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->timestamp('subscription_expires_at')->nullable();
             $table->boolean('is_active')->default(true);
-            $table->enum('status', ['pending', 'approved', 'banned', 'declined'])->default('pending')->after('is_active');
+            $table->enum('status', ['pending', 'approved', 'banned', 'declined'])->default('pending');
             $table->softDeletes();
             $table->timestamps();
         });
