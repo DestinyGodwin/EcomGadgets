@@ -55,10 +55,13 @@ Route::prefix('v1/')->group(function () {
             Route::put('/featured-plans/{featuredProductPlan}', 'update');
             Route::delete('/featured-plans/{featuredProductPlan}', 'destroy');
         });
-          Route::post('/stores/{store}/approve', [AdminStoreController::class, 'approve']);
-          Route::post('/stores/{store}/decline', [AdminStoreController::class, 'decline']);
-          Route::post('/stores/{store}/deactivate', [AdminStoreController::class, 'deactivate']);
-          Route::post('/stores/{store}/reactivate', [AdminStoreController::class, 'reactivate']);
+        Route::prefix('/stores')->controller(StoreController::class)->group(function () {
+    Route::post('{store}/approve', 'approve');
+    Route::post('{store}/decline', 'decline');
+    Route::post('{store}/deactivate', 'deactivate');
+    Route::post('{store}/reactivate', 'reactivate');
+    Route::get('{store}', 'show'); 
+});
 
         Route::prefix('settings')->group(function () {
             Route::get('/', [SettingsController::class, 'index']);

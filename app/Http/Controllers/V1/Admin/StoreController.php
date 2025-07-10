@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1\Admin;
 use App\Models\Store;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\V1\Admin\AdminStoreResource;
 use App\Notifications\V1\Stores\StoreApprovedNotification;
 use App\Notifications\V1\Stores\StoreDeclinedNotification;
 use App\Notifications\V1\Stores\StoreDeactivatedNotification;
@@ -56,5 +57,9 @@ class StoreController extends Controller
         ]);
         $store->user->notify(new StoreReactivatedNotification($store, $request->message));
         return response()->json(['message' => 'Store has been reactivated and user notified.']);
+    }
+    public function show(Store $store)
+    {
+        return new AdminStoreResource($store);
     }
 }
