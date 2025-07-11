@@ -95,4 +95,5 @@ class Product extends Model
         return $this->wishlists()->where('user_id', $user->id)->exists();
     }
 
+
 }

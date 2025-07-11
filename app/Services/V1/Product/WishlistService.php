@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\V1\Product;
 
+use App\Models\ProductWishlist;
 use App\Models\Wishlist;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,6 +17,7 @@ class WishlistService
 
     public function add(array $data): Wishlist
     {
+        
         return Wishlist::firstOrCreate([
             'user_id'    => Auth::id(),
             'product_id' => $data['product_id'],
