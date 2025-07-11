@@ -1,32 +1,32 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\V1\PaymentController;
+use App\Http\Controllers\V1\Admin\AdminCategoryController;
+use App\Http\Controllers\V1\Admin\AdminTransactionController;
+use App\Http\Controllers\V1\Admin\AdvertPlanController;
+use App\Http\Controllers\V1\Admin\DummyAdvertBookingController;
+use App\Http\Controllers\V1\Admin\FeaturedProductPlanController;
+use App\Http\Controllers\V1\Admin\NotifyingController;
+use App\Http\Controllers\V1\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\V1\Admin\SettingsController;
+use App\Http\Controllers\V1\Admin\StoreController as AdminStoreController;
+use App\Http\Controllers\V1\Admin\SubscriptionPlanController;
+use App\Http\Controllers\V1\Admin\UserController;
+use App\Http\Controllers\V1\AdvertBookingController;
+use App\Http\Controllers\V1\Auth\AuthController;
 use App\Http\Controllers\V1\CategoryController;
 use App\Http\Controllers\V1\LocationController;
-use App\Http\Controllers\V1\Auth\AuthController;
-use App\Http\Controllers\V1\Admin\UserController;
-use App\Http\Controllers\V1\TransactionController;
 use App\Http\Controllers\V1\NotificationController;
-use App\Http\Controllers\V1\Stores\StoreController;
-use App\Http\Controllers\V1\AdvertBookingController;
-use App\Http\Controllers\V1\Admin\SettingsController;
-use App\Http\Controllers\V1\PaymentWebhookController;
-use App\Http\Controllers\V1\Product\ReviewController;
-use App\Http\Controllers\V1\Admin\NotifyingController;
-use App\Http\Controllers\V1\Product\ProductController;
-use App\Http\Controllers\V1\Admin\AdvertPlanController;
-use App\Http\Controllers\V1\Product\WishlistController;
-use App\Http\Controllers\V1\Admin\AdminCategoryController;
+use App\Http\Controllers\V1\PaymentController;
 use App\Http\Controllers\V1\PaymentVerificationController;
-use App\Http\Controllers\V1\Admin\AdminTransactionController;
-use App\Http\Controllers\V1\Admin\SubscriptionPlanController;
-use App\Http\Controllers\V1\Admin\DummyAdvertBookingController;
+use App\Http\Controllers\V1\PaymentWebhookController;
+use App\Http\Controllers\V1\Product\ProductAnalyticsController;
+use App\Http\Controllers\V1\Product\ProductController;
+use App\Http\Controllers\V1\Product\ReviewController;
+use App\Http\Controllers\V1\Product\WishlistController;
+use App\Http\Controllers\V1\Stores\StoreController;
 use App\Http\Controllers\V1\Stores\StoreSubscriptionController;
-use App\Http\Controllers\V1\Admin\FeaturedProductPlanController;
-use App\Http\Controllers\V1\Admin\ProductController as AdminProductController;
-use App\Http\Controllers\V1\Admin\StoreController as AdminStoreController;
+use App\Http\Controllers\V1\TransactionController;
+use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1/')->group(function () {
     Route::prefix('auth')->group(function () {
@@ -50,18 +50,20 @@ Route::prefix('v1/')->group(function () {
             Route::put('subscriptions/{subscription_plan}', 'update');
             Route::delete('subscriptions/{subscription_plan}', 'destroy');
         });
-        Route::controller(FeaturedProductPlanController::class)->group( function (){
+        Route::controller(FeaturedProductPlanController::class)->group(function () {
             Route::post('/featured-plans', 'store');
             Route::put('/featured-plans/{featuredProductPlan}', 'update');
             Route::delete('/featured-plans/{featuredProductPlan}', 'destroy');
         });
         Route::prefix('/stores')->controller(AdminStoreController::class)->group(function () {
-    Route::post('{store}/approve', 'approve');
-    Route::post('{store}/decline', 'decline');
-    Route::post('{store}/deactivate', 'deactivate');
-    Route::post('{store}/reactivate', 'reactivate');
-    Route::get('{store}', 'show'); 
-});
+            Route::get('/', 'index');
+            Route::get('/search', 'search'); 
+            Route::post('{store}/approve', 'approve');
+            Route::post('{store}/decline', 'decline');
+            Route::post('{store}/deactivate', 'deactivate');
+            Route::post('{store}/reactivate', 'reactivate');
+            Route::get('{store}', 'show');
+        });
 
         Route::prefix('settings')->group(function () {
             Route::get('/', [SettingsController::class, 'index']);
@@ -76,10 +78,10 @@ Route::prefix('v1/')->group(function () {
             Route::get('users/search', 'search');
         });
         Route::prefix('/products')->group(function () {
-    Route::get('/', [AdminProductController::class, 'index']);
-    Route::get('/filter', [AdminProductController::class, 'filter']); 
-    Route::get('/{product}', [AdminProductController::class, 'show']);
-});
+            Route::get('/', [AdminProductController::class, 'index']);
+            Route::get('/filter', [AdminProductController::class, 'filter']);
+            Route::get('/{product}', [AdminProductController::class, 'show']);
+        });
         Route::prefix('/transactions')->group(function () {
             Route::get('/', [AdminTransactionController::class, 'index']);
             Route::get('/{id}', [AdminTransactionController::class, 'show']);
@@ -156,11 +158,10 @@ Route::prefix('v1/')->group(function () {
             Route::get('/wishlist/{productId}', 'show');
             Route::delete('/wishlist/{productId}', 'destroy');
         });
-         Route::prefix('reviews')->group(function () {
+        Route::prefix('reviews')->group(function () {
             Route::post('/', [ReviewController::class, 'store']);
-               Route::put('/{id}', [ReviewController::class, 'update']);
+            Route::put('/{id}', [ReviewController::class, 'update']);
             Route::delete('/{id}', [ReviewController::class, 'destroy']);
-         
 
         });
     });
@@ -173,6 +174,12 @@ Route::prefix('v1/')->group(function () {
         Route::get('products/by-lga', 'byLga');
         Route::get('products/{product}', 'show');
     });
+    Route::prefix('/analytics/{product}')->group(function () {
+        Route::get('/views', [ProductAnalyticsController::class, 'viewCount']);
+        Route::get('/wishlists', [ProductAnalyticsController::class, 'wishlistCount']);
+        Route::get('/total', [ProductAnalyticsController::class, 'totalCount']);
+    });
+
     Route::get('stores', [StoreController::class, 'index']);
     Route::get('stores/search', [StoreController::class, 'search']);
     Route::get('stores/{store}', [StoreController::class, 'show']);

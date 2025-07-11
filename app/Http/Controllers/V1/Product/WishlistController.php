@@ -1,12 +1,14 @@
 <?php
-
 namespace App\Http\Controllers\V1\Product;
 
-use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
-use App\Services\V1\Product\WishlistService;
-use App\Http\Resources\V1\Product\WishlistResource;
 use App\Http\Requests\V1\Product\StoreWishlistRequest;
+use App\Http\Resources\V1\Product\WishlistResource;
+use App\Models\Product;
+use App\Models\ProductWishlist;
+use App\Services\V1\Product\WishlistService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class WishlistController extends Controller
 {
@@ -31,7 +33,17 @@ class WishlistController extends Controller
      */
     public function store(StoreWishlistRequest $request): WishlistResource
     {
+
         $wishlistItem = $this->wishlistService->add($request->validated());
+
+        $product = Product::findOrFail($request->product_id);
+
+        if ($product->is_featured) {
+            ProductWishlist::firstOrCreate([
+                'product_id' => $product->id,
+                'user_id'    => Auth::user()->id(),
+            ]);
+        }
         return new WishlistResource($wishlistItem);
     }
 
@@ -49,7 +61,7 @@ class WishlistController extends Controller
         return response()->json(['message' => 'Product removed from wishlist']);
     }
 
-    public function show($productId): WishlistResource|JsonResponse
+    public function show($productId): WishlistResource | JsonResponse
     {
         $wishlistItem = $this->wishlistService->show($productId);
 

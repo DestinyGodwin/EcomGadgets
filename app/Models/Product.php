@@ -90,6 +90,7 @@ class Product extends Model
         return $this->wishlists()->count();
     }
 
+
     public function isWishlistedBy(User $user)
     {
         return $this->wishlists()->where('user_id', $user->id)->exists();

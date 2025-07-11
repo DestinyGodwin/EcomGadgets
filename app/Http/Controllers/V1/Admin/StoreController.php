@@ -5,14 +5,18 @@ use App\Models\Store;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
+use App\Services\V1\Stores\StoreService;
 use App\Mail\V1\Stores\StoreDeclinedMail;
 use App\Mail\V1\Stores\StoreDeactivatedMail;
 use App\Mail\V1\Stores\StoreReactivatedMail;
+use App\Http\Resources\V1\Stores\StoreResource;
+use App\Http\Requests\V1\Stores\StoreSearchRequest;
 use App\Http\Resources\V1\Admin\AdminStoreResource;
 use App\Notifications\V1\Stores\StoreApprovedNotification;
 
 class StoreController extends Controller
 {
+            public function __construct(protected StoreService $storeService) {}
     public function approve(Store $store)
     {
         $store->update(['status' => 'approved', 'is_active' => true]);
@@ -63,4 +67,20 @@ Mail::to($store->user->email)->send(new StoreReactivatedMail($store, $request->m
     {
         return new AdminStoreResource($store);
     }
+
+    public function index(Request $request)
+{
+    $perPage = $request->get('per_page', 10); 
+    $stores = Store::paginate($perPage);
+    return StoreResource::collection($stores);
+       
+}
+public function search(StoreSearchRequest $request)
+{
+    $query = $request->validated()['q'];
+
+    $stores = $this->storeService->searchStores($query);
+
+    return StoreResource::collection($stores);
+}
 }

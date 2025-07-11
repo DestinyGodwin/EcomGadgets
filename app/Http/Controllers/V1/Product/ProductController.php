@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1\Product;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use App\Services\V1\Product\ProductService;
 use App\Http\Resources\V1\Product\ProductResource;
@@ -32,7 +33,6 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
-         
        $product->load(['images', 'store', 'reviews.user']);
          $this->analyticsService->trackView($product);
        return new ViewProductResource($product);

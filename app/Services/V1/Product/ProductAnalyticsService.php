@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Services\V1\Product;
 
 use App\Models\Product;
@@ -15,30 +14,35 @@ class ProductAnalyticsService
      */
     public function trackView(Product $product): void
     {
-        if (!$product->is_featured) return;
+        if (! $product->is_featured) {
+            return;
+        }
 
         $fingerprint = $this->generateFingerprint();
-        $cacheKey = "viewed:product:{$product->id}:{$fingerprint}";
+        $cacheKey    = "viewed:product:{$product->id}:{$fingerprint}";
 
-        if (!Cache::has($cacheKey)) {
-            ProductView::create([
-                'product_id' => $product->id,
-                'user_id' => Auth::user()->id(),
-                'ip_address' => request()->ip(),
-                'user_agent' => request()->userAgent(),
-            ]);
+        if (! Cache::has($cacheKey)) {
+       ProductView::create([
+    'product_id' => $product->id,
+    'user_id'    => Auth::check() ? Auth::id() : null,
+    'ip_address' => request()->ip(),
+    'user_agent' => request()->userAgent(),
+]);
 
             Cache::put($cacheKey, true, now()->addHour());
         }
     }
 
-    public function addToWishlist(Product $product): ProductWishlist|null
+    public function addToWishlist(Product $product): ProductWishlist | null
     {
-        if (!$product->is_featured) return null;
+        if (! $product->is_featured) {
+            return null;
+        }
 
         return ProductWishlist::firstOrCreate([
             'product_id' => $product->id,
-            'user_id' => Auth::user()->id(),
+           'user_id'    => Auth::user()->id(),
+
         ]);
     }
 
@@ -57,4 +61,5 @@ class ProductAnalyticsService
         $deviceId = request()->header('X-Device-ID');
         return sha1(($deviceId ?? request()->ip()) . '|' . request()->userAgent());
     }
+
 }

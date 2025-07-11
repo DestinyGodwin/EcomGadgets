@@ -23,4 +23,16 @@ class ProductAnalyticsController extends Controller
         $count = $this->analyticsService->getWishlistCount($product);
         return response()->json(['wishlists' => $count]);
     }
+     public function totalCount(Product $product)
+    {
+        $views = $this->analyticsService->getViewCount($product);
+        $wishlists = $this->analyticsService->getWishlistCount($product);
+        $total = $views + $wishlists;
+
+        return response()->json([
+            'views' => $views,
+            'wishlists' => $wishlists,
+            'total' => $total
+        ]);
+    }
 }
