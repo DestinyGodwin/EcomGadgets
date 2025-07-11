@@ -3,14 +3,13 @@
 namespace App\Http\Controllers\V1\Product;
 
 use App\Models\Product;
-use App\Models\ProductView;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use App\Services\V1\Product\ProductService;
 use App\Http\Resources\V1\Product\ProductResource;
 use App\Http\Resources\V1\Product\MyProductResource;
+use App\Services\V1\Product\ProductAnalyticsService;
 use App\Http\Requests\V1\Product\StoreProductRequest;
 use App\Http\Requests\V1\Product\SearchProductRequest;
 use App\Http\Requests\V1\Product\UpdateProductRequest;
@@ -20,7 +19,7 @@ class ProductController extends Controller
 {
     protected ProductService $productService;
 
-    public function __construct(ProductService $productService)
+    public function __construct(ProductService $productService, protected ProductAnalyticsService $analyticsService)
     {
         $this->productService = $productService;
     }
@@ -32,15 +31,10 @@ class ProductController extends Controller
     }
 
     public function show(Product $product)
-    {ProductView::create([
-        'product_id' => $product->id,
-        'user_id' => Auth::user()->id(),              
-        'ip_address' => request()->ip(),
-        'user_agent' => request()->userAgent(),
-    ]);
+    {
          
        $product->load(['images', 'store', 'reviews.user']);
-
+         $this->analyticsService->trackView($product);
        return new ViewProductResource($product);
     }
 
