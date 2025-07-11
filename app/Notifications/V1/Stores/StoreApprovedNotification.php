@@ -7,7 +7,6 @@ use Illuminate\Bus\Queueable;
 use App\Mail\V1\Stores\StoreApprovedMail;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 
 class StoreApprovedNotification extends Notification implements ShouldQueue
 {

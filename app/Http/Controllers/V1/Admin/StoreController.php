@@ -1,14 +1,15 @@
 <?php
 namespace App\Http\Controllers\V1\Admin;
 
-use App\Models\Store;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\Admin\AdminStoreResource;
+use App\Mail\V1\Stores\StoreDeclinedMail;
+use App\Models\Store;
 use App\Notifications\V1\Stores\StoreApprovedNotification;
-use App\Notifications\V1\Stores\StoreDeclinedNotification;
 use App\Notifications\V1\Stores\StoreDeactivatedNotification;
 use App\Notifications\V1\Stores\StoreReactivatedNotification;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class StoreController extends Controller
 {
@@ -26,7 +27,7 @@ class StoreController extends Controller
         ]);
 
         $store->update(['status' => 'declined']);
-        $store->user->notify(new StoreDeclinedNotification($store, $request->reason));
+        Mail::to($store->user->email)->send(new StoreDeclinedMail($store, $request->reason));
         return response()->json(['message' => 'Store declined with message sent.']);
     }
 

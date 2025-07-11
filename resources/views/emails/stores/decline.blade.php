@@ -29,16 +29,16 @@
     </div>
     <div class="body">
       <h2>Hello, {{ $storeOwner }}!</h2>
-      <p>Unfortunately, your store <span class="highlight">"{{ $store->store_name }}"</span> has been declined.</p>
+      <p>Unfortunately, your store <span class="highlight">"{{ $store->store_name }}"</span> was declined by our review team.</p>
       <p><strong>Reason:</strong> {{ $reason }}</p>
-      <p>You can edit and resubmit your store details for a new review.</p>
+      <p>Please update your store details accordingly and resubmit for approval.</p>
       <div>
-        <a href="{{ url('/store/edit/' . $store->slug) }}" class="cta-button">Edit and Resubmit</a>
+        <a href="{{ $ctaUrl }}" class="cta-button">Edit and Resubmit</a>
       </div>
-      <p style="margin-top: 30px;">If you have any questions, feel free to contact our support team.</p>
+      <p style="margin-top: 30px;">If you need assistance, feel free to reach out to our support team.</p>
       <p style="margin-top: 10px;">
-        📧 Email us at <a href="mailto:support@strapre.com" class="highlight">support@strapre.com</a><br />
-        🔒 Always access your account via <strong>strapre.com</strong>
+        📧 Email: <a href="mailto:support@strapre.com" class="highlight">support@strapre.com</a><br />
+        🔒 Visit: <strong>strapre.com</strong>
       </p>
     </div>
     <div class="footer">
