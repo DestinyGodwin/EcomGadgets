@@ -7,9 +7,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\V1\Stores\StoreDeclinedMail;
 use App\Mail\V1\Stores\StoreDeactivatedMail;
+use App\Mail\V1\Stores\StoreReactivatedMail;
 use App\Http\Resources\V1\Admin\AdminStoreResource;
 use App\Notifications\V1\Stores\StoreApprovedNotification;
-use App\Notifications\V1\Stores\StoreReactivatedNotification;
 
 class StoreController extends Controller
 {
@@ -56,7 +56,7 @@ Mail::to($store->user->email)->send(new StoreDeactivatedMail($store, $request->m
             'is_active' => true,
             'status'    => $store->status === 'banned' ? 'approved' : $store->status,
         ]);
-        $store->user->notify(new StoreReactivatedNotification($store, $request->message));
+Mail::to($store->user->email)->send(new StoreReactivatedMail($store, $request->message));
         return response()->json(['message' => 'Store has been reactivated and user notified.']);
     }
     public function show(Store $store)
