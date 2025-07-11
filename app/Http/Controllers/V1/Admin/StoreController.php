@@ -88,6 +88,6 @@ class StoreController extends Controller
     public function pending(Request $request)
     {
         $stores = Store::where('status', 'pending')->paginate();
-        return StoreResource::collection($stores);        -
+        return StoreResource::collection($stores);    
     }
 }
