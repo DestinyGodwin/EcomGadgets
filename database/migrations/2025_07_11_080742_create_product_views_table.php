@@ -12,8 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('product_views', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+          $table->uuid('id')->primary();
+          $table->foreignUuid('product_id')->constrained()->onDelete('cascade');
+          $table->foreignUuid('user_id')->nullable()->constrained()->onDelete('set null');
+          $table->ipAddress('ip_address')->nullable();        
+          $table->string('user_agent')->nullable();            
+          $table->timestamps();
         });
     }
 
