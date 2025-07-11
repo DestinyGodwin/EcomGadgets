@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Services\V1\Product;
 
 use App\Models\Wishlist;
@@ -16,19 +15,19 @@ class WishlistService
     }
 
     public function add(array $data): Wishlist
-{
-    return Wishlist::firstOrCreate([
-        'user_id' => Auth::id(),
-        'product_id' => $data['product_id'],
-    ]);
-}
+    {
+        return Wishlist::firstOrCreate([
+            'user_id'    => Auth::id(),
+            'product_id' => $data['product_id'],
+        ]);
+    }
 
     public function remove($productId): bool
-{
-    return Wishlist::where('user_id', Auth::id())
-        ->where('product_id', $productId)
-        ->delete() > 0;
-}
+    {
+        return Wishlist::where('user_id', Auth::id())
+            ->where('product_id', $productId)
+            ->delete() > 0;
+    }
 
     public function list()
     {
@@ -37,11 +36,11 @@ class WishlistService
             ->paginate();
     }
     public function show($productId)
-{
-    return Wishlist::with('product')
-        ->where('user_id', Auth::id())
-        ->where('product_id', $productId)
-        ->first();
-}
+    {
+        return Wishlist::with('product')
+            ->where('user_id', Auth::id())
+            ->where('product_id', $productId)
+            ->first();
+    }
 
 }
