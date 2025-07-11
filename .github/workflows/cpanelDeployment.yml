@@ -1,81 +1,31 @@
 
-# on:
-#   push:
-#     branches:
-#       - main
-
-# name: 🚀 Deploy website on push
-
-# jobs:
-#   web-deploy:
-#     name: 🎉 Deploy
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       - name: 🚚 Get latest code
-#         uses: actions/checkout@v3
-
-#       # Optional: Build step if using static site generators
-#       # - name: 🔧 Build site
-#       #   run: npm install && npm run build
-
-#       - name: 📂 Sync files
-#         uses: SamKirkland/FTP-Deploy-Action@4.3.3
-#         with:
-#           server: ${{ secrets.FTP_SERVER }}
-#           username: ${{ secrets.FTP_USERNAME }}
-#           password: ${{ secrets.FTP_PASSWORD }}
-#           port: 1624
-#           # local-dir: ./build   # if you have a build step
-#           dangerous-clean-slate: false  # optional
-
-
-name: Deploy Laravel App to cPanel
-
 on:
   push:
     branches:
       - main
 
+name: 🚀 Deploy website on push
+
 jobs:
-  deploy:
+  web-deploy:
+    name: 🎉 Deploy
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: 🚚 Get latest code
         uses: actions/checkout@v3
 
-      - name: Set DEPLOYPATH
-        run: echo "DEPLOYPATH=/home/gkzxhmso/repositories/EcomGadgets" >> $GITHUB_ENV
+      # Optional: Build step if using static site generators
+      # - name: 🔧 Build site
+      #   run: npm install && npm run build
 
-      - name: Copy project files to cPanel (via FTP or SSH)
-        uses: SamKirkland/FTP-Deploy-Action@v4
+      - name: 📂 Sync files
+        uses: SamKirkland/FTP-Deploy-Action@4.3.3
         with:
-           server: ${{ secrets.CPANEL_FTP_SERVER }}
-           username: ${{ secrets.CPANEL_FTP_USERNAME }}
-           password: ${{ secrets.CPANEL_FTP_PASSWORD }}
-          local-dir: ./
-          server-dir: ${{ env.DEPLOYPATH }}
-          exclude: |
-            .git*
-            node_modules/
-            tests/
-            .env
-            storage/
-            vendor/
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 1624
+          # local-dir: ./build   # if you have a build step
+          dangerous-clean-slate: false  # optional
 
-      - name: SSH into server and run Laravel post-deployment commands
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-           server: ${{ secrets.CPANEL_FTP_SERVER }}
-           username: ${{ secrets.CPANEL_FTP_USERNAME }}
-           password: ${{ secrets.CPANEL_FTP_PASSWORD }}
-          port: 22
-          script: |
-            cd $DEPLOYPATH
-            cp .env.production .env
-            composer install --no-dev --optimize-autoloader
-            php artisan migrate --force
-            php artisan config:cache
-            php artisan route:cache
-            php artisan view:cache
