@@ -17,6 +17,7 @@ class MyStoreResource extends JsonResource
             'id'                      => $this->id,
             'store_name'              => $this->store_name,
             'store_description'       => $this->store_description,
+            'slug' => $this->slug,
             'phone'                   => $this->phone,
             'email'                   => $this->email,
             'address'                 => $this->address,
