@@ -1,15 +1,15 @@
 <?php
 namespace App\Http\Controllers\V1\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\V1\Admin\AdminStoreResource;
-use App\Mail\V1\Stores\StoreDeclinedMail;
 use App\Models\Store;
-use App\Notifications\V1\Stores\StoreApprovedNotification;
-use App\Notifications\V1\Stores\StoreDeactivatedNotification;
-use App\Notifications\V1\Stores\StoreReactivatedNotification;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\V1\Stores\StoreDeclinedMail;
+use App\Mail\V1\Stores\StoreDeactivatedMail;
+use App\Http\Resources\V1\Admin\AdminStoreResource;
+use App\Notifications\V1\Stores\StoreApprovedNotification;
+use App\Notifications\V1\Stores\StoreReactivatedNotification;
 
 class StoreController extends Controller
 {
@@ -41,7 +41,7 @@ class StoreController extends Controller
         }
         $store->update(['is_active' => false, 'status' => 'banned']);
 
-        $store->user->notify(new StoreDeactivatedNotification($store, $request->message));
+Mail::to($store->user->email)->send(new StoreDeactivatedMail($store, $request->message));
         return response()->json(['message' => 'Store deactivated and user notified.']);
     }
     public function reactivate(Request $request, Store $store)
