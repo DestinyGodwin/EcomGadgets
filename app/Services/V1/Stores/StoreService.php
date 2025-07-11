@@ -7,10 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use App\Mail\V1\Stores\StoreUnderReviewMail;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
 use App\Mail\V1\Admin\NewStoreAwaitingApprovalMail;
-use App\Notifications\V1\Admin\NewStoreAwaitingApprovalNotification;
 
 class StoreService
 {
@@ -162,8 +160,8 @@ class StoreService
         ];
 
         $store->update($updateData);
-        Notification::route('mail', config('mail.admin_email'))
-            ->notify(new NewStoreAwaitingApprovalNotification($store));
+         Mail::to(config('mail.admin_email'))->send(new NewStoreAwaitingApprovalMail($store));
+
 
         return $store;
 

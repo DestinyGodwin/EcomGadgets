@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Mail\V1\Admin;
+namespace App\Mail\V1\Stores;
 
 use App\Models\Store;
 use Illuminate\Bus\Queueable;
@@ -10,27 +10,31 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class NewStoreAwaitingApprovalMail extends Mailable implements ShouldQueue
+class StoreDeactivatedMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    public function __construct(public Store $store) {}
+    public function __construct(
+        public Store $store,
+        public string $reason
+    ) {}
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'New Store Pending Approval'
+            subject: 'Your Store Has Been Deactivated',
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'emails.admin.new_store_pending',
+            view: 'emails.stores.deactivated',
             with: [
-                'store' => $this->store,
                 'storeOwner' => $this->store->user->first_name ?? 'Vendor',
-                'reviewUrl' => url("/admin/stores/{$this->store->slug}")
+                'store' => $this->store,
+                'reason' => $this->reason,
+                'supportUrl' => url('/support')
             ]
         );
     }
