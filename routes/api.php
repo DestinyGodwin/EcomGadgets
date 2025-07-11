@@ -58,6 +58,7 @@ Route::prefix('v1/')->group(function () {
         Route::prefix('/stores')->controller(AdminStoreController::class)->group(function () {
             Route::get('/', 'index');
             Route::get('/search', 'search'); 
+            Route::get('/pending', 'pending');
             Route::post('{store}/approve', 'approve');
             Route::post('{store}/decline', 'decline');
             Route::post('{store}/deactivate', 'deactivate');
