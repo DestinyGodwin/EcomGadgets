@@ -22,12 +22,12 @@ class ProductAnalyticsService
         $cacheKey    = "viewed:product:{$product->id}:{$fingerprint}";
 
         if (! Cache::has($cacheKey)) {
-       ProductView::create([
-    'product_id' => $product->id,
-    'user_id'    => Auth::check() ? Auth::id() : null,
-    'ip_address' => request()->ip(),
-    'user_agent' => request()->userAgent(),
-]);
+            ProductView::create([
+                'product_id' => $product->id,
+                'user_id'    => Auth::check() ? Auth::user()->id : null,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+            ]);
 
             Cache::put($cacheKey, true, now()->addHour());
         }
@@ -41,7 +41,7 @@ class ProductAnalyticsService
 
         return ProductWishlist::firstOrCreate([
             'product_id' => $product->id,
-           'user_id'    => Auth::user()->id(),
+            'user_id'    => Auth::user()->id,
 
         ]);
     }

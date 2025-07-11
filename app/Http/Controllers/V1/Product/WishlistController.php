@@ -41,7 +41,7 @@ class WishlistController extends Controller
         if ($product->is_featured) {
             ProductWishlist::firstOrCreate([
                 'product_id' => $product->id,
-                'user_id'    => Auth::user()->id(),
+                'user_id'    => Auth::user()->id,
             ]);
         }
         return new WishlistResource($wishlistItem);
