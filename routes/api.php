@@ -130,6 +130,7 @@ Route::prefix('v1/')->group(function () {
         });
         Route::controller(ProductController::class)->group(function () {
             Route::post('products', 'store');
+            Route::get('my-featured', 'myFeaturedProducts');
             Route::get('my-products', 'myProducts');
             Route::get('my-products/{product}', 'showMy');
             Route::put('products/{product}', 'update');

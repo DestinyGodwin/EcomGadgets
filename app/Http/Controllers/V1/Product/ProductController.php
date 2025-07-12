@@ -1,20 +1,18 @@
 <?php
-
 namespace App\Http\Controllers\V1\Product;
 
-use App\Models\Product;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
-use App\Services\V1\Product\ProductService;
-use App\Http\Resources\V1\Product\ProductResource;
-use App\Http\Resources\V1\Product\MyProductResource;
-use App\Services\V1\Product\ProductAnalyticsService;
-use App\Http\Requests\V1\Product\StoreProductRequest;
 use App\Http\Requests\V1\Product\SearchProductRequest;
+use App\Http\Requests\V1\Product\StoreProductRequest;
 use App\Http\Requests\V1\Product\UpdateProductRequest;
+use App\Http\Resources\V1\Product\MyProductResource;
+use App\Http\Resources\V1\Product\ProductResource;
 use App\Http\Resources\V1\Product\ViewProductResource;
+use App\Models\Product;
+use App\Services\V1\Product\ProductAnalyticsService;
+use App\Services\V1\Product\ProductService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class ProductController extends Controller
 {
@@ -33,9 +31,9 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
-       $product->load(['images', 'store', 'reviews.user']);
-         $this->analyticsService->trackView($product);
-       return new ViewProductResource($product);
+        $product->load(['images', 'store', 'reviews.user']);
+        $this->analyticsService->trackView($product);
+        return new ViewProductResource($product);
     }
 
     public function store(StoreProductRequest $request)
@@ -46,27 +44,27 @@ class ProductController extends Controller
 
     public function update(UpdateProductRequest $request, Product $product)
     {
-                Gate::authorize('update', $product);
+        Gate::authorize('update', $product);
         $product = $this->productService->update($product, $request->validated());
         return new ProductResource($product);
     }
 
     public function destroy(Product $product)
     {
-                        Gate::authorize('delete', $product);
+        Gate::authorize('delete', $product);
         $this->productService->delete($product);
         return response()->json(['message' => 'Product deleted successfully.']);
     }
 
-       public function byCategory(Request $request, string $categoryId)
-{
-    $stateId = $request->query('state_id');
-    $lgaId = $request->query('lga_id');
+    public function byCategory(Request $request, string $categoryId)
+    {
+        $stateId = $request->query('state_id');
+        $lgaId   = $request->query('lga_id');
 
-    $products = $this->productService->getByCategory($categoryId, $stateId, $lgaId);
+        $products = $this->productService->getByCategory($categoryId, $stateId, $lgaId);
 
-    return ProductResource::collection($products);
-}
+        return ProductResource::collection($products);
+    }
 
     public function byBrand(string $brand)
     {
@@ -75,7 +73,7 @@ class ProductController extends Controller
     }
     public function search(SearchProductRequest $request)
     {
-        $filters = $request->validated();
+        $filters  = $request->validated();
         $products = $this->productService->search($filters);
 
         return ProductResource::collection($products);
@@ -92,32 +90,39 @@ class ProductController extends Controller
         return ProductResource::collection($products);
     }
     public function byState(Request $request)
-{
-    $request->validate([
-        'state_id' => 'required|exists:states,id',
-    ]);
+    {
+        $request->validate([
+            'state_id' => 'required|exists:states,id',
+        ]);
 
-    $products = $this->productService->getByState($request->state_id);
-    return ProductResource::collection($products);
-}
+        $products = $this->productService->getByState($request->state_id);
+        return ProductResource::collection($products);
+    }
 
-public function byLga(Request $request)
-{
-    $request->validate([
-        'lga_id' => 'required|exists:lgas,id',
-    ]);
+    public function byLga(Request $request)
+    {
+        $request->validate([
+            'lga_id' => 'required|exists:lgas,id',
+        ]);
 
-    $products = $this->productService->getByLga($request->lga_id);
-    return ProductResource::collection($products);
-}
+        $products = $this->productService->getByLga($request->lga_id);
+        return ProductResource::collection($products);
+    }
 
-    public function myProducts(){
-       $products =  $this->productService->myProducts();
-       return MyProductResource::collection($products);
+    public function myProducts()
+    {
+        $products = $this->productService->myProducts();
+        return MyProductResource::collection($products);
     }
     public function showMy(string $productId)
     {
         return new MyProductResource($this->productService->find($productId));
+    }
+
+    public function myFeaturedProducts()
+    {
+        $products = $this->productService->myFeaturedProducts();
+        return MyProductResource::collection($products);
     }
 
 }

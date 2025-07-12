@@ -120,52 +120,52 @@ class ProductService
             ->orderByDesc('featured_expires_at')->latest()->paginate();
     }
 
-public function search(array $filters): LengthAwarePaginator
-{
-    $query = Product::with('store');
-    if (!empty($filters['search'])) {
-        $query->where(function ($q) use ($filters) {
-            $q->where('name', 'like', '%' . $filters['search'] . '%')
-              ->orWhere('brand', 'like', '%' . $filters['search'] . '%');
-        });
+    public function search(array $filters): LengthAwarePaginator
+    {
+        $query = Product::with('store');
+        if (! empty($filters['search'])) {
+            $query->where(function ($q) use ($filters) {
+                $q->where('name', 'like', '%' . $filters['search'] . '%')
+                    ->orWhere('brand', 'like', '%' . $filters['search'] . '%');
+            });
+        }
+        if (! empty($filters['state_id'])) {
+            $query->whereHas('store', function ($q) use ($filters) {
+                $q->where('state_id', $filters['state_id']);
+            });
+        }
+        if (! empty($filters['category_id'])) {
+            $query->where('category_id', $filters['category_id']);
+        }
+        if (! empty($filters['brand'])) {
+            $query->where('brand', 'like', '%' . $filters['brand'] . '%');
+        }
+        if (! empty($filters['min_price'])) {
+            $query->where('price', '>=', $filters['min_price']);
+        }
+        if (! empty($filters['max_price'])) {
+            $query->where('price', '<=', $filters['max_price']);
+        }
+        $query->orderByDesc('is_featured')
+            ->orderByDesc('featured_expires_at');
+        switch ($filters['sort_by'] ?? null) {
+            case 'price_asc':
+                $query->orderBy('price', 'asc');
+                break;
+            case 'price_desc':
+                $query->orderBy('price', 'desc');
+                break;
+            case 'name_asc':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'name_desc':
+                $query->orderBy('name', 'desc');
+                break;
+            default:
+                $query->orderBy('created_at', 'desc');
+        }
+        return $query->paginate(20);
     }
-    if (!empty($filters['state_id'])) {
-        $query->whereHas('store', function ($q) use ($filters) {
-            $q->where('state_id', $filters['state_id']);
-        });
-    }
-    if (!empty($filters['category_id'])) {
-        $query->where('category_id', $filters['category_id']);
-    }
-    if (!empty($filters['brand'])) {
-        $query->where('brand', 'like', '%' . $filters['brand'] . '%');
-    }
-    if (!empty($filters['min_price'])) {
-        $query->where('price', '>=', $filters['min_price']);
-    }
-    if (!empty($filters['max_price'])) {
-        $query->where('price', '<=', $filters['max_price']);
-    }
-    $query->orderByDesc('is_featured')
-          ->orderByDesc('featured_expires_at');
-    switch ($filters['sort_by'] ?? null) {
-        case 'price_asc':
-            $query->orderBy('price', 'asc');
-            break;
-        case 'price_desc':
-            $query->orderBy('price', 'desc');
-            break;
-        case 'name_asc':
-            $query->orderBy('name', 'asc');
-            break;
-        case 'name_desc':
-            $query->orderBy('name', 'desc');
-            break;
-        default:
-            $query->orderBy('created_at', 'desc');
-    }
-    return $query->paginate(20);
-}
 
     public function getByUserState(): LengthAwarePaginator
     {
@@ -206,7 +206,7 @@ public function search(array $filters): LengthAwarePaginator
 
     public function myProducts(): LengthAwarePaginator
     {
-        return Auth::user()->products()->latest()->paginate(20);
+        return Auth::user()->products()->latest()->paginate();
     }
 
     public function find(string $product): Product
@@ -239,4 +239,14 @@ public function search(array $filters): LengthAwarePaginator
     {
         return Product::with(['store', 'category'])->findOrFail($product);
     }
+    public function myFeaturedProducts(): LengthAwarePaginator
+{
+    return Auth::user()->products()
+        ->where('is_featured', true)
+        ->where(function ($query) {
+            $query->whereNull('featured_expires_at')
+                  ->orWhere('featured_expires_at', '>', now());
+        })->latest()->paginate();
+}
+
 }
