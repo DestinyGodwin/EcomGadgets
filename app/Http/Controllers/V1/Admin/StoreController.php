@@ -34,7 +34,7 @@ class StoreController extends Controller
         // $store->update(['status' => 'declined']);
 
         Mail::to($store->user->email)->send(new StoreDeclinedMail($store, $request->reason));
-        $store->delete();
+        $store->forceDelete();
         return response()->json(data: ['message' => 'Store declined with message sent.']);
     }
 
