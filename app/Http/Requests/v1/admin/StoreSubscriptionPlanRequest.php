@@ -22,7 +22,7 @@ class StoreSubscriptionPlanRequest extends FormRequest
     public function rules(): array
     {
         return [
-        'name' => ['required', 'string', 'max:255'],
+        'name' => ['required', 'string', 'max:255', 'unique:subscription_plans,name'],
         'price' => ['required', 'numeric', 'min:0'],
         'description' => ['required', 'string','min:3', 'max:255'],
         'duration_days' => ['required', 'integer', 'min:1'],

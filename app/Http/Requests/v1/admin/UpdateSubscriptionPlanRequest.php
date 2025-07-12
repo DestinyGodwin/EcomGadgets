@@ -2,6 +2,7 @@
 namespace App\Http\Requests\V1\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateSubscriptionPlanRequest extends FormRequest
 {
@@ -21,7 +22,7 @@ class UpdateSubscriptionPlanRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'          => ['sometimes', 'string', 'max:255'],
+            'name'          => ['sometimes', 'string', 'max:255',Rule::unique('subscription_plans', 'name')->ignore($this->route('subscription_plan'))],
             'price'         => ['sometimes', 'numeric', 'min:0'],
             'description'   => ['sometimes', 'string', 'min:3', 'max:255'],
             'duration_days' => ['sometimes', 'integer', 'min:1'],
