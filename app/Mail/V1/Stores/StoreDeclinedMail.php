@@ -38,7 +38,7 @@ class StoreDeclinedMail extends Mailable
                 'storeOwner' => $this->store->user->first_name ?? 'Vendor',
                 'store'      => $this->store,
                 'reason'     => $this->reason,
-                'ctaUrl'     => url("/store/edit/{$this->store->slug}"),
+                // 'ctaUrl'     => url("/store/edit/{$this->store->slug}"),
             ]
         );
     }

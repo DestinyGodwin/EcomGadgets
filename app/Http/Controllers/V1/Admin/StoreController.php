@@ -31,9 +31,11 @@ class StoreController extends Controller
             'reason' => ['required', 'string', 'min:5'],
         ]);
 
-        $store->update(['status' => 'declined']);
+        // $store->update(['status' => 'declined']);
+
         Mail::to($store->user->email)->send(new StoreDeclinedMail($store, $request->reason));
-        return response()->json(['message' => 'Store declined with message sent.']);
+        $store->delete();
+        return response()->json(data: ['message' => 'Store declined with message sent.']);
     }
 
     public function deactivate(Request $request, Store $store)
