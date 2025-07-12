@@ -141,6 +141,17 @@ class StoreService
 
     public function resubmit(Store $store, array $data): Store
     {
+           if ($store->store_image) {
+        Storage::disk('public')->delete($store->store_image);
+    }
+
+    if ($store->store_cac_image) {
+        Storage::disk('public')->delete($store->store_cac_image);
+    }
+
+    if ($store->store_id_image) {
+        Storage::disk('public')->delete($store->store_id_image);
+    }
         $storeImagePath = $data['store_image']->store('stores', 'public');
         $cacImagePath   = $data['store_cac_image']->store('stores/cac', 'public');
         $idImagePath    = $data['store_id_image']->store('stores/id', 'public');
