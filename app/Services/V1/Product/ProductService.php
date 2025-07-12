@@ -239,14 +239,15 @@ class ProductService
     {
         return Product::with(['store', 'category'])->findOrFail($product);
     }
-    public function myFeaturedProducts(): LengthAwarePaginator
+    public function myFeaturedProducts()
 {
     return Auth::user()->products()
         ->where('is_featured', true)
         ->where(function ($query) {
             $query->whereNull('featured_expires_at')
                   ->orWhere('featured_expires_at', '>', now());
-        })->latest()->paginate();
+        })->latest()->get();
 }
+
 
 }

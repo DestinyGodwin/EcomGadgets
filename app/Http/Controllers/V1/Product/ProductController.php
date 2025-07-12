@@ -1,18 +1,19 @@
 <?php
 namespace App\Http\Controllers\V1\Product;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\V1\Product\SearchProductRequest;
-use App\Http\Requests\V1\Product\StoreProductRequest;
-use App\Http\Requests\V1\Product\UpdateProductRequest;
-use App\Http\Resources\V1\Product\MyProductResource;
-use App\Http\Resources\V1\Product\ProductResource;
-use App\Http\Resources\V1\Product\ViewProductResource;
 use App\Models\Product;
-use App\Services\V1\Product\ProductAnalyticsService;
-use App\Services\V1\Product\ProductService;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
+use App\Services\V1\Product\ProductService;
+use App\Http\Resources\V1\Product\ProductResource;
+use App\Http\Resources\V1\Product\MyProductResource;
+use App\Services\V1\Product\ProductAnalyticsService;
+use App\Http\Requests\V1\Product\StoreProductRequest;
+use App\Http\Requests\V1\Product\SearchProductRequest;
+use App\Http\Requests\V1\Product\UpdateProductRequest;
+use App\Http\Resources\V1\Product\ViewProductResource;
+use App\Http\Resources\V1\Product\FeaturedProductResource;
 
 class ProductController extends Controller
 {
@@ -122,7 +123,7 @@ class ProductController extends Controller
     public function myFeaturedProducts()
     {
         $products = $this->productService->myFeaturedProducts();
-        return MyProductResource::collection($products);
+        return FeaturedProductResource::collection($products);
     }
 
 }
