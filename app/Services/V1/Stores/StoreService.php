@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Mail\V1\Stores\StoreUnderReviewMail;
 use Illuminate\Validation\ValidationException;
 use App\Mail\V1\Admin\NewStoreAwaitingApprovalMail;
+use App\Mail\V1\Admin\StoreEditAwaitingApprovalMail;
 
 class StoreService
 {
@@ -225,7 +226,6 @@ class StoreService
     } catch (\Throwable $e) {
         Log::error('Failed to notify admin about store edit: ' . $e->getMessage());
     }
-
     return $updateRequest;
 }
 
