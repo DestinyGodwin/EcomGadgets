@@ -87,16 +87,16 @@ public function getStore(string $storeId)
     return response()->json($store);
 }
 
-public function resubmit(ResubmitStoreRequest $request, Store $store): MyStoreResource
-{
-    if ($store->user_id !== Auth::user()->id()) {
-        abort(403, 'Unauthorized');
-    }
+// public function resubmit(ResubmitStoreRequest $request, Store $store): MyStoreResource
+// {
+//     if ($store->user_id !== Auth::user()->id()) {
+//         abort(403, 'Unauthorized');
+//     }
 
-    $validated = $request->validated();
+//     $validated = $request->validated();
 
-    $resubmitted = $this->storeService->resubmit($store, $validated);
+//     $resubmitted = $this->storeService->resubmit($store, $validated);
 
-    return new MyStoreResource($resubmitted);
-}
+//     return new MyStoreResource($resubmitted);
+// }
 }
