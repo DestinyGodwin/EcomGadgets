@@ -103,5 +103,8 @@ class Store extends Model
             'updated_at' => 'datetime',
         ];
     }
-
+    public function updateRequests()
+{
+    return $this->hasMany(StoreUpdateRequest::class);
+}
 }
