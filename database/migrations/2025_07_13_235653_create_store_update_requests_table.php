@@ -12,7 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('store_update_requests', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('store_id')->constrained()->cascadeOnDelete();
+            $table->json('new_data'); // Store proposed update as JSON
+            $table->enum('status', ['pending', 'approved', 'declined'])->default('pending');
+            $table->text('admin_feedback')->nullable();
             $table->timestamps();
         });
     }
