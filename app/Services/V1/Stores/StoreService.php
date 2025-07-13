@@ -1,15 +1,15 @@
 <?php
 namespace App\Services\V1\Stores;
 
-use App\Models\Store;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
-use App\Mail\V1\Stores\StoreUnderReviewMail;
-use Illuminate\Validation\ValidationException;
 use App\Mail\V1\Admin\NewStoreAwaitingApprovalMail;
 use App\Mail\V1\Admin\StoreEditAwaitingApprovalMail;
+use App\Mail\V1\Stores\StoreUnderReviewMail;
+use App\Models\Store;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class StoreService
 {
@@ -142,7 +142,6 @@ class StoreService
 
     // public function resubmit(Store $store, array $data): Store
 
-    
     // {
     //        if ($store->store_image) {
     //     Storage::disk('public')->delete($store->store_image);
@@ -176,60 +175,42 @@ class StoreService
     //     $store->update($updateData);
     //      Mail::to(config('mail.admin_email'))->send(new NewStoreAwaitingApprovalMail($store));
 
-
     //     return $store;
 
     // }
 
     public function requestUpdate($request)
-{
-    $user = Auth::user();
-    $store = $user->store;
-    if (!$store) {
-        throw ValidationException::withMessages(['store' => ['No store found.']]);
-    }
-    $pendingRequest = $store->updateRequests()->where('status', 'pending')->first();
-    if ($pendingRequest) {
-        throw ValidationException::withMessages([
-            'update_request' => ['You already have a pending store update request.'],
+    {
+        $user  = Auth::user();
+        $store = $user->store;
+        if (! $store) {
+            throw ValidationException::withMessages(['store' => ['No store found.']]);
+        }
+        $pendingRequest = $store->updateRequests()->where('status', 'pending')->first();
+        if ($pendingRequest) {
+            throw ValidationException::withMessages([
+                'update_request' => ['You already have a pending store update request.'],
+            ]);
+        }
+        $data = $request->only([
+            'store_name', 'store_description', 'phone', 'email',
+            'state_id', 'lga_id', 'address',
         ]);
-    }
-    $data = $request->only([
-        'store_name', 'store_description', 'phone', 'email',
-        'state_id', 'lga_id', 'address',
-    ]);
-    if ($request->hasFile('store_image')) {
-        if ($store->store_image) {
-            Storage::disk('public')->delete($store->store_image);
+        if ($request->hasFile('store_image')) {
+            if ($store->store_image) {
+                Storage::disk('public')->delete($store->store_image);
+            }
+            $data['store_image'] = $request->file('store_image')->store('stores', 'public');
         }
-        $data['store_image'] = $request->file('store_image')->store('stores', 'public');
-    }
-    if ($request->hasFile('store_cac_image')) {
-        if ($store->store_cac_image) {
-            Storage::disk('public')->delete($store->store_cac_image);
+        $updateRequest = $store->updateRequests()->create([
+            'new_data' => $data,
+        ]);
+        try {
+            Mail::to(config('mail.admin_email'))->send(new StoreEditAwaitingApprovalMail($store, $updateRequest));
+        } catch (\Throwable $e) {
+            Log::error('Failed to notify admin about store edit: ' . $e->getMessage());
         }
-        $data['store_cac_image'] = $request->file('store_cac_image')->store('stores/cac', 'public');
+        return $updateRequest;
     }
-
-    if ($request->hasFile('store_id_image')) {
-        if ($store->store_id_image) {
-            Storage::disk('public')->delete($store->store_id_image);
-        }
-        $data['store_id_image'] = $request->file('store_id_image')->store('stores/id', 'public');
-    }
-
-    $updateRequest = $store->updateRequests()->create([
-        'new_data' => $data,
-    ]);
-    try {
-        Mail::to(config('mail.admin_email'))->send(new StoreEditAwaitingApprovalMail($store, $updateRequest));
-    } catch (\Throwable $e) {
-        Log::error('Failed to notify admin about store edit: ' . $e->getMessage());
-    }
-    return $updateRequest;
-}
-
-
-
 
 }

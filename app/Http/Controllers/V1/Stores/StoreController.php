@@ -99,4 +99,12 @@ public function getStore(string $storeId)
 
 //     return new MyStoreResource($resubmitted);
 // }
+
+public function requestUpdate(UpdateStoreRequest $request)
+{
+    $updateRequest = $this->storeService->requestUpdate($request);
+    return response()->json([
+        'message' => 'Store update request submitted and pending admin approval.',
+    ]);
+}
 }
