@@ -112,13 +112,10 @@ class AdvertBookingService
     $realCount = $realAds->count();
     if ($realCount < $limit) {
         $remaining = $limit - $realCount;
-        $dummyAds = AdvertBooking::where('state_id', $stateId)
-            ->where('is_dummy', true)
+        $dummyAds = AdvertBooking::where('is_dummy', true)
             ->where('starts_at', '<=', $now)
             ->where('ends_at', '>=', $now)
-            ->orderBy('starts_at')
-            ->take($remaining)
-            ->get();
+            ->orderBy('starts_at')->take($remaining)->get();   
         return $realAds->concat($dummyAds);
     }
     return $realAds;
