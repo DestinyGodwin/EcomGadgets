@@ -140,6 +140,8 @@ class StoreService
     }
 
     // public function resubmit(Store $store, array $data): Store
+
+    
     // {
     //        if ($store->store_image) {
     //     Storage::disk('public')->delete($store->store_image);
@@ -177,5 +179,57 @@ class StoreService
     //     return $store;
 
     // }
+
+    public function requestUpdate($request)
+{
+    $user = Auth::user();
+    $store = $user->store;
+    if (!$store) {
+        throw ValidationException::withMessages(['store' => ['No store found.']]);
+    }
+    $pendingRequest = $store->updateRequests()->where('status', 'pending')->first();
+    if ($pendingRequest) {
+        throw ValidationException::withMessages([
+            'update_request' => ['You already have a pending store update request.'],
+        ]);
+    }
+    $data = $request->only([
+        'store_name', 'store_description', 'phone', 'email',
+        'state_id', 'lga_id', 'address',
+    ]);
+    if ($request->hasFile('store_image')) {
+        if ($store->store_image) {
+            Storage::disk('public')->delete($store->store_image);
+        }
+        $data['store_image'] = $request->file('store_image')->store('stores', 'public');
+    }
+    if ($request->hasFile('store_cac_image')) {
+        if ($store->store_cac_image) {
+            Storage::disk('public')->delete($store->store_cac_image);
+        }
+        $data['store_cac_image'] = $request->file('store_cac_image')->store('stores/cac', 'public');
+    }
+
+    if ($request->hasFile('store_id_image')) {
+        if ($store->store_id_image) {
+            Storage::disk('public')->delete($store->store_id_image);
+        }
+        $data['store_id_image'] = $request->file('store_id_image')->store('stores/id', 'public');
+    }
+
+    $updateRequest = $store->updateRequests()->create([
+        'new_data' => $data,
+    ]);
+    try {
+        Mail::to(config('mail.admin_email'))->send(new StoreEditAwaitingApprovalMail($store, $updateRequest));
+    } catch (\Throwable $e) {
+        Log::error('Failed to notify admin about store edit: ' . $e->getMessage());
+    }
+
+    return $updateRequest;
+}
+
+
+
 
 }
