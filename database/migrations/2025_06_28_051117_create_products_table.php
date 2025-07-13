@@ -25,7 +25,6 @@ return new class extends Migration
             $table->boolean('is_featured')->default(false);
             $table->timestamp('featured_expires_at')->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

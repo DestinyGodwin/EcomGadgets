@@ -5,13 +5,12 @@ use App\Models\Scopes\ActiveStoreScope;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
 class Product extends Model
 {
-    use HasUuids, SoftDeletes, HasSlug;
+    use HasUuids, HasSlug;
     protected $perPage  = 16;
     protected $fillable = ['category_id',
         'name', 'slug', 'description',
