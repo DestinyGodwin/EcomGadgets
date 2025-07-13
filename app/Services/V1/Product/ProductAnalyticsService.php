@@ -29,7 +29,9 @@ class ProductAnalyticsService
                 'user_agent' => request()->userAgent(),
             ]);
 
-            Cache::put($cacheKey, true, now()->addHour());
+            // Cache::put($cacheKey, true, now()->addHour());
+            Cache::put($cacheKey, true, now()->addMinutes(2));
+
         }
     }
 
