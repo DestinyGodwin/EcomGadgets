@@ -1,12 +1,13 @@
 <?php
 namespace App\Services\V1\Product;
 
-use App\Models\Product;
 use Exception;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Product;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ProductService
 {
@@ -22,6 +23,11 @@ class ProductService
     {
         return DB::transaction(function () use ($data) {
             $store   = Auth::user()->store;
+             if (! $store || ! $store->is_active || $store->status !== 'approved') {
+            throw ValidationException::withMessages([
+                'store' => ['Your store must be active and approved to create products.']
+            ]);
+        }
             $product = $store->products()->create([
                 'category_id'     => $data['category_id'],
                 'name'            => $data['name'],
