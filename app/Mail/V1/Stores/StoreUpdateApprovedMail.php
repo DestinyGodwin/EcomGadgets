@@ -1,5 +1,5 @@
 <?php
-namespace App\Mail\V1\Vendor;
+namespace App\Mail\V1\Stores;
 
 use App\Models\Store;
 use Illuminate\Bus\Queueable;

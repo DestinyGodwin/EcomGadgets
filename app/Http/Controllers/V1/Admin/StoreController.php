@@ -12,7 +12,7 @@ use App\Mail\V1\Stores\StoreDeactivatedMail;
 use App\Mail\V1\Stores\StoreReactivatedMail;
 use App\Http\Resources\V1\Stores\StoreResource;
 use App\Mail\V1\Stores\StoreUpdateDeclinedMail;
-use App\Mail\V1\Vendor\StoreUpdateApprovedMail;
+use App\Mail\V1\Stores\StoreUpdateApprovedMail;
 use App\Http\Requests\V1\Stores\StoreSearchRequest;
 use App\Http\Resources\V1\Admin\AdminStoreResource;
 use App\Notifications\V1\Stores\StoreApprovedNotification;
@@ -124,7 +124,7 @@ public function declineUpdateRequest($id, $reason)
 }
      public function pendingIndex()
     {
-        $pendingRequests = StoreUpdateRequest::with('store.user')
+        $pendingRequests = StoreUpdateRequest::with('store')
             ->where('status', 'pending')
             ->latest()
             ->get();
@@ -136,7 +136,7 @@ public function declineUpdateRequest($id, $reason)
 
     public function pendingShow($id)
     {
-        $updateRequest = StoreUpdateRequest::with('store.user')->findOrFail($id);
+        $updateRequest = StoreUpdateRequest::with('store')->findOrFail($id);
 
         return response()->json([
             'store' => $updateRequest->store,
