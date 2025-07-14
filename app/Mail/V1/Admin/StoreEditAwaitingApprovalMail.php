@@ -3,11 +3,12 @@
 
 namespace App\Mail\V1\Admin;
 
-use App\Models\StoreUpdateRequest;
+use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use App\Models\StoreUpdateRequest;
 use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class StoreEditAwaitingApprovalMail extends Mailable implements ShouldQueue

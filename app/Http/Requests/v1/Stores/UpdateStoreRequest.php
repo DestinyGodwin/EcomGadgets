@@ -22,7 +22,15 @@ class UpdateStoreRequest extends FormRequest
     public function rules(): array
     {
        return [
-            'store_name' => ['sometimes', 'string', 'min:3', 'max:255', 'unique:stores,store_name,' . $this->store->id],
+            // 'store_name' => ['sometimes', 'string', 'min:3', 'max:255', 'unique:stores,store_name,' . $this->store->id],
+              'store_name' => [
+            'sometimes',
+            'string',
+            'min:3',
+            'max:255',
+            'unique:stores,store_name,' . $this->user()->store->id,
+        ],
+        'store_image' => ['sometimes', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'store_image' => ['sometimes', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'store_description' => ['sometimes', 'string', 'min:3', 'max:233'],
             'email' => ['sometimes', 'email', 'max:255'],

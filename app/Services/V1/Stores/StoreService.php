@@ -206,7 +206,9 @@ class StoreService
             'new_data' => $data,
         ]);
         try {
-            Mail::to(config('mail.admin_email'))->send(new StoreEditAwaitingApprovalMail($store, $updateRequest));
+            // Mail::to(config('mail.admin_email'))->send(new StoreEditAwaitingApprovalMail($store, $updateRequest));
+            Mail::to(config('mail.admin_email'))->send(new StoreEditAwaitingApprovalMail($updateRequest));
+
         } catch (\Throwable $e) {
             Log::error('Failed to notify admin about store edit: ' . $e->getMessage());
         }

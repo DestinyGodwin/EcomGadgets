@@ -12,6 +12,7 @@ use App\Mail\V1\Stores\StoreDeactivatedMail;
 use App\Mail\V1\Stores\StoreReactivatedMail;
 use App\Http\Resources\V1\Stores\StoreResource;
 use App\Mail\V1\Stores\StoreUpdateDeclinedMail;
+use App\Mail\V1\Vendor\StoreUpdateApprovedMail;
 use App\Http\Requests\V1\Stores\StoreSearchRequest;
 use App\Http\Resources\V1\Admin\AdminStoreResource;
 use App\Notifications\V1\Stores\StoreApprovedNotification;

@@ -59,6 +59,10 @@ Route::prefix('v1/')->group(function () {
             Route::get('/', 'index');
             Route::get('/search', 'search'); 
             Route::get('/pending', 'pending');
+            Route::get('/update-requests',  'pendingIndex');
+            Route::get('/update-requests/{id}',  'pendingShow');
+            Route::post('/update-requests/{id}/approve', 'approveUpdateRequest');
+            Route::post('/update-requests/{id}/decline', 'declineUpdateRequest');
             Route::post('{store}/approve', 'approve');
             Route::post('{store}/decline', 'decline');
             Route::post('{store}/deactivate', 'deactivate');
@@ -113,7 +117,8 @@ Route::prefix('v1/')->group(function () {
         Route::controller(StoreController::class)->group(function () {
             Route::post('stores', 'store');
             Route::get('mystore', 'mystore');
-            Route::put('stores/{store}', 'update');
+            // Route::put('stores/{store}', 'update');
+            Route::put('stores/{store}', 'requestUpdate');
             Route::delete('stores/{store}', 'destroy');
             Route::post('stores/{store}/resubmit', 'resubmit');
         });
