@@ -109,15 +109,18 @@ class StoreController extends Controller
     return response()->json(['message' => 'Store update approved and applied.']);
 }
 
-public function declineUpdateRequest($id, $reason)
+public function declineUpdateRequest(Request $request, $id)
 {
+     $request->validate([
+        'reason' => ['required', 'string', 'max:500'],
+    ]);
     $updateRequest = StoreUpdateRequest::findOrFail($id);
     $updateRequest->status = 'declined';
-    $updateRequest->admin_feedback = $reason;
+    $updateRequest->admin_feedback = $request->reason;
     $updateRequest->save();
 
     Mail::to($updateRequest->store->email)->send(
-        new StoreUpdateDeclinedMail($updateRequest->store, $reason)
+        new StoreUpdateDeclinedMail($updateRequest->store, $request->reason)
     );
 
     return response()->json(['message' => 'Store update request declined.']);
