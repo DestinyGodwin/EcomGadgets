@@ -86,6 +86,8 @@ Route::prefix('v1/')->group(function () {
             Route::get('/', [AdminProductController::class, 'index']);
             Route::get('/filter', [AdminProductController::class, 'filter']);
             Route::get('/{product}', [AdminProductController::class, 'show']);
+            Route::delete('/{product}/delete', 'destroy');
+
         });
         Route::prefix('/transactions')->group(function () {
             Route::get('/', [AdminTransactionController::class, 'index']);

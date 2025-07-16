@@ -36,7 +36,7 @@ class ProductController extends Controller
         );
     }
 
-    public function destroyWithReason(Request $request, Product $product)
+    public function destroy(Request $request, Product $product)
 {
     $request->validate(['reason' => ['required', 'string', 'max:5000'],]);
     $reason = $request->input('reason');
