@@ -21,6 +21,12 @@ class AuthServices
     {
        $this->otpService = $otpServices;
     } 
+
+     protected const ROLE_CODES = [
+        'admin' => 'A1Z9X',
+        'vendor' => 'V3D7Q',
+        'customer' => 'C5B2L',
+    ];
     public function store(array $data){
          $user =    User::create($data);
          try {
@@ -32,7 +38,8 @@ class AuthServices
         $token = $user->createToken('bearer_token')->plainTextToken;
         return [
             'token' => $token,
-            'message' => 'Registration Successful. Otp sent to '. $user->email ,
+            'message' => 'Registration Successful. Otp sent to '. $user->email,
+            
         ];
 
     }
