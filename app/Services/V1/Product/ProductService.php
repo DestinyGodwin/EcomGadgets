@@ -1,11 +1,14 @@
 <?php
+
 namespace App\Services\V1\Product;
 
 use Exception;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
+use App\Models\FeaturedProductPlan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Models\FeaturedProductSubscription;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -23,11 +26,11 @@ class ProductService
     {
         return DB::transaction(function () use ($data) {
             $store   = Auth::user()->store;
-             if (! $store || ! $store->is_active || $store->status !== 'approved') {
-            throw ValidationException::withMessages([
-                'store' => ['Your store must be active and approved to create products.']
-            ]);
-        }
+            if (! $store || ! $store->is_active || $store->status !== 'approved') {
+                throw ValidationException::withMessages([
+                    'store' => ['Your store must be active and approved to create products.']
+                ]);
+            }
             $product = $store->products()->create([
                 'category_id'     => $data['category_id'],
                 'name'            => $data['name'],
@@ -96,102 +99,102 @@ class ProductService
         });
     }
 
-    public function getAll(): LengthAwarePaginator
-    {
-        return Product::with(['images', 'store'])->orderByDesc('is_featured')
-            ->orderByDesc('featured_expires_at')->latest()->paginate();
-    }
+    // public function getAll(): LengthAwarePaginator
+    // {
+    //     return Product::with(['images', 'store'])->orderByDesc('is_featured')
+    //         ->orderByDesc('featured_expires_at')->latest()->paginate();
+    // }
 
-    public function getByCategory(string $categoryId, ?string $stateId = null, ?string $lgaId = null): LengthAwarePaginator
-    {
-        return Product::with(['images', 'store'])
-            ->where('category_id', $categoryId)
-            ->whereHas('store', function ($query) use ($stateId, $lgaId) {
-                if ($stateId) {
-                    $query->where('state_id', $stateId);
-                }
+    // public function getByCategory(string $categoryId, ?string $stateId = null, ?string $lgaId = null): LengthAwarePaginator
+    // {
+    //     return Product::with(['images', 'store'])
+    //         ->where('category_id', $categoryId)
+    //         ->whereHas('store', function ($query) use ($stateId, $lgaId) {
+    //             if ($stateId) {
+    //                 $query->where('state_id', $stateId);
+    //             }
 
-                if ($lgaId) {
-                    $query->where('lga_id', $lgaId);
-                }
-            })->orderByDesc('is_featured')
-            ->orderByDesc('featured_expires_at')->latest()->paginate();
-    }
+    //             if ($lgaId) {
+    //                 $query->where('lga_id', $lgaId);
+    //             }
+    //         })->orderByDesc('is_featured')
+    //         ->orderByDesc('featured_expires_at')->latest()->paginate();
+    // }
 
-    public function getByBrand(string $brand)
-    {
-        return Product::with(['images', 'store'])
-            ->where('brand', $brand)
-            ->orderByDesc('is_featured')
-            ->orderByDesc('featured_expires_at')->latest()->paginate();
-    }
+    // public function getByBrand(string $brand)
+    // {
+    //     return Product::with(['images', 'store'])
+    //         ->where('brand', $brand)
+    //         ->orderByDesc('is_featured')
+    //         ->orderByDesc('featured_expires_at')->latest()->paginate();
+    // }
 
-    public function search(array $filters): LengthAwarePaginator
-    {
-        $query = Product::with('store');
-        if (! empty($filters['search'])) {
-            $query->where(function ($q) use ($filters) {
-                $q->where('name', 'like', '%' . $filters['search'] . '%')
-                    ->orWhere('brand', 'like', '%' . $filters['search'] . '%');
-            });
-        }
-        if (! empty($filters['state_id'])) {
-            $query->whereHas('store', function ($q) use ($filters) {
-                $q->where('state_id', $filters['state_id']);
-            });
-        }
-        if (! empty($filters['category_id'])) {
-            $query->where('category_id', $filters['category_id']);
-        }
-        if (! empty($filters['brand'])) {
-            $query->where('brand', 'like', '%' . $filters['brand'] . '%');
-        }
-        if (! empty($filters['min_price'])) {
-            $query->where('price', '>=', $filters['min_price']);
-        }
-        if (! empty($filters['max_price'])) {
-            $query->where('price', '<=', $filters['max_price']);
-        }
-        $query->orderByDesc('is_featured')
-            ->orderByDesc('featured_expires_at');
-        switch ($filters['sort_by'] ?? null) {
-            case 'price_asc':
-                $query->orderBy('price', 'asc');
-                break;
-            case 'price_desc':
-                $query->orderBy('price', 'desc');
-                break;
-            case 'name_asc':
-                $query->orderBy('name', 'asc');
-                break;
-            case 'name_desc':
-                $query->orderBy('name', 'desc');
-                break;
-            default:
-                $query->orderBy('created_at', 'desc');
-        }
-        return $query->paginate(20);
-    }
+    // public function search(array $filters): LengthAwarePaginator
+    // {
+    //     $query = Product::with('store');
+    //     if (! empty($filters['search'])) {
+    //         $query->where(function ($q) use ($filters) {
+    //             $q->where('name', 'like', '%' . $filters['search'] . '%')
+    //                 ->orWhere('brand', 'like', '%' . $filters['search'] . '%');
+    //         });
+    //     }
+    //     if (! empty($filters['state_id'])) {
+    //         $query->whereHas('store', function ($q) use ($filters) {
+    //             $q->where('state_id', $filters['state_id']);
+    //         });
+    //     }
+    //     if (! empty($filters['category_id'])) {
+    //         $query->where('category_id', $filters['category_id']);
+    //     }
+    //     if (! empty($filters['brand'])) {
+    //         $query->where('brand', 'like', '%' . $filters['brand'] . '%');
+    //     }
+    //     if (! empty($filters['min_price'])) {
+    //         $query->where('price', '>=', $filters['min_price']);
+    //     }
+    //     if (! empty($filters['max_price'])) {
+    //         $query->where('price', '<=', $filters['max_price']);
+    //     }
+    //     $query->orderByDesc('is_featured')
+    //         ->orderByDesc('featured_expires_at');
+    //     switch ($filters['sort_by'] ?? null) {
+    //         case 'price_asc':
+    //             $query->orderBy('price', 'asc');
+    //             break;
+    //         case 'price_desc':
+    //             $query->orderBy('price', 'desc');
+    //             break;
+    //         case 'name_asc':
+    //             $query->orderBy('name', 'asc');
+    //             break;
+    //         case 'name_desc':
+    //             $query->orderBy('name', 'desc');
+    //             break;
+    //         default:
+    //             $query->orderBy('created_at', 'desc');
+    //     }
+    //     return $query->paginate(20);
+    // }
 
-    public function getByUserState(): LengthAwarePaginator
-    {
-        $user = Auth::user();
-        return Product::with(['images', 'store'])
-            ->whereHas('store', function ($query) use ($user) {
-                $query->where('state_id', $user->state_id);
-            })->orderByDesc('is_featured')
-            ->orderByDesc('featured_expires_at')->latest()->paginate();
-    }
+    // public function getByUserState(): LengthAwarePaginator
+    // {
+    //     $user = Auth::user();
+    //     return Product::with(['images', 'store'])
+    //         ->whereHas('store', function ($query) use ($user) {
+    //             $query->where('state_id', $user->state_id);
+    //         })->orderByDesc('is_featured')
+    //         ->orderByDesc('featured_expires_at')->latest()->paginate();
+    // }
 
-    public function getByUserLga(): LengthAwarePaginator
-    {
-        $user = Auth::user();
-        return Product::with(['images', 'store'])
-            ->whereHas('store', function ($query) use ($user) {
-                $query->where('lga_id', $user->lga_id);
-            })->orderByDesc('is_featured')
-            ->orderByDesc('featured_expires_at')->latest()->paginate();
-    }
+    // public function getByUserLga(): LengthAwarePaginator
+    // {
+    //     $user = Auth::user();
+    //     return Product::with(['images', 'store'])
+    //         ->whereHas('store', function ($query) use ($user) {
+    //             $query->where('lga_id', $user->lga_id);
+    //         })->orderByDesc('is_featured')
+    //         ->orderByDesc('featured_expires_at')->latest()->paginate();
+    // }
 
     public function getByState($stateId): LengthAwarePaginator
     {
@@ -222,8 +225,8 @@ class ProductService
 
     public function all(): LengthAwarePaginator
     {
-        return Product::with('store')->orderByDesc('is_featured')
-            ->orderByDesc('featured_expires_at')->latest()->paginate();
+        return $this->getFeaturedAndRegularProducts();
+
     }
 
     public function filter(array $filters): LengthAwarePaginator
@@ -246,14 +249,243 @@ class ProductService
         return Product::with(['store', 'category'])->findOrFail($product);
     }
     public function myFeaturedProducts()
-{
-    return Auth::user()->products()
-        ->where('is_featured', true)
-        ->where(function ($query) {
-            $query->whereNull('featured_expires_at')
-                  ->orWhere('featured_expires_at', '>', now());
-        })->latest()->get();
-}
+    {
+        return Auth::user()->products()
+            ->where('is_featured', true)
+            ->where(function ($query) {
+                $query->whereNull('featured_expires_at')
+                    ->orWhere('featured_expires_at', '>', now());
+            })->latest()->get();
+    }
+
+    public function getAll(): LengthAwarePaginator
+    {
+        return $this->getFeaturedAndRegularProducts();
+    }
+
+    private function getFeaturedAndRegularProducts($filters = []): LengthAwarePaginator
+    {
+        $perPage = 30;
+        $page = request()->get('page', 1);
+
+        // Get featured product plans ordered by price (descending - highest price first)
+        $plans = FeaturedProductPlan::getPlansOrderedByPrice();
+
+        // Define allocation per plan position (total 20 featured products)
+        $planAllocations = [
+            0 => 8, // Most expensive plan (Gold)
+            1 => 6, // Second most expensive (Silver)  
+            2 => 4, // Third most expensive (Bronze)
+            3 => 2  // Fourth most expensive (Basic)
+        ];
+
+        $featuredProducts = collect();
+
+        foreach ($plans as $index => $plan) {
+            $allocation = $planAllocations[$index] ?? 0;
+            if ($allocation === 0) continue;
+
+            // Get products from active subscriptions for this plan
+            $planProducts = collect();
+
+            foreach ($plan->activeSubscriptions as $subscription) {
+                if ($subscription->needsRefresh()) {
+                    $this->refreshSubscriptionProducts($subscription);
+                }
+
+                $planProducts = $planProducts->merge($subscription->products);
+            }
+
+            // Get the required number of products for this plan, ordered by updated_at desc
+            $selectedProducts = $planProducts
+                ->sortByDesc('updated_at')
+                ->take($allocation);
+
+            $featuredProducts = $featuredProducts->merge($selectedProducts);
+        }
+
+        // Get non-featured products to fill remaining slots
+        $remainingSlots = $perPage - $featuredProducts->count();
+
+        $nonFeaturedQuery = Product::with(['images', 'store'])
+            ->whereNotIn('id', $featuredProducts->pluck('id'))
+            ->latest();
+
+        // Apply filters if any
+        $nonFeaturedQuery = $this->applyFilters($nonFeaturedQuery, $filters);
+
+        $nonFeaturedProducts = $nonFeaturedQuery
+            ->take($remainingSlots)
+            ->get();
+
+        // Combine featured and non-featured products
+        $allProducts = $featuredProducts->concat($nonFeaturedProducts);
+
+        // Create paginator
+        return new LengthAwarePaginator(
+            $allProducts,
+            $this->getTotalProductCount($filters),
+            $perPage,
+            $page,
+            [
+                'path' => request()->url(),
+                'pageName' => 'page',
+            ]
+        );
+    }
+
+    private function refreshSubscriptionProducts(FeaturedProductSubscription $subscription): void
+    {
+        // Only update the updated_at timestamps of products already in the subscription
+        $productIds = $subscription->products()->pluck('products.id');
+
+        if ($productIds->isNotEmpty()) {
+            Product::whereIn('id', $productIds)
+                ->update(['updated_at' => now()]);
+        }
+
+        // Update last refreshed time
+        $subscription->update(['last_refreshed_at' => now()]);
+    }
+
+    private function applyFilters($query, array $filters)
+    {
+        if (!empty($filters['search'])) {
+            $query->where(function ($q) use ($filters) {
+                $q->where('name', 'like', '%' . $filters['search'] . '%')
+                    ->orWhere('brand', 'like', '%' . $filters['search'] . '%');
+            });
+        }
+
+        if (!empty($filters['state_id'])) {
+            $query->whereHas('store', function ($q) use ($filters) {
+                $q->where('state_id', $filters['state_id']);
+            });
+        }
+
+        if (!empty($filters['category_id'])) {
+            $query->where('category_id', $filters['category_id']);
+        }
+
+        if (!empty($filters['user_state_id'])) {
+            $query->whereHas('store', function ($q) use ($filters) {
+                $q->where('state_id', $filters['user_state_id']);
+            });
+        }
+
+        if (!empty($filters['user_lga_id'])) {
+            $query->whereHas('store', function ($q) use ($filters) {
+                $q->where('lga_id', $filters['user_lga_id']);
+            });
+        }
 
 
+        return $query;
+    }
+
+    private function getTotalProductCount(array $filters = []): int
+    {
+        $query = Product::query();
+        return $this->applyFilters($query, $filters)->count();
+    }
+
+    // Method to add products to a subscription
+    public function addProductsToSubscription(string $subscriptionId, array $productIds): bool
+    {
+        $subscription = FeaturedProductSubscription::findOrFail($subscriptionId);
+
+        // Verify subscription belongs to authenticated user's store
+        if ($subscription->store_id !== Auth::user()->store->id) {
+            throw new Exception('Unauthorized access to subscription.');
+        }
+
+        // Verify subscription is active
+        if (!$subscription->isActive()) {
+            throw new Exception('Subscription is not active.');
+        }
+
+        // Verify products belong to the user's store
+        $products = Product::whereIn('id', $productIds)
+            ->where('store_id', Auth::user()->store->id)
+            ->get();
+
+        if ($products->count() !== count($productIds)) {
+            throw new Exception('Some products do not belong to your store.');
+        }
+
+        // Check if adding these products would exceed plan limit
+        $currentCount = $subscription->products()->count();
+        $newCount = count($productIds);
+
+        if (($currentCount + $newCount) > $subscription->plan->max_products) {
+            throw new Exception("Cannot add {$newCount} products. Only {$subscription->availableSlots()} slots available.");
+        }
+
+        // Add products to subscription
+        $subscription->products()->attach($productIds, ['added_at' => now()]);
+
+        return true;
+    }
+
+    // Method to remove products from subscription
+    public function removeProductsFromSubscription(string $subscriptionId, array $productIds): bool
+    {
+        $subscription = FeaturedProductSubscription::findOrFail($subscriptionId);
+
+        // Verify subscription belongs to authenticated user's store
+        if ($subscription->store_id !== Auth::user()->store->id) {
+            throw new Exception('Unauthorized access to subscription.');
+        }
+
+        $subscription->products()->detach($productIds);
+        return true;
+    }
+
+    // Get user's active subscriptions
+    public function myActiveSubscriptions()
+    {
+        $user = Auth::user();
+
+        return FeaturedProductSubscription::where('store_id', $user->store->id)
+            ->where('is_active', true)
+            ->where(function ($query) {
+                $query->whereNull('ends_at')
+                    ->orWhere('ends_at', '>', now());
+            })
+            ->with(['plan', 'products'])
+            ->get();
+    }
+
+    public function getByCategory(string $categoryId, ?string $stateId = null, ?string $lgaId = null): LengthAwarePaginator
+    {
+        $filters = [
+            'category_id' => $categoryId,
+            'state_id' => $stateId,
+            'lga_id' => $lgaId
+        ];
+
+        return $this->getFeaturedAndRegularProducts($filters);
+    }
+
+    public function search(array $filters): LengthAwarePaginator
+    {
+        return $this->getFeaturedAndRegularProducts($filters);
+    }
+
+    public function getByBrand(string $brand): LengthAwarePaginator
+    {
+        return $this->getFeaturedAndRegularProducts(['brand' => $brand]);
+    }
+
+    public function getByUserState(): LengthAwarePaginator
+    {
+        $user = Auth::user();
+        return $this->getFeaturedAndRegularProducts(['user_state_id' => $user->state_id]);
+    }
+
+    public function getByUserLga(): LengthAwarePaginator
+    {
+        $user = Auth::user();
+        return $this->getFeaturedAndRegularProducts(['user_lga_id' => $user->lga_id]);
+    }
 }
