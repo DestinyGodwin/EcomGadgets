@@ -12,8 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('featured_products', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+           $table->uuid('id')->primary();
+           $table->foreignUuid('product_id')->constrained()->onDelete('cascade');
+           $table->foreignUuid('store_id')->constrained()->onDelete('cascade');
+           $table->foreignUuid('plan_id')->constrained('featured_product_plans')->onDelete('cascade');
+           $table->timestamp('starts_at');
+           $table->timestamp('ends_at');
+           $table->timestamps();
         });
     }
 
