@@ -17,7 +17,6 @@ return new class extends Migration
             $table->foreignUuid('product_id')->constrained()->onDelete('cascade');
             $table->timestamp('added_at')->default(now());
             $table->timestamps();
-
             $table->unique(['subscription_id', 'product_id']);
             $table->index('subscription_id');
             $table->index('product_id');
