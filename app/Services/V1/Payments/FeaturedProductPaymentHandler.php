@@ -5,6 +5,7 @@ namespace App\Services\V1\Payments;
 use Carbon\Carbon;
 use App\Models\Product;
 use App\Models\FeaturedProductLog;
+use App\Models\FeaturedProductSubscription;
 
 
 class FeaturedProductPaymentHandler implements PaymentHandlerInterface
@@ -19,30 +20,41 @@ class FeaturedProductPaymentHandler implements PaymentHandlerInterface
  
     public function handleSuccessfulPayment(array $meta): void
     {
-        $product = Product::findOrFail($meta['product_id']);
+        // $product = Product::findOrFail($meta['product_id']);
 
-        $currentExpiry = $product->featured_expires_at;
+        // $currentExpiry = $product->featured_expires_at;
 
-        if ($currentExpiry && !($currentExpiry instanceof Carbon)) {
-            $currentExpiry = Carbon::parse($currentExpiry);
-        }
+        // if ($currentExpiry && !($currentExpiry instanceof Carbon)) {
+        //     $currentExpiry = Carbon::parse($currentExpiry);
+        // }
 
-        $newExpiry = $currentExpiry && $currentExpiry->isFuture()
-            ? $currentExpiry->copy()->addDays($meta['duration_days']) 
-            : now()->addDays($meta['duration_days']);
+        // $newExpiry = $currentExpiry && $currentExpiry->isFuture()
+        //     ? $currentExpiry->copy()->addDays($meta['duration_days']) 
+        //     : now()->addDays($meta['duration_days']);
 
-        FeaturedProductLog::create([
-            'product_id' => $product->id,
+        // FeaturedProductLog::create([
+        //     'product_id' => $product->id,
+        //     'store_id' => $meta['store_id'],
+        //     'plan_id' => $meta['plan_id'],
+        //     'reference' => $meta['reference'],
+        //     'starts_at' => $currentExpiry ?? now(),
+        //     'ends_at' => $newExpiry,
+        // ]);
+
+        // $product->update([
+        //     'is_featured' => true,
+        //     'featured_expires_at' => $newExpiry,
+        // ]);
+
+        FeaturedProductSubscription::create([
             'store_id' => $meta['store_id'],
             'plan_id' => $meta['plan_id'],
             'reference' => $meta['reference'],
-            'starts_at' => $currentExpiry ?? now(),
-            'ends_at' => $newExpiry,
+            'starts_at' => now(),
+            'ends_at' => now()->addDays($meta['duration_days']),
+            'is_active' => true,
+            'last_refreshed_at' => now(),
         ]);
-
-        $product->update([
-            'is_featured' => true,
-            'featured_expires_at' => $newExpiry,
-        ]);
+    
     }
 }
