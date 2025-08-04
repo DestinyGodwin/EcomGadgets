@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
-class FeaturedProductPlan extends Model
-{
+class FeaturedProductPlan extends Model {
     use HasUuids, SoftDeletes;
 
     protected $fillable = [
-        'name', 'price', 'description', 'duration_days'
+        'name', 'price', 'description', 'duration_days',    'max_products', 'refresh_interval_minutes'
+
     ];
 }
 
