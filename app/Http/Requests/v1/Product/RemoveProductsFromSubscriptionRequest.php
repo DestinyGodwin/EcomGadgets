@@ -4,7 +4,7 @@ namespace App\Http\Requests\V1\Product;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AddProductsToSubscriptionRequest extends FormRequest
+class RemoveProductsFromSubscriptionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,12 +23,12 @@ class AddProductsToSubscriptionRequest extends FormRequest
     {
         return [
             'subscription_id' => 'required|string|exists:featured_product_subscriptions,id',
-            'product_ids' => 'required|array|min:1|max:30',
+            'product_ids' => 'required|array|min:1',
             'product_ids.*' => 'required|string|exists:products,id',
         ];
     }
 
-        public function messages(): array
+    public function messages(): array
     {
         return [
             'subscription_id.required' => 'Subscription ID is required.',
@@ -36,7 +36,6 @@ class AddProductsToSubscriptionRequest extends FormRequest
             'product_ids.required' => 'At least one product must be selected.',
             'product_ids.array' => 'Product IDs must be an array.',
             'product_ids.min' => 'At least one product must be selected.',
-            'product_ids.max' => 'You can add a maximum of 30 products at once.',
             'product_ids.*.exists' => 'One or more products are invalid.',
         ];
     }
