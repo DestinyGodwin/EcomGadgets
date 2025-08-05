@@ -20,6 +20,8 @@ class FeaturedProductPlanResource extends JsonResource
             'price' => $this->price,
             'description' => $this->description,
             'duration_days' => $this->duration_days,
+            'max_products'  => $this->max_products,
+            'refresh_interval' => $this->refresh_interval_minutes
         ];
     }
 }
