@@ -1,32 +1,33 @@
 <?php
 
-use App\Http\Controllers\V1\Admin\AdminCategoryController;
-use App\Http\Controllers\V1\Admin\AdminTransactionController;
-use App\Http\Controllers\V1\Admin\AdvertPlanController;
-use App\Http\Controllers\V1\Admin\DummyAdvertBookingController;
-use App\Http\Controllers\V1\Admin\FeaturedProductPlanController;
-use App\Http\Controllers\V1\Admin\NotifyingController;
-use App\Http\Controllers\V1\Admin\ProductController as AdminProductController;
-use App\Http\Controllers\V1\Admin\SettingsController;
-use App\Http\Controllers\V1\Admin\StoreController as AdminStoreController;
-use App\Http\Controllers\V1\Admin\SubscriptionPlanController;
-use App\Http\Controllers\V1\Admin\UserController;
-use App\Http\Controllers\V1\AdvertBookingController;
-use App\Http\Controllers\V1\Auth\AuthController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\V1\PaymentController;
 use App\Http\Controllers\V1\CategoryController;
 use App\Http\Controllers\V1\LocationController;
-use App\Http\Controllers\V1\NotificationController;
-use App\Http\Controllers\V1\PaymentController;
-use App\Http\Controllers\V1\PaymentVerificationController;
-use App\Http\Controllers\V1\PaymentWebhookController;
-use App\Http\Controllers\V1\Product\ProductAnalyticsController;
-use App\Http\Controllers\V1\Product\ProductController;
-use App\Http\Controllers\V1\Product\ReviewController;
-use App\Http\Controllers\V1\Product\WishlistController;
-use App\Http\Controllers\V1\Stores\StoreController;
-use App\Http\Controllers\V1\Stores\StoreSubscriptionController;
+use App\Http\Controllers\V1\Auth\AuthController;
+use App\Http\Controllers\V1\Admin\UserController;
 use App\Http\Controllers\V1\TransactionController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\V1\NotificationController;
+use App\Http\Controllers\V1\Stores\StoreController;
+use App\Http\Controllers\V1\AdvertBookingController;
+use App\Http\Controllers\V1\Admin\SettingsController;
+use App\Http\Controllers\V1\PaymentWebhookController;
+use App\Http\Controllers\V1\Product\ReviewController;
+use App\Http\Controllers\V1\Admin\NotifyingController;
+use App\Http\Controllers\V1\Product\ProductController;
+use App\Http\Controllers\V1\Admin\AdvertPlanController;
+use App\Http\Controllers\V1\Product\WishlistController;
+use App\Http\Controllers\V1\Admin\AdminCategoryController;
+use App\Http\Controllers\V1\PaymentVerificationController;
+use App\Http\Controllers\V1\Admin\AdminTransactionController;
+use App\Http\Controllers\V1\Admin\SubscriptionPlanController;
+use App\Http\Controllers\V1\Admin\DummyAdvertBookingController;
+use App\Http\Controllers\V1\Product\ProductAnalyticsController;
+use App\Http\Controllers\V1\Stores\StoreSubscriptionController;
+use App\Http\Controllers\V1\Admin\FeaturedProductPlanController;
+use App\Http\Controllers\V1\Admin\StoreController as AdminStoreController;
+use App\Http\Controllers\V1\Product\FeaturedProductSubscriptionController;
+use App\Http\Controllers\V1\Admin\ProductController as AdminProductController;
 
 Route::prefix('v1/')->group(function () {
     Route::prefix('auth')->group(function () {
@@ -123,6 +124,16 @@ Route::prefix('v1/')->group(function () {
             Route::delete('stores/{store}', 'destroy');
             Route::post('stores/{store}/resubmit', 'resubmit');
         });
+            Route::prefix('featured-subscriptions')->group(function () {
+        Route::get('/my-subscriptions', [FeaturedProductSubscriptionController::class, 'mySubscriptions']);
+        Route::get('/{subscriptionId}', [FeaturedProductSubscriptionController::class, 'showSubscription']);
+        
+        // Product management within subscriptions
+        Route::post('/add-products', [FeaturedProductSubscriptionController::class, 'addProducts']);
+        Route::post('/remove-products', [FeaturedProductSubscriptionController::class, 'removeProducts']);
+        Route::get('/{subscriptionId}/available-products', [FeaturedProductSubscriptionController::class, 'availableProducts']);
+        Route::get('/{subscriptionId}/products', [FeaturedProductSubscriptionController::class, 'subscriptionProducts']);
+    });
         Route::controller(StoreSubscriptioncontroller::class)->group(function () {
             Route::get('my-subscriptions', 'storeSubscriptions');
             Route::get('my-subscriptions/{subscriptionId}', 'storeSubscription');
