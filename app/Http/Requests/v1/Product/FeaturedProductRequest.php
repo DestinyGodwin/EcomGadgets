@@ -23,7 +23,7 @@ class FeaturedProductRequest extends FormRequest
     {
         return [
             'plan_id' => ['required','exists:featured_product_plans,id'],
-            'product_id' => ['required','exists:products,id'],
+            // 'product_id' => ['required','exists:products,id'],
         ];
     }
 }
