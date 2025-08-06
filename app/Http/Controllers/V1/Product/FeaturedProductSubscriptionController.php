@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\FeaturedProductSubscription;
 use App\Services\V1\Product\ProductService;
+use App\Http\Resources\V1\Product\MyFeaturedSubscriptionResource;
 use App\Http\Requests\V1\Product\AddProductsToSubscriptionRequest;
 use App\Http\Requests\V1\Product\RemoveProductsFromSubscriptionRequest;
 
@@ -16,16 +17,12 @@ class FeaturedProductSubscriptionController extends Controller
     public function __construct(
         private ProductService $productService, ) {}
         
-    public function mySubscriptions(): JsonResponse
+    public function mySubscriptions()
     {
-        try {
-            $subscriptions = $this->productService->myActiveSubscriptions();
+ try {
+        $subscriptions = $this->productService->myActiveSubscriptions();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Subscriptions retrieved successfully.',
-                'data' => $subscriptions
-            ]);
+        return MyFeaturedSubscriptionResource::collection($subscriptions);
 
         } catch (Exception $e) {
             return response()->json([
@@ -35,7 +32,7 @@ class FeaturedProductSubscriptionController extends Controller
         }
     }
 
-    public function showSubscription(string $subscriptionId): JsonResponse
+    public function showSubscription(string $subscriptionId)
     {
         try {
             $subscription = FeaturedProductSubscription::with(['plan', 'products.images', 'store'])
@@ -49,11 +46,8 @@ class FeaturedProductSubscriptionController extends Controller
                 ], 403);
             }
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Subscription details retrieved successfully.',
-                'data' => $subscription
-            ]);
+            return MyFeaturedSubscriptionResource::collection($subscriptions);
+
 
         } catch (Exception $e) {
             return response()->json([

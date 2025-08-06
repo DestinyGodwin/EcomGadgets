@@ -488,7 +488,7 @@ public function addProductsToSubscription(string $subscriptionId, array $product
                 $query->whereNull('ends_at')
                     ->orWhere('ends_at', '>', now());
             })
-            ->with(['plan', 'products'])
+            ->with(['plan'])
             ->paginate();
     }
 
