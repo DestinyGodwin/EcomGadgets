@@ -38,7 +38,7 @@ class AuthServices
         $token = $user->createToken('bearer_token')->plainTextToken;
         return [
             'token' => $token,
-            'code' => self::ROLE_CODES[$user->role] ?? null,
+            'role_code' => self::ROLE_CODES[$user->role] ?? null,
             'message' => 'Registration Successful. Otp sent to '. $user->email,
         ];
     }
@@ -52,7 +52,7 @@ class AuthServices
      $token = $user->createToken('Bearer Token')->plainTextToken;
         return [
             'token' => $token,
-            'code' => self::ROLE_CODES[$user->role] ?? null,
+            'role_code' => self::ROLE_CODES[$user->role] ?? null,
         ];
     }
 

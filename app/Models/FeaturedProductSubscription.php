@@ -72,4 +72,9 @@ class FeaturedProductSubscription extends Model
     {
         return $this->plan->max_products - $this->products()->count();
     }
+
+    public function featuredProducts()
+{
+    return $this->hasMany(FeaturedSubscriptionProduct::class, 'subscription_id');
+}
 }

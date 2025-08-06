@@ -39,6 +39,8 @@ class PaymentService
                 ]),
             ])->json();
 
+            // dd($response);
+
         return [
             'authorization_url' => $response['data']['authorization_url'],
             'reference' => $reference,

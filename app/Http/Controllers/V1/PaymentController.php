@@ -60,7 +60,6 @@ class PaymentController extends Controller
             'type' => 'FEAT',
             'metadata' => [
                 'store_id' => $store->id,
-                'product_id' => $request->product_id,
                 'plan_id' => $plan->id,
             ],
         ]);

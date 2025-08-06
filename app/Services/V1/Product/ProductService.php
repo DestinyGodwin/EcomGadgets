@@ -390,42 +390,78 @@ class ProductService
     }
 
     // Method to add products to a subscription
-    public function addProductsToSubscription(string $subscriptionId, array $productIds): bool
-    {
-        $subscription = FeaturedProductSubscription::findOrFail($subscriptionId);
+    // public function addProductsToSubscription(string $subscriptionId, array $productIds): bool
+    // {
+    //     $subscription = FeaturedProductSubscription::findOrFail($subscriptionId);
 
-        // Verify subscription belongs to authenticated user's store
-        if ($subscription->store_id !== Auth::user()->store->id) {
-            throw new Exception('Unauthorized access to subscription.');
-        }
+    //     // Verify subscription belongs to authenticated user's store
+    //     if ($subscription->store_id !== Auth::user()->store->id) {
+    //         throw new Exception('Unauthorized access to subscription.');
+    //     }
 
-        // Verify subscription is active
-        if (!$subscription->isActive()) {
-            throw new Exception('Subscription is not active.');
-        }
+    //     // Verify subscription is active
+    //     if (!$subscription->isActive()) {
+    //         throw new Exception('Subscription is not active.');
+    //     }
 
-        // Verify products belong to the user's store
-        $products = Product::whereIn('id', $productIds)
-            ->where('store_id', Auth::user()->store->id)
-            ->get();
+    //     // Verify products belong to the user's store
+    //     $products = Product::whereIn('id', $productIds)
+    //         ->where('store_id', Auth::user()->store->id)
+    //         ->get();
 
-        if ($products->count() !== count($productIds)) {
-            throw new Exception('Some products do not belong to your store.');
-        }
+    //     if ($products->count() !== count($productIds)) {
+    //         throw new Exception('Some products do not belong to your store.');
+    //     }
 
-        // Check if adding these products would exceed plan limit
-        $currentCount = $subscription->products()->count();
-        $newCount = count($productIds);
+    //     // Check if adding these products would exceed plan limit
+    //     $currentCount = $subscription->products()->count();
+    //     $newCount = count($productIds);
 
-        if (($currentCount + $newCount) > $subscription->plan->max_products) {
-            throw new Exception("Cannot add {$newCount} products. Only {$subscription->availableSlots()} slots available.");
-        }
+    //     if (($currentCount + $newCount) > $subscription->plan->max_products) {
+    //         throw new Exception("Cannot add {$newCount} products. Only {$subscription->availableSlots()} slots available.");
+    //     }
 
-        // Add products to subscription
-        $subscription->products()->attach($productIds, ['added_at' => now()]);
+    //     // Add products to subscription
+    //     $subscription->products()->attach($productIds, ['added_at' => now()]);
 
-        return true;
+    //     return true;
+    // }
+public function addProductsToSubscription(string $subscriptionId, array $productIds): bool
+{
+    $subscription = FeaturedProductSubscription::findOrFail($subscriptionId);
+
+    if ($subscription->store_id !== Auth::user()->store->id) {
+        throw new Exception('Unauthorized access to subscription.');
     }
+
+    if (!$subscription->isActive()) {
+        throw new Exception('Subscription is not active.');
+    }
+
+    $products = Product::whereIn('id', $productIds)
+        ->where('store_id', Auth::user()->store->id)
+        ->get();
+
+    if ($products->count() !== count($productIds)) {
+        throw new Exception('Some products do not belong to your store.');
+    }
+
+    $currentCount = $subscription->products()->count();
+    $newCount = count($productIds);
+
+    if (($currentCount + $newCount) > $subscription->plan->max_products) {
+        throw new Exception("Cannot add {$newCount} products. Only {$subscription->availableSlots()} slots available.");
+    }
+
+    foreach ($productIds as $productId) {
+        $subscription->featuredProducts()->create([
+            'product_id' => $productId,
+            'added_at' => now(),
+        ]);
+    }
+
+    return true;
+}
 
     // Method to remove products from subscription
     public function removeProductsFromSubscription(string $subscriptionId, array $productIds): bool
