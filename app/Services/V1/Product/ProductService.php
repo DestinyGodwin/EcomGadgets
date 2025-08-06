@@ -489,7 +489,7 @@ public function addProductsToSubscription(string $subscriptionId, array $product
                     ->orWhere('ends_at', '>', now());
             })
             ->with(['plan', 'products'])
-            ->get();
+            ->paginate();
     }
 
     public function getByCategory(string $categoryId, ?string $stateId = null, ?string $lgaId = null): LengthAwarePaginator
