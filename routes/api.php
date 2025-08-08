@@ -131,8 +131,8 @@ Route::prefix('v1/')->group(function () {
         // Product management within subscriptions
         Route::post('/add-products', [FeaturedProductSubscriptionController::class, 'addProducts']);
         Route::post('/remove-products', [FeaturedProductSubscriptionController::class, 'removeProducts']);
-        Route::get('/{subscriptionId}/available-products', [FeaturedProductSubscriptionController::class, 'availableProducts']);
-        Route::get('/{subscriptionId}/products', [FeaturedProductSubscriptionController::class, 'subscriptionProducts']);
+        // Route::get('/{subscriptionId}/available-products', [FeaturedProductSubscriptionController::class, 'availableProducts']);
+        // Route::get('/{subscriptionId}/products', [FeaturedProductSubscriptionController::class, 'subscriptionProducts']);
     });
         Route::controller(StoreSubscriptioncontroller::class)->group(function () {
             Route::get('my-subscriptions', 'storeSubscriptions');

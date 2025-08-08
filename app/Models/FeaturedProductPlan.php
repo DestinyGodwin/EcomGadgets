@@ -16,23 +16,26 @@ class FeaturedProductPlan extends Model {
 
     ];
 
-      public function subscriptions(): HasMany
-    {
-        return $this->hasMany(FeaturedProductSubscription::class, 'plan_id');
+        public function featuredProducts() {
+        return $this->hasMany(FeaturedProduct::class, 'plan_id');
     }
+    //   public function subscriptions(): HasMany
+    // {
+    //     return $this->hasMany(FeaturedProductSubscription::class, 'plan_id');
+    // }
 
-    public function activeSubscriptions(): HasMany
-    {
-        return $this->subscriptions()->where('is_active', true)
-            ->where(function ($query) {
-                $query->whereNull('ends_at')
-                      ->orWhere('ends_at', '>', now());
-            });
-    }
+    // public function activeSubscriptions(): HasMany
+    // {
+    //     return $this->subscriptions()->where('is_active', true)
+    //         ->where(function ($query) {
+    //             $query->whereNull('ends_at')
+    //                   ->orWhere('ends_at', '>', now());
+    //         });
+    // }
 
-    public static function getPlansOrderedByPrice()
-    {
-        return self::orderByDesc('price')->get();
-    }
+    // public static function getPlansOrderedByPrice()
+    // {
+    //     return self::orderByDesc('price')->get();
+    // }
 }
 

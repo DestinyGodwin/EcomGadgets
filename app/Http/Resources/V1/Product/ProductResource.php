@@ -23,7 +23,7 @@ class ProductResource extends JsonResource
             // 'specifications' => $this->specifications,
             // 'brand' => $this->brand,
             'price' => $this->price,
-            'is_featured' => $this->is_featured,
+            // 'is_featured' => $this->is_featured,
             'wholesale_price' => $this->wholesale_price,
             'average_rating'  => round($this->reviews->avg('rating'), 1),
 

@@ -46,7 +46,7 @@ class FeaturedProductSubscriptionController extends Controller
                 ], 403);
             }
 
-            return MyFeaturedSubscriptionResource::collection($subscriptions);
+            return new MyFeaturedSubscriptionResource($subscription);
 
 
         } catch (Exception $e) {
@@ -99,85 +99,85 @@ class FeaturedProductSubscriptionController extends Controller
         }
     }
 
-    public function availableProducts(string $subscriptionId): JsonResponse
-    {
-        try {
-            $subscription = FeaturedProductSubscription::findOrFail($subscriptionId);
+    // public function availableProducts(string $subscriptionId): JsonResponse
+    // {
+    //     try {
+    //         $subscription = FeaturedProductSubscription::findOrFail($subscriptionId);
 
-            // Verify subscription belongs to authenticated user's store
-            if ($subscription->store_id !== Auth::user()->store->id) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Unauthorized access to subscription.'
-                ], 403);
-            }
+    //         // Verify subscription belongs to authenticated user's store
+    //         if ($subscription->store_id !== Auth::user()->store->id) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Unauthorized access to subscription.'
+    //             ], 403);
+    //         }
 
-            // Get products that are not already in any active subscription
-            $usedProductIds = FeaturedProductSubscription::where('store_id', Auth::user()->store->id)
-                ->where('is_active', true)
-                ->where(function ($query) {
-                    $query->whereNull('ends_at')
-                          ->orWhere('ends_at', '>', now());
-                })
-                ->with('products')
-                ->get()
-                ->pluck('products')
-                ->flatten()
-                ->pluck('id');
+    //         // Get products that are not already in any active subscription
+    //         $usedProductIds = FeaturedProductSubscription::where('store_id', Auth::user()->store->id)
+    //             ->where('is_active', true)
+    //             ->where(function ($query) {
+    //                 $query->whereNull('ends_at')
+    //                       ->orWhere('ends_at', '>', now());
+    //             })
+    //             ->with('products')
+    //             ->get()
+    //             ->pluck('products')
+    //             ->flatten()
+    //             ->pluck('id');
 
-            $availableProducts = Auth::user()->store->products()
-                ->whereNotIn('id', $usedProductIds)
-                ->with(['images', 'category'])
-                ->latest()
-                ->paginate(20);
+    //         $availableProducts = Auth::user()->store->products()
+    //             ->whereNotIn('id', $usedProductIds)
+    //             ->with(['images', 'category'])
+    //             ->latest()
+    //             ->paginate(20);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Available products retrieved successfully.',
-                'data' => $availableProducts,
-                'subscription_info' => [
-                    'available_slots' => $subscription->availableSlots(),
-                    'max_products' => $subscription->plan->max_products,
-                    'current_products' => $subscription->products()->count()
-                ]
-            ]);
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Available products retrieved successfully.',
+    //             'data' => $availableProducts,
+    //             'subscription_info' => [
+    //                 'available_slots' => $subscription->availableSlots(),
+    //                 'max_products' => $subscription->plan->max_products,
+    //                 'current_products' => $subscription->products()->count()
+    //             ]
+    //         ]);
 
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to retrieve available products: ' . $e->getMessage()
-            ], 500);
-        }
-    }
+    //     } catch (Exception $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Failed to retrieve available products: ' . $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
 
-    public function subscriptionProducts(string $subscriptionId): JsonResponse
-    {
-        try {
-            $subscription = FeaturedProductSubscription::with(['products.images', 'plan'])
-                ->findOrFail($subscriptionId);
+    // public function subscriptionProducts(string $subscriptionId): JsonResponse
+    // {
+    //     try {
+    //         $subscription = FeaturedProductSubscription::with(['products.images', 'plan'])
+    //             ->findOrFail($subscriptionId);
 
-            // Verify subscription belongs to authenticated user's store
-            if ($subscription->store_id !== Auth::user()->store->id) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Unauthorized access to subscription.'
-                ], 403);
-            }
+    //         // Verify subscription belongs to authenticated user's store
+    //         if ($subscription->store_id !== Auth::user()->store->id) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Unauthorized access to subscription.'
+    //             ], 403);
+    //         }
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Subscription products retrieved successfully.',
-                'data' => [
-                    'subscription' => $subscription,
-                    'products' => $subscription->products()->with('images')->paginate(20)
-                ]
-            ]);
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Subscription products retrieved successfully.',
+    //             'data' => [
+    //                 'subscription' => $subscription,
+    //                 'products' => $subscription->products()->with('images')->paginate(20)
+    //             ]
+    //         ]);
 
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to retrieve subscription products: ' . $e->getMessage()
-            ], 500);
-        }
-    }
+    //     } catch (Exception $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Failed to retrieve subscription products: ' . $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
 }
