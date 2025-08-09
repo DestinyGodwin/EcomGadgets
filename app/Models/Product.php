@@ -95,5 +95,9 @@ class Product extends Model
         return $this->wishlists()->where('user_id', $user->id)->exists();
     }
 
+    public function featuredProduct()
+{
+    return $this->hasOne(FeaturedProduct::class);
+}
 
 }

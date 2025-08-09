@@ -32,8 +32,8 @@ class AddProductsToSubscriptionRequest extends FormRequest {
     public function withValidator( Validator $validator ): void {
         $validator->after( function ( $validator ) {
             if ( $this->has( 'subscription_id' ) && $this->has( 'product_ids' ) ) {
-                $existing = DB::table( 'featured_subscription_products' )
-                ->where( 'subscription_id', $this->subscription_id )
+                $existing = DB::table( 'featured_products' )
+                ->where( 'featured_product_subscription_id', $this->subscription_id )
                 ->whereIn( 'product_id', $this->product_ids )
                 ->pluck( 'product_id' )
                 ->toArray();

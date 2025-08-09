@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('featured_products', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('product_id')->constrained()->onDelete('cascade');
-            $table->foreignUuid('plan_id')->constrained('featured_plans')->onDelete('cascade');
-            $table->timestamp('expires_at');
+            $table->foreignUuid('featured_product_subscription_id')->constrained('featured_product_subscriptions')->onDelete('cascade');
+            $table->timestamp('added_at')->default(now()); 
+            $table->timestamp('expires_at')->nullable();
             $table->timestamps();
         });
     }

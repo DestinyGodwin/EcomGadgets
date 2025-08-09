@@ -8,13 +8,13 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 class FeaturedProduct extends Model {
     use HasUuids;
 
-      protected $fillable = ['product_id', 'plan_id', 'expires_at'];
+    protected $fillable = [ 'product_id', 'featured_product_subscription_id', 'expires_at' ];
 
     public function product() {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo( Product::class );
     }
 
-    public function plan() {
-        return $this->belongsTo(FeaturedProductPlan::class, 'plan_id');
+    public function subscription() {
+        return $this->belongsTo( FeaturedProductSubscription::class, 'featured_product_subscription_id' );
     }
 }

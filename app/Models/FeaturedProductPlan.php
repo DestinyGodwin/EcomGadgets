@@ -16,9 +16,9 @@ class FeaturedProductPlan extends Model {
 
     ];
 
-        public function featuredProducts() {
-        return $this->hasMany(FeaturedProduct::class, 'plan_id');
-    }
+    //     public function featuredProducts() {
+    //     return $this->hasMany(FeaturedProduct::class);
+    // }
     //   public function subscriptions(): HasMany
     // {
     //     return $this->hasMany(FeaturedProductSubscription::class, 'plan_id');
@@ -37,5 +37,10 @@ class FeaturedProductPlan extends Model {
     // {
     //     return self::orderByDesc('price')->get();
     // }
+
+        public function subscriptions()
+    {
+        return $this->hasMany(FeaturedProductSubscription::class);
+    }
 }
 
