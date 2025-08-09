@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use App\Models\Scopes\ActiveStoreScope;
@@ -12,11 +13,18 @@ class Product extends Model
 {
     use HasUuids, HasSlug;
     protected $perPage  = 16;
-    protected $fillable = ['category_id',
-        'name', 'slug', 'description',
-        'specifications', 'brand', 'price',
-        'wholesale_price', 'is_featured',
-        'featured_expires_at'];
+    protected $fillable = [
+        'category_id',
+        'name',
+        'slug',
+        'description',
+        'specifications',
+        'brand',
+        'price',
+        'wholesale_price',
+        'is_featured',
+        'featured_expires_at'
+    ];
 
     public function store(): BelongsTo
     {
@@ -95,13 +103,28 @@ class Product extends Model
         return $this->wishlists()->where('user_id', $user->id)->exists();
     }
 
-//     public function featuredProduct()
-// {
-//     return $this->hasOne(FeaturedProduct::class);
-// }
-public function featuredProducts()
-{
-    return $this->hasMany(FeaturedProduct::class);
-}
+    //     public function featuredProduct()
+    // {
+    //     return $this->hasOne(FeaturedProduct::class);
+    // }
+    public function featuredProducts()
+    {
+        return $this->hasMany(FeaturedProduct::class);
+    }
 
+    public function scopeCurrentlyFeatured($query)
+    {
+        return $query->whereHas('featuredProducts', function ($q) {
+            $q->whereNull('deleted_at')
+                ->where('expires_at', '>', now());
+        });
+    }
+
+    public function isCurrentlyFeatured(): bool
+    {
+        return $this->featuredProducts()
+            ->whereNull('deleted_at')
+            ->where('expires_at', '>', now())
+            ->exists();
+    }
 }
