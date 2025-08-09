@@ -26,6 +26,9 @@ class StoreFeaturedProductPlanRequest extends FormRequest
             'price' => ['required', 'numeric', 'min:0'],
             'description' => ['required', 'string', 'min:3', 'max:255'],
             'duration_days' => ['required', 'integer', 'min:1'],
+            'max_products' => ['somwtimes', 'integer', 'min:1'],
+            'refresh_interval_minutes' => ['somwtimes', 'integer', 'min:1'],
+            'featured_limit'  => ['somwtimes', 'integer', 'min:1'],
         ];
     }
 }
