@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\V1\Product;
 
 use App\Http\Controllers\Controller;
@@ -38,10 +39,16 @@ class WishlistController extends Controller
 
         $product = Product::findOrFail($request->product_id);
 
-        if ($product->is_featured) {
+        // if ($product->is_featured) {
+        //     ProductWishlist::firstOrCreate([
+        //         'product_id' => $product->id,
+        //         'user_id'    => Auth::user()->id,
+        //     ]);
+        // }
+        if ($product->isCurrentlyFeatured()) {
             ProductWishlist::firstOrCreate([
                 'product_id' => $product->id,
-                'user_id'    => Auth::user()->id,
+                'user_id'    => Auth::id(),
             ]);
         }
         return new WishlistResource($wishlistItem);
