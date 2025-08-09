@@ -3,15 +3,17 @@
 namespace App\Notifications\V1\Admin;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Mail\V1\Admin\NewStoreAwaitingApprovalMail;
 
-class NewStoreAwaitingApprovalNotification extends Notification implements ShouldQueue
+class NewStoreAwaitingApprovalNotification extends Notification 
 {
     use Queueable;
 
-    public $store;
+    /**
+     * Create a new notification instance.
+     */
+public $store;
 
     public function __construct($store)
     {
@@ -25,11 +27,11 @@ class NewStoreAwaitingApprovalNotification extends Notification implements Shoul
 
     public function toMail($notifiable)
     {
-        $subject = 'New Store Pending Approval';
-        $messageText = "A new store \"{$this->store->store_name}\" has been created.\n\n"
-            . "Please review the store and either approve or decline it.\n\n"
-            . "Review here: " . url("/admin/stores/{$this->store->slug}");
-
-        return new NewStoreAwaitingApprovalMail($subject, $messageText);
+        return (new MailMessage)
+            ->subject('New Store Pending Approval')
+            ->line("A new store \"{$this->store->store_name}\" has been created.")
+            ->line("Please review the store and either approve or decline it.")
+            ->action('Review Store', url("/admin/stores/{$this->store->slug}"))
+            ->line('Thank you.');
     }
 }
