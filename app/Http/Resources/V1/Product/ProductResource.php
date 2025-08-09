@@ -23,7 +23,7 @@ class ProductResource extends JsonResource
             // 'specifications' => $this->specifications,
             // 'brand' => $this->brand,
             'price' => $this->price,
-            // 'is_featured' => $this->is_featured,
+            'is_featured' => $this->isCurrentlyFeatured(),
             'wholesale_price' => $this->wholesale_price,
             'average_rating'  => round($this->reviews->avg('rating'), 1),
 
@@ -31,9 +31,9 @@ class ProductResource extends JsonResource
             'store' => [
                 'id' => $this->store->id,
                 'name' => $this->store->store_name,
-                'slug' =>$this->store->slug,
+                'slug' => $this->store->slug,
                 'store_lga' =>  $this->store->lga->name,
-               'store_image' => asset('storage/' . $this->store->store_image),             
+                'store_image' => asset('storage/' . $this->store->store_image),
                 'store_state' => $this->store->state->name,
                 'phone_number' => $this->store->phone,
 
