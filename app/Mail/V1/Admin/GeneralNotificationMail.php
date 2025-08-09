@@ -9,43 +9,37 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class GeneralNotificationMail extends Mailable
+class GeneralNotificationMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     */
-    public function __construct()
+    public string $subjectText;
+    public string $messageText;
+
+    public function __construct(string $subject, string $messageText)
     {
-        //
+        $this->subjectText = $subject;
+        $this->messageText = $messageText;
     }
 
-    /**
-     * Get the message envelope.
-     */
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'General Notification Mail',
+            subject: $this->subjectText,
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'emails.admin.general_notification',
+            with: [
+                'messageText' => $this->messageText,
+                'subject' => $this->subjectText, 
+            ],
         );
     }
 
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
     public function attachments(): array
     {
         return [];
