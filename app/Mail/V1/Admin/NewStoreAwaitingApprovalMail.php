@@ -29,8 +29,7 @@ class NewStoreAwaitingApprovalMail extends Mailable implements ShouldQueue
             view: 'emails.admin.new_store_pending',
             with: [
                 'store' => $this->store,
-                'storeOwner' => $this->store->user->first_name ?? 'Vendor',
-                'reviewUrl' => url("/admin/stores/{$this->store->slug}")
+                'storeOwner' => $this->store->user->first_name ?? 'Vendor'
             ]
         );
     }
