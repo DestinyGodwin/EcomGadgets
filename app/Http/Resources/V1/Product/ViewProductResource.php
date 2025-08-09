@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Resources\V1\Product;
 
 use App\Http\Resources\V1\Product\ProductImageResource;
@@ -22,7 +23,7 @@ class ViewProductResource extends JsonResource
             'slug'            => $this->slug,
             'description'     => $this->description,
             'price'           => $this->price,
-            'is_featured'     => $this->is_featured,
+            'is_featured' => $this->isCurrentlyFeatured(),
             'wholesale_price' => $this->wholesale_price,
             'images'          => ProductImageResource::collection($this->images),
 
