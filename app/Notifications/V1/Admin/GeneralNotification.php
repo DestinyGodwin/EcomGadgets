@@ -3,9 +3,11 @@
 namespace App\Notifications\V1\Admin;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Mail\V1\Admin\GeneralNotificationMail;
+use Illuminate\Notifications\Messages\MailMessage;
+
 class GeneralNotification extends Notification implements ShouldQueue
 {
     use Queueable;
@@ -35,11 +37,13 @@ class GeneralNotification extends Notification implements ShouldQueue
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail($notifiable): MailMessage
+    public function toMail($notifiable)
     {
-        return (new MailMessage)
-            ->subject($this->subject)
-            ->line($this->message);
+        // return (new MailMessage)
+        //     ->subject($this->subject)
+        //     ->line($this->message);
+           return (new GeneralNotificationMail($this->subject, $this->message));
+
     }
 
     

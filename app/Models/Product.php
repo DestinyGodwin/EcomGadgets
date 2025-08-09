@@ -111,20 +111,17 @@ class Product extends Model
     {
         return $this->hasMany(FeaturedProduct::class);
     }
+public function scopeCurrentlyFeatured($query)
+{
+    return $query->whereHas('featuredProducts', function ($q) {
+        $q->where('expires_at', '>', now());
+    });
+}
 
-    public function scopeCurrentlyFeatured($query)
-    {
-        return $query->whereHas('featuredProducts', function ($q) {
-            $q->whereNull('deleted_at')
-                ->where('expires_at', '>', now());
-        });
-    }
-
-    public function isCurrentlyFeatured(): bool
-    {
-        return $this->featuredProducts()
-            ->whereNull('deleted_at')
-            ->where('expires_at', '>', now())
-            ->exists();
-    }
+public function isCurrentlyFeatured(): bool
+{
+    return $this->featuredProducts()
+        ->where('expires_at', '>', now())
+        ->exists();
+}
 }
