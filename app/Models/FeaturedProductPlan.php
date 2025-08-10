@@ -12,7 +12,7 @@ class FeaturedProductPlan extends Model {
     use HasUuids, SoftDeletes;
 
     protected $fillable = [
-        'name', 'price', 'description', 'duration_days',    'max_products', 'refresh_interval_minutes'
+        'name', 'price', 'description', 'duration_days',    'max_products', 'refresh_interval_minutes','featured_limit',
 
     ];
 

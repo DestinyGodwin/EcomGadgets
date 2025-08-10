@@ -71,8 +71,8 @@ class RefreshFeaturedProducts extends Command
 
         $totalChecked = 0;
         $totalRefreshed = 0;
-        $subscriptionsAffected = []; // [subscriptionId => ['plan' => name, 'count' => n]]
-        $plansRefreshed = [];        // [planName => count]
+        $subscriptionsAffected = []; 
+        $plansRefreshed = [];       
         $skipped = 0;
 
         FeaturedProduct::with(['subscription.plan'])
