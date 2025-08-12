@@ -101,119 +101,7 @@ class ProductService
         });
     }
 
-    // public function getAll(): LengthAwarePaginator
-    // {
-    //     return Product::with(['images', 'store'])->orderByDesc('is_featured')
-    //         ->orderByDesc('featured_expires_at')->latest()->paginate();
-    // }
-
-    // public function getByCategory(string $categoryId, ?string $stateId = null, ?string $lgaId = null): LengthAwarePaginator
-    // {
-    //     return Product::with(['images', 'store'])
-    //         ->where('category_id', $categoryId)
-    //         ->whereHas('store', function ($query) use ($stateId, $lgaId) {
-    //             if ($stateId) {
-    //                 $query->where('state_id', $stateId);
-    //             }
-
-    //             if ($lgaId) {
-    //                 $query->where('lga_id', $lgaId);
-    //             }
-    //         })->orderByDesc('is_featured')
-    //         ->orderByDesc('featured_expires_at')->latest()->paginate();
-    // }
-
-    // public function getByBrand(string $brand)
-    // {
-    //     return Product::with(['images', 'store'])
-    //         ->where('brand', $brand)
-    //         ->orderByDesc('is_featured')
-    //         ->orderByDesc('featured_expires_at')->latest()->paginate();
-    // }
-
-    // public function search(array $filters): LengthAwarePaginator
-    // {
-    //     $query = Product::with('store');
-    //     if (! empty($filters['search'])) {
-    //         $query->where(function ($q) use ($filters) {
-    //             $q->where('name', 'like', '%' . $filters['search'] . '%')
-    //                 ->orWhere('brand', 'like', '%' . $filters['search'] . '%');
-    //         });
-    //     }
-    //     if (! empty($filters['state_id'])) {
-    //         $query->whereHas('store', function ($q) use ($filters) {
-    //             $q->where('state_id', $filters['state_id']);
-    //         });
-    //     }
-    //     if (! empty($filters['category_id'])) {
-    //         $query->where('category_id', $filters['category_id']);
-    //     }
-    //     if (! empty($filters['brand'])) {
-    //         $query->where('brand', 'like', '%' . $filters['brand'] . '%');
-    //     }
-    //     if (! empty($filters['min_price'])) {
-    //         $query->where('price', '>=', $filters['min_price']);
-    //     }
-    //     if (! empty($filters['max_price'])) {
-    //         $query->where('price', '<=', $filters['max_price']);
-    //     }
-    //     $query->orderByDesc('is_featured')
-    //         ->orderByDesc('featured_expires_at');
-    //     switch ($filters['sort_by'] ?? null) {
-    //         case 'price_asc':
-    //             $query->orderBy('price', 'asc');
-    //             break;
-    //         case 'price_desc':
-    //             $query->orderBy('price', 'desc');
-    //             break;
-    //         case 'name_asc':
-    //             $query->orderBy('name', 'asc');
-    //             break;
-    //         case 'name_desc':
-    //             $query->orderBy('name', 'desc');
-    //             break;
-    //         default:
-    //             $query->orderBy('created_at', 'desc');
-    //     }
-    //     return $query->paginate(20);
-    // }
-
-    // public function getByUserState(): LengthAwarePaginator
-    // {
-    //     $user = Auth::user();
-    //     return Product::with(['images', 'store'])
-    //         ->whereHas('store', function ($query) use ($user) {
-    //             $query->where('state_id', $user->state_id);
-    //         })->orderByDesc('is_featured')
-    //         ->orderByDesc('featured_expires_at')->latest()->paginate();
-    // }
-
-    // public function getByUserLga(): LengthAwarePaginator
-    // {
-    //     $user = Auth::user();
-    //     return Product::with(['images', 'store'])
-    //         ->whereHas('store', function ($query) use ($user) {
-    //             $query->where('lga_id', $user->lga_id);
-    //         })->orderByDesc('is_featured')
-    //         ->orderByDesc('featured_expires_at')->latest()->paginate();
-    // }
-
-    // public function getByState($stateId): LengthAwarePaginator
-    // {
-    //     return Product::with(['images', 'store'])
-    //         ->whereHas('store', function ($query) use ($stateId) {
-    //             $query->where('state_id', $stateId);
-    //         })->orderByDesc('is_featured')
-    //         ->orderByDesc('featured_expires_at')->latest()->paginate();
-    // }
-    // public function getByLga($lgaId): LengthAwarePaginator
-    // {
-    //     return Product::with(['images', 'store'])
-    //         ->whereHas('store', function ($query) use ($lgaId) {
-    //             $query->where('lga_id', $lgaId);
-    //         })->orderByDesc('is_featured')
-    //         ->orderByDesc('featured_expires_at')->latest()->paginate();
-    // }
+  
 
     public function myProducts(): LengthAwarePaginator
     {
@@ -505,7 +393,7 @@ class ProductService
     //         return $this->getFeaturedAndRegularProducts($filters);
     //     }
 
-    //     public function search(array $filters): LengthAwarePaginator
+    //     public functio search(array $filters): LengthAwarePaginator
     //     {
     //         return $this->getFeaturedAndRegularProducts($filters);
     //     }
@@ -612,26 +500,70 @@ class ProductService
     /**
      * Merge featured and non-featured into paginated results.
      */
-    private function getCombinedProducts(array $filters = [], int $perPage = 30): LengthAwarePaginator
-    {
-        $featured = $this->fetchFeatured($filters);
-        $featuredIds = $featured->pluck('id')->toArray();
+    // private function getCombinedProducts(array $filters = [], int $perPage = 30): LengthAwarePaginator
+    // {
+    //     $featured = $this->fetchFeatured($filters);
+    //     $featuredIds = $featured->pluck('id')->toArray();
 
-        $remainingSlots = $perPage - $featured->count();
-        $nonFeatured = $this->fetchNonFeatured($filters, $remainingSlots, $featuredIds);
+    //     $remainingSlots = $perPage - $featured->count();
+    //     $nonFeatured = $this->fetchNonFeatured($filters, $remainingSlots, $featuredIds);
 
-        $allProducts = $featured->merge($nonFeatured);
+    //     $allProducts = $featured->merge($nonFeatured);
 
-        // Manual pagination
-        $page = request()->get('page', 1);
-        $total = $allProducts->count();
-        $items = $allProducts->forPage($page, $perPage)->values();
+    //     // Manual pagination
+    //     $page = request()->get('page', 1);
+    //     $total = $allProducts->count();
+    //     $items = $allProducts->forPage($page, $perPage)->values();
 
-        return new LengthAwarePaginator($items, $total, $perPage, $page, [
+    //     return new LengthAwarePaginator($items, $total, $perPage, $page, [
+    //         'path' => request()->url(),
+    //         'query' => request()->query(),
+    //     ]);
+    // }
+private function getCombinedProducts(array $filters = [], int $perPage = 30): LengthAwarePaginator
+{
+    $page = request()->get('page', 1);
+
+    // Fetch featured products according to plan limits
+    $featured = $this->fetchFeatured($filters);
+    $featuredIds = $featured->pluck('id')->toArray();
+
+    // Determine how many non-featured slots remain for this page
+    $remainingSlots = $perPage - $featured->count();
+    if ($remainingSlots < 0) {
+        $remainingSlots = 0;
+    }
+
+    // Base query for non-featured products
+    $nonFeaturedQuery = Product::with(['images', 'store', 'category'])
+        ->whereNotIn('id', $featuredIds);
+    $this->applyFilters($nonFeaturedQuery, $filters);
+
+    // Get total count (featured count + filtered non-featured count)
+    $nonFeaturedTotal = (clone $nonFeaturedQuery)->count();
+    $total = $featured->count() + $nonFeaturedTotal;
+
+    // Paginate non-featured properly using DB offset/limit
+    $offset = max(0, ($page - 1) * $perPage - $featured->count());
+    $nonFeatured = $nonFeaturedQuery
+        ->skip($offset)
+        ->take($remainingSlots)
+        ->get();
+
+    // Merge featured & non-featured for this page
+    $allProducts = $featured->merge($nonFeatured);
+
+    return new LengthAwarePaginator(
+        $allProducts,
+        $total,
+        $perPage,
+        $page,
+        [
             'path' => request()->url(),
             'query' => request()->query(),
-        ]);
-    }
+        ]
+    );
+}
 
     /**
      * Public methods for various fetch types.
