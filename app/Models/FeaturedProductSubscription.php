@@ -13,6 +13,7 @@ class FeaturedProductSubscription extends Model
 
     protected $fillable = [
         'store_id',
+        "plan_id",
         'featured_product_plan_id',
         'reference',
         'starts_at',
