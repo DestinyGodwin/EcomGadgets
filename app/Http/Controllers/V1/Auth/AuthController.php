@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\V1\Auth;
 
 use App\Models\User;
@@ -7,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Services\V1\AuthServices;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\Auth\LoginRequest;
+use App\Http\Requests\V1\Auth\LogoutRequest;
 use App\Http\Resources\V1\Auth\UserResource;
 use App\Http\Requests\V1\Auth\VerifyEmailRequest;
 use App\Http\Requests\V1\Auth\RegisterUserRequest;
@@ -19,8 +21,7 @@ use App\Http\Requests\V1\Auth\CompleteProfileRequest;
 class AuthController extends Controller
 {
 
-    public function __construct(protected AuthServices $authServices)
-    {}
+    public function __construct(protected AuthServices $authServices) {}
 
     public function store(RegisterUserRequest $request)
     {
@@ -34,14 +35,15 @@ class AuthController extends Controller
     }
     public function login(LoginRequest $request)
     {
-        $data = $this->authServices->login($request->validated());
+        $credentials = $request->only(['email', 'password']);
+        $device = $request->only(['device_token',  'device_name']);
+
+        $data = $this->authServices->login($credentials, $device);
 
         if (isset($data['error'])) {
             return response()->json(['message' => $data['error']], 401);
         }
-         if (request()->filled('device_token')) {
-            $this->registerDevice($user, request()->only('device_token', 'device_name'));
-        }
+
         return response()->json([
             'message'   => 'Logged in successfully',
             'token'     => $data['token'],
@@ -106,23 +108,10 @@ class AuthController extends Controller
         return new UserResource($user);
     }
 
-    public function logout(Request $request)
+    public function logout(LogoutRequest $request)
     {
-        $this->authServices->logout();
-        return response()->json('logged out successfully');
+        $this->authServices->logout($request->device_token);
+        return response()->json('Logged out successfully');
     }
 
-    protected function registerDevice(User $user, array $data): void
-    {
-        if (empty($data['device_token'])) {
-            return;
-        }
-        UserDevice::updateOrCreate(
-            ['device_token' => $data['device_token']],
-            [
-                'user_id' => $user->id,
-                'device_name' => $data['device_name'] ?? null,
-            ]
-        );
-    }
 }
