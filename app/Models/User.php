@@ -90,4 +90,18 @@ class User extends Authenticatable
     {
         return $this->hasManyThrough(Product::class, Store::class);
     }
+
+    public function devices()
+    {
+        return $this->hasMany(UserDevice::class);
+    }
+
+    /**
+     * Route notifications for FCM channel.
+     * Must return string or array of tokens.
+     */
+    public function routeNotificationForFcm()
+    {
+        return $this->devices()->pluck('device_token')->toArray();
+    }
 }
