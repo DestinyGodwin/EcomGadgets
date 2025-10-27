@@ -1,18 +1,20 @@
 <?php
 namespace App\Http\Controllers\V1\Auth;
 
+use App\Models\User;
+use App\Models\UserDevice;
+use Illuminate\Http\Request;
+use App\Services\V1\AuthServices;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\V1\Auth\ChangePasswordRequest;
-use App\Http\Requests\V1\Auth\CompleteProfileRequest;
-use App\Http\Requests\V1\Auth\ForgotPasswordRequest;
 use App\Http\Requests\V1\Auth\LoginRequest;
+use App\Http\Resources\V1\Auth\UserResource;
+use App\Http\Requests\V1\Auth\VerifyEmailRequest;
 use App\Http\Requests\V1\Auth\RegisterUserRequest;
 use App\Http\Requests\V1\Auth\ResetPasswordRequest;
 use App\Http\Requests\V1\Auth\UpdateProfileRequest;
-use App\Http\Requests\V1\Auth\VerifyEmailRequest;
-use App\Http\Resources\V1\Auth\UserResource;
-use App\Services\V1\AuthServices;
-use Illuminate\Http\Request;
+use App\Http\Requests\V1\Auth\ChangePasswordRequest;
+use App\Http\Requests\V1\Auth\ForgotPasswordRequest;
+use App\Http\Requests\V1\Auth\CompleteProfileRequest;
 
 class AuthController extends Controller
 {
@@ -36,6 +38,9 @@ class AuthController extends Controller
 
         if (isset($data['error'])) {
             return response()->json(['message' => $data['error']], 401);
+        }
+         if (request()->filled('device_token')) {
+            $this->registerDevice($user, request()->only('device_token', 'device_name'));
         }
         return response()->json([
             'message'   => 'Logged in successfully',
@@ -105,5 +110,19 @@ class AuthController extends Controller
     {
         $this->authServices->logout();
         return response()->json('logged out successfully');
+    }
+
+    protected function registerDevice(User $user, array $data): void
+    {
+        if (empty($data['device_token'])) {
+            return;
+        }
+        UserDevice::updateOrCreate(
+            ['device_token' => $data['device_token']],
+            [
+                'user_id' => $user->id,
+                'device_name' => $data['device_name'] ?? null,
+            ]
+        );
     }
 }
