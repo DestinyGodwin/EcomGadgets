@@ -2,11 +2,12 @@
 
 namespace App\Notifications\V1\Products;
 
-use App\Models\ProductRequest;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
+use App\Models\ProductRequest;
 use Illuminate\Notifications\Notification;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Mail\V1\Products\ProductRequestedMail;
+use Illuminate\Notifications\Messages\MailMessage;
 
 class ProductRequestedNotification extends Notification implements ShouldQueue
 {
@@ -19,18 +20,10 @@ class ProductRequestedNotification extends Notification implements ShouldQueue
         return ['mail', 'database', 'fcm'];
     }
 
-    public function toMail($notifiable)
+     public function toMail($notifiable)
     {
-        $frontendUrl = config('frontend.url');
-        $productUrl  = "{$frontendUrl}/product-requests/{$this->productRequest->id}";
-
-        return (new MailMessage)
-            ->subject('New Product Request from a User')
-            ->greeting("Hello {$notifiable->first_name},")
-            ->line("A user requested the product \"{$this->productRequest->name}\".")
-            ->line("Description: " . ($this->productRequest->description ?? 'N/A'))
-            ->action('View Product Request', $productUrl)
-            ->line('You may have this item available in your store.');
+        return (new ProductRequestedMail($this->productRequest, $notifiable->first_name))
+            ->to($notifiable->email);
     }
 
     public function toDatabase($notifiable): array
