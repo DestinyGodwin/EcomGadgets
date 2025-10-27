@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Notifications\V1\Stores;
 
 use App\Models\Store;
@@ -11,40 +12,57 @@ class StoreDeactivatedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    /**
-     * Create a new notification instance.
-     */
-    public function __construct(protected Store $store, protected string $message)
-    {}
+    public function __construct(
+        protected Store $store,
+        protected string $message
+    ) {}
 
-    public function via($notifiable)
+    public function via($notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database', 'fcm'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
     public function toMail($notifiable)
     {
         return (new MailMessage)
             ->subject('Your Store Has Been Deactivated')
             ->greeting("Hello {$notifiable->first_name},")
-            ->line("Your store \"{$this->store->store_name}\" has been deactivated ")
+            ->line("Your store \"{$this->store->store_name}\" has been deactivated.")
             ->line('Reason: ' . $this->message)
-            ->line('If you believe this was a mistake or you need assistance, please contact support.')
+            ->line('If you believe this was a mistake or need help, please contact support.')
             ->line('Thank you for your understanding.');
     }
 
-    /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(object $notifiable): array
+    public function toDatabase($notifiable): array
     {
         return [
-            //
+            'store_id'   => $this->store->id,
+            'store_name' => $this->store->store_name,
+            'slug'       => $this->store->slug,
+            'message'    => "Your store \"{$this->store->store_name}\" has been deactivated.",
+            'reason'     => $this->message,
+            'url'        => url("/store/{$this->store->slug}"),
+        ];
+    }
+
+    public function toFcm($notifiable): array
+    {
+        $frontendUrl = config('frontend.url');
+        $storeUrl = "{$frontendUrl}/store/{$this->store->slug}";
+
+        return [
+            'to' => $notifiable->routeNotificationForFcm(),
+            'notification' => [
+                'title' => 'Store Deactivated',
+                'body'  => "Your store \"{$this->store->store_name}\" has been deactivated. Reason: {$this->message}",
+            ],
+            'data' => [
+                'store_id'   => $this->store->id,
+                'store_name' => $this->store->store_name,
+                'slug'       => $this->store->slug,
+                'reason'     => $this->message,
+                'type'       => 'store_deactivated',
+            ],
         ];
     }
 }
