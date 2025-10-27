@@ -5,6 +5,7 @@ namespace App\Services\V1;
 use Exception;
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\UserDevice;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -43,12 +44,16 @@ class AuthServices
         ];
     }
 
-    public function login(array $credentials){
+    public function login(array $credentials,  array $device = []){
       if (!Auth::attempt($credentials))  {
         return ['error' => 'Invalid credentials'];
       }
       $user = Auth::user();
       $user->tokens()->delete();
+
+         if (! empty($device['device_token'])) {
+            $this->registerDevice($user, $device);
+        }
      $token = $user->createToken('Bearer Token')->plainTextToken;
         return [
             'token' => $token,
@@ -184,8 +189,49 @@ public function getProfile(){
     return Auth::user();
 }
 
-   public function logout(){
-    Auth::user()->currentAccessToken()->delete();
+//    public function logout(){
+//     Auth::user()->currentAccessToken()->delete();
+
+
+     public function logout(?string $deviceToken = null): void
+    {
+        $user = Auth::user();
+
+        if ($deviceToken) {
+            UserDevice::where('user_id', $user->id)
+                ->where('device_token', $deviceToken)
+                ->delete();
+        }
+
+        $user->currentAccessToken()->delete();
+    }
+
+     /**
+     * Register or update device token (single source of truth)
+     *
+     * @param User  $user
+     * @param array $data
+     */
+    protected function registerDevice(User $user, array $data): void
+    {
+        $deviceToken = $data['device_token'] ?? null;
+        if (! $deviceToken) {
+            return;
+        }
+
+        UserDevice::where('device_token', $deviceToken)
+            ->where('user_id', '!=', $user->id)
+            ->delete();
+
+        UserDevice::updateOrCreate(
+            ['device_token' => $deviceToken],
+            [
+                'user_id' => $user->id,
+                'platform' => $data['platform'] ?? null,
+                'device_name' => $data['device_name'] ?? null,
+            ]
+        );
+    }
 }
 
-}
+
