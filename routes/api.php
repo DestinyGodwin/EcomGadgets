@@ -13,6 +13,7 @@ use App\Http\Controllers\V1\AdvertBookingController;
 use App\Http\Controllers\V1\Admin\SettingsController;
 use App\Http\Controllers\V1\PaymentWebhookController;
 use App\Http\Controllers\V1\Product\ReviewController;
+use App\Services\V1\Product\ProductRequestController;
 use App\Http\Controllers\V1\Admin\NotifyingController;
 use App\Http\Controllers\V1\Product\ProductController;
 use App\Http\Controllers\V1\Admin\AdvertPlanController;
@@ -145,6 +146,8 @@ Route::prefix('v1/')->group(function () {
             Route::get('/status/{status}', [TransactionController::class, 'status']);
             Route::get('/search', [TransactionController::class, 'search']);
         });
+            Route::post('product-requests', [ProductRequestController::class, 'store']);
+
         Route::controller(ProductController::class)->group(function () {
             Route::post('products', 'store');
             Route::get('my-featured', 'myFeaturedProducts');
