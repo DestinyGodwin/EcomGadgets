@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Services\V1\Product;
+namespace App\Http\Controllers\V1\Product;
 
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Services\V1\Product\ProductRequestService;
 use App\Http\Requests\V1\Product\StoreProductRequestRequest;
 
 class ProductRequestController extends Controller
