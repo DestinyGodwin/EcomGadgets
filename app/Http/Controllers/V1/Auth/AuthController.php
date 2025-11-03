@@ -116,20 +116,46 @@ class AuthController extends Controller
     }
 
     public function redirectToGoogle()
-{
-    return Socialite::driver('google')->stateless()->redirect();
-}
+    {
+        return Socialite::driver('google')->stateless()->redirect();
+    }
 
-public function handleGoogleCallback()
-{
-    $googleUser = Socialite::driver('google')->stateless()->user();
+    public function handleGoogleCallback()
+    {
+        $googleUser = Socialite::driver('google')->stateless()->user();
 
-    $data = $this->authServices->googleLoginOrRegister($googleUser);
+        $data = $this->authServices->googleLoginOrRegister($googleUser);
 
-    return response()->json([
-        'message' => 'Logged in successfully',
-        'token' => $data['token'],
-        'role_code' => $data['role_code'],
-    ]);
-}
+        return response()->json([
+            'message' => 'Logged in successfully',
+            'token' => $data['token'],
+            'role_code' => $data['role_code'],
+        ]);
+    }
+
+    public function googleMobileLogin(Request $request)
+    {
+        $request->validate(['id_token' => 'required|string']);
+
+        $payload = json_decode(
+            file_get_contents('https://oauth2.googleapis.com/tokeninfo?id_token=' . $request->id_token),
+            true
+        );
+
+        if (!isset($payload['email'])) {
+            return response()->json(['message' => 'Invalid token'], 401);
+        }
+
+        $data = $this->authServices->googleLoginOrRegister((object)[
+            'id' => $payload['sub'],
+            'email' => $payload['email'],
+            'name' => $payload['name'] ?? null,
+        ]);
+
+        return response()->json([
+            'message' => 'Logged in successfully',
+            'token' => $data['token'],
+            'role_code' => $data['role_code'],
+        ]);
+    }
 }
