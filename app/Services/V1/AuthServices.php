@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\V1\Auth\UserResource;
+use Laravel\Socialite\Contracts\User as SocialiteUser;
 
 class AuthServices
 {
@@ -232,6 +233,35 @@ public function getProfile(){
             ]
         );
     }
+
+    public function googleLoginOrRegister(SocialiteUser $googleUser)
+{
+    $user = User::where('email', $googleUser->getEmail())->first();
+
+    if (! $user) {
+        $user = User::create([
+            'name' => $googleUser->getName(),
+            'email' => $googleUser->getEmail(),
+            'google_id' => $googleUser->getId(),
+            'email_verified_at' => now(),
+            'password' => "",
+        ]);
+    }
+
+    if (! $user->google_id) {
+        $user->update(['google_id' => $googleUser->getId()]);
+    }
+
+    $user->tokens()->delete();
+
+    $token = $user->createToken('Bearer Token')->plainTextToken;
+
+    return [
+        'token' => $token,
+        'role_code' => self::ROLE_CODES[$user->role] ?? null,
+    ];
+}
+
 }
 
 
