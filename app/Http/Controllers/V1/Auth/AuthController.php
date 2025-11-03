@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1\Auth;
 use App\Models\User;
 use App\Models\UserDevice;
 use Illuminate\Http\Request;
+use Laravel\Socialite\Socialite;
 use App\Services\V1\AuthServices;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\Auth\LoginRequest;
@@ -114,4 +115,21 @@ class AuthController extends Controller
         return response()->json('Logged out successfully');
     }
 
+    public function redirectToGoogle()
+{
+    return Socialite::driver('google')->stateless()->redirect();
+}
+
+public function handleGoogleCallback()
+{
+    $googleUser = Socialite::driver('google')->stateless()->user();
+
+    $data = $this->authServices->googleLoginOrRegister($googleUser);
+
+    return response()->json([
+        'message' => 'Logged in successfully',
+        'token' => $data['token'],
+        'role_code' => $data['role_code'],
+    ]);
+}
 }
