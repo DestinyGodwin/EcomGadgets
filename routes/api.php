@@ -36,7 +36,7 @@ Route::prefix('v1/')->group(function () {
             Route::post('register', 'store');
             Route::get('google/redirect', 'redirectToGoogle');
             Route::get('google/callback', 'handleGoogleCallback');
-            Route::post('google-login', [AuthController::class, 'googleMobileLogin']);
+            Route::post('google-login', 'googleMobileLogin');
 
             Route::post('login', 'login')->middleware('logged.in');
             Route::post('verify-email', 'verifyEmail')->middleware('auth:sanctum');

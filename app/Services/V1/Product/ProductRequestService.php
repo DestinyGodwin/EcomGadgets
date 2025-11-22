@@ -29,7 +29,7 @@ class ProductRequestService
 
         // Notify all admins and vendors
         User::whereIn('role', ['admin', 'vendor'])
-            ->where('status', 'active')
+            ->where('status', 'active')->where('state_id', $user->state_id)
             ->chunkById(100, function ($recipients) use ($productRequest) {
                 Notification::send($recipients, new ProductRequestedNotification($productRequest));
             });
