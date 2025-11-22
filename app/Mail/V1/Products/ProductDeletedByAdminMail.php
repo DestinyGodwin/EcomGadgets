@@ -39,7 +39,7 @@ class ProductDeletedByAdminMail extends Mailable implements ShouldQueue
                 'storeOwner' => $this->product->store->user->first_name,
                 'productName' => $this->product->name,
                 'reason' => $this->reason,
-                'ctaUrl' =>  config('app.store_frontend_url'). '/products',            ]
+                          ]
         );
     }
 

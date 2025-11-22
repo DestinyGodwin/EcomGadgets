@@ -35,11 +35,17 @@ return [
         ],
     ],
     'paystack' => [
-    'secret_key' => env('PAYSTACK_SECRET_KEY'),
-    'public_key' => env('PAYSTACK_PUBLIC_KEY'),
-    'payment_url' => env('PAYSTACK_PAYMENT_URL'), 
-    'callback_url' => env('PAYSTACK_CALLBACK_URL'),
- 
+        'secret_key' => env('PAYSTACK_SECRET_KEY'),
+        'public_key' => env('PAYSTACK_PUBLIC_KEY'),
+        'payment_url' => env('PAYSTACK_PAYMENT_URL'),
+        'callback_url' => env('PAYSTACK_CALLBACK_URL'),
 
-],
+
+    ],
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI'),
+    ],
+
 ];

@@ -1,24 +1,28 @@
 <?php
+
 namespace App\Http\Controllers\V1\Auth;
 
+use App\Models\User;
+use App\Models\UserDevice;
+use Illuminate\Http\Request;
+use Laravel\Socialite\Socialite;
+use App\Services\V1\AuthServices;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\V1\Auth\ChangePasswordRequest;
-use App\Http\Requests\V1\Auth\CompleteProfileRequest;
-use App\Http\Requests\V1\Auth\ForgotPasswordRequest;
 use App\Http\Requests\V1\Auth\LoginRequest;
+use App\Http\Requests\V1\Auth\LogoutRequest;
+use App\Http\Resources\V1\Auth\UserResource;
+use App\Http\Requests\V1\Auth\VerifyEmailRequest;
 use App\Http\Requests\V1\Auth\RegisterUserRequest;
 use App\Http\Requests\V1\Auth\ResetPasswordRequest;
 use App\Http\Requests\V1\Auth\UpdateProfileRequest;
-use App\Http\Requests\V1\Auth\VerifyEmailRequest;
-use App\Http\Resources\V1\Auth\UserResource;
-use App\Services\V1\AuthServices;
-use Illuminate\Http\Request;
+use App\Http\Requests\V1\Auth\ChangePasswordRequest;
+use App\Http\Requests\V1\Auth\ForgotPasswordRequest;
+use App\Http\Requests\V1\Auth\CompleteProfileRequest;
 
 class AuthController extends Controller
 {
 
-    public function __construct(protected AuthServices $authServices)
-    {}
+    public function __construct(protected AuthServices $authServices) {}
 
     public function store(RegisterUserRequest $request)
     {
@@ -32,11 +36,15 @@ class AuthController extends Controller
     }
     public function login(LoginRequest $request)
     {
-        $data = $this->authServices->login($request->validated());
+        $credentials = $request->only(['email', 'password']);
+        $device = $request->only(['device_token',  'device_name']);
+
+        $data = $this->authServices->login($credentials, $device);
 
         if (isset($data['error'])) {
             return response()->json(['message' => $data['error']], 401);
         }
+
         return response()->json([
             'message'   => 'Logged in successfully',
             'token'     => $data['token'],
@@ -101,9 +109,53 @@ class AuthController extends Controller
         return new UserResource($user);
     }
 
-    public function logout(Request $request)
+    public function logout(LogoutRequest $request)
     {
-        $this->authServices->logout();
-        return response()->json('logged out successfully');
+        $this->authServices->logout($request->device_token);
+        return response()->json('Logged out successfully');
+    }
+
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->stateless()->redirect();
+    }
+
+    public function handleGoogleCallback()
+    {
+        $googleUser = Socialite::driver('google')->stateless()->user();
+
+        $data = $this->authServices->googleLoginOrRegister($googleUser);
+
+        return response()->json([
+            'message' => 'Logged in successfully',
+            'token' => $data['token'],
+            'role_code' => $data['role_code'],
+        ]);
+    }
+
+    public function googleMobileLogin(Request $request)
+    {
+        $request->validate(['id_token' => 'required|string']);
+
+        $payload = json_decode(
+            file_get_contents('https://oauth2.googleapis.com/tokeninfo?id_token=' . $request->id_token),
+            true
+        );
+
+        if (!isset($payload['email'])) {
+            return response()->json(['message' => 'Invalid token'], 401);
+        }
+
+        $data = $this->authServices->googleLoginOrRegister((object)[
+            'id' => $payload['sub'],
+            'email' => $payload['email'],
+            'name' => $payload['name'] ?? null,
+        ]);
+
+        return response()->json([
+            'message' => 'Logged in successfully',
+            'token' => $data['token'],
+            'role_code' => $data['role_code'],
+        ]);
     }
 }

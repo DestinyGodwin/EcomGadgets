@@ -26,8 +26,8 @@ class StoreCreatedNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
-    }
+        return ['mail', 'database', 'fcm'];
+        }
 
     /**
      * Get the mail representation of the notification.
@@ -55,4 +55,24 @@ class StoreCreatedNotification extends Notification implements ShouldQueue
             //
         ];
     }
+
+    public function toFcm($notifiable): array
+{
+    $frontendUrl = config('frontend.url');
+    $storeUrl = "{$frontendUrl}/stores/{$this->store->id}";
+
+    return [
+        'to' => $notifiable->routeNotificationForFcm(),
+        'notification' => [
+            'title' => 'Store Created Successfully',
+            'body'  => 'Your store "' . $this->store->name . '" has been created successfully.',
+        ],
+        'data' => [
+            'store_id' => $this->store->id,
+            'store_name' => $this->store->name,
+            'type' => 'store_created',
+        ],
+    ];
+}
+
 }

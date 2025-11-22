@@ -13,6 +13,7 @@ use App\Http\Controllers\V1\AdvertBookingController;
 use App\Http\Controllers\V1\Admin\SettingsController;
 use App\Http\Controllers\V1\PaymentWebhookController;
 use App\Http\Controllers\V1\Product\ReviewController;
+use App\Http\Controllers\V1\Product\ProductRequestController;
 use App\Http\Controllers\V1\Admin\NotifyingController;
 use App\Http\Controllers\V1\Product\ProductController;
 use App\Http\Controllers\V1\Admin\AdvertPlanController;
@@ -33,6 +34,10 @@ Route::prefix('v1/')->group(function () {
     Route::prefix('auth')->group(function () {
         Route::controller(AuthController::class)->group(function () {
             Route::post('register', 'store');
+            Route::get('google/redirect', 'redirectToGoogle');
+            Route::get('google/callback', 'handleGoogleCallback');
+            Route::post('google-login', 'googleMobileLogin');
+
             Route::post('login', 'login')->middleware('logged.in');
             Route::post('verify-email', 'verifyEmail')->middleware('auth:sanctum');
             Route::get('resend-otp', 'resendOtp')->middleware('auth:sanctum');
@@ -58,7 +63,7 @@ Route::prefix('v1/')->group(function () {
         });
         Route::prefix('/stores')->controller(AdminStoreController::class)->group(function () {
             Route::get('/', 'index');
-            Route::get('/search', 'search'); 
+            Route::get('/search', 'search');
             Route::get('/pending', 'pending');
             Route::get('/update-requests',  'pendingIndex');
             Route::get('/update-requests/{id}',  'pendingShow');
@@ -124,16 +129,16 @@ Route::prefix('v1/')->group(function () {
             Route::delete('stores/{store}', 'destroy');
             Route::post('stores/{store}/resubmit', 'resubmit');
         });
-            Route::prefix('featured-subscriptions')->group(function () {
-        Route::get('/my-subscriptions', [FeaturedProductSubscriptionController::class, 'mySubscriptions']);
-        Route::get('/{subscriptionId}', [FeaturedProductSubscriptionController::class, 'showSubscription']);
-        
-        // Product management within subscriptions
-        Route::post('/add-products', [FeaturedProductSubscriptionController::class, 'addProducts']);
-        Route::post('/remove-products', [FeaturedProductSubscriptionController::class, 'removeProducts']);
-        // Route::get('/{subscriptionId}/available-products', [FeaturedProductSubscriptionController::class, 'availableProducts']);
-        // Route::get('/{subscriptionId}/products', [FeaturedProductSubscriptionController::class, 'subscriptionProducts']);
-    });
+        Route::prefix('featured-subscriptions')->group(function () {
+            Route::get('/my-subscriptions', [FeaturedProductSubscriptionController::class, 'mySubscriptions']);
+            Route::get('/{subscriptionId}', [FeaturedProductSubscriptionController::class, 'showSubscription']);
+
+            // Product management within subscriptions
+            Route::post('/add-products', [FeaturedProductSubscriptionController::class, 'addProducts']);
+            Route::post('/remove-products', [FeaturedProductSubscriptionController::class, 'removeProducts']);
+            // Route::get('/{subscriptionId}/available-products', [FeaturedProductSubscriptionController::class, 'availableProducts']);
+            // Route::get('/{subscriptionId}/products', [FeaturedProductSubscriptionController::class, 'subscriptionProducts']);
+        });
         Route::controller(StoreSubscriptioncontroller::class)->group(function () {
             Route::get('my-subscriptions', 'storeSubscriptions');
             Route::get('my-subscriptions/{subscriptionId}', 'storeSubscription');
@@ -145,6 +150,8 @@ Route::prefix('v1/')->group(function () {
             Route::get('/status/{status}', [TransactionController::class, 'status']);
             Route::get('/search', [TransactionController::class, 'search']);
         });
+        Route::post('product-requests', [ProductRequestController::class, 'store']);
+
         Route::controller(ProductController::class)->group(function () {
             Route::post('products', 'store');
             Route::get('my-featured', 'myFeaturedProducts');
@@ -181,7 +188,6 @@ Route::prefix('v1/')->group(function () {
             Route::post('/', [ReviewController::class, 'store']);
             Route::put('/{id}', [ReviewController::class, 'update']);
             Route::delete('/{id}', [ReviewController::class, 'destroy']);
-
         });
     });
     Route::controller(ProductController::class)->group(function () {

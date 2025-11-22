@@ -4,22 +4,22 @@ namespace App\Notifications\V1\Stores;
 
 use App\Models\Store;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class StoreReactivatedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    /**
-     * Create a new notification instance.
-     */
-   public function __construct(protected Store $store,protected string $message ) {}
+    public function __construct(
+        protected Store $store,
+        protected string $message
+    ) {}
 
-    public function via($notifiable)
+    public function via($notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database', 'fcm'];
     }
 
     public function toMail($notifiable)
@@ -33,16 +33,37 @@ class StoreReactivatedNotification extends Notification implements ShouldQueue
             ->line('Thank you for working with us!');
     }
 
-
-    /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(object $notifiable): array
+    public function toDatabase($notifiable): array
     {
         return [
-            //
+            'store_id'   => $this->store->id,
+            'store_name' => $this->store->store_name,
+            'slug'       => $this->store->slug,
+            'message'    => "Your store \"{$this->store->store_name}\" has been reactivated.",
+            'admin_note' => $this->message,
+            'url'        => url("/store/edit/{$this->store->slug}"),
+        ];
+    }
+
+    public function toFcm($notifiable): array
+    {
+        $frontendUrl = config('frontend.url');
+        $editUrl = "{$frontendUrl}/store/edit/{$this->store->slug}";
+
+        return [
+            'to' => $notifiable->routeNotificationForFcm(),
+            'notification' => [
+                'title' => 'Store Reactivated',
+                'body'  => "Your store \"{$this->store->store_name}\" has been reactivated.",
+            ],
+            'data' => [
+                'store_id'   => $this->store->id,
+                'store_name' => $this->store->store_name,
+                'slug'       => $this->store->slug,
+                'admin_note' => $this->message,
+                'type'       => 'store_reactivated',
+                'url'        => $editUrl,
+            ],
         ];
     }
 }

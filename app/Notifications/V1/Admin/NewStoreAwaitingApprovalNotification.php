@@ -34,4 +34,25 @@ public $store;
             ->action('Review Store', url("/admin/stores/{$this->store->slug}"))
             ->line('Thank you.');
     }
+
+    public function toFcm($notifiable): array
+    {
+        $frontendUrl = config('frontend.url');
+        $reviewUrl = "{$frontendUrl}/admin/stores/{$this->store->slug}";
+
+        return [
+            'to' => $notifiable->routeNotificationForFcm(),
+            'notification' => [
+                'title' => 'New Store Awaiting Approval',
+                'body'  => "A new store \"{$this->store->store_name}\" has been submitted for review.",
+            ],
+            'data' => [
+                'store_id'   => $this->store->id,
+                'store_name' => $this->store->store_name,
+                'slug'       => $this->store->slug,
+                'type'       => 'new_store_awaiting_approval',
+                'url'        => $reviewUrl,
+            ],
+        ];
+    }
 }

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\V1\Products;
+namespace App\Http\Requests\V1\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreReviewRequest extends FormRequest
+class LoginRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,10 +21,11 @@ class StoreReviewRequest extends FormRequest
      */
     public function rules(): array
     {
-         return [
-            'product_id' => ['required','exists:products,id'],
-            'rating' => ['required','integer','min:1','max:5'],
-            'comment' => ['nullable','string','max:1000'],
+       return [
+            'email' => ['required', 'email', 'max:255'],
+            'password' => ['required', 'max:255'],
+            'device_token' => ['nullable', 'string', 'max:255'],
+            'device_name' => ['nullable', 'string', 'max:100'],
         ];
     }
 }

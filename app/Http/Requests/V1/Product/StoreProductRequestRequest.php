@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\V1\Products;
+namespace App\Http\Requests\V1\Product;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateReviewRequest extends FormRequest
+class StoreProductRequestRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,9 @@ class UpdateReviewRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'rating' => ['required', 'integer', 'min:1', 'max:5'],
-            'comment' => ['required', 'string', 'min:3', 'max:1000'],
+            'name'        => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'image'       => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ];
     }
 }
