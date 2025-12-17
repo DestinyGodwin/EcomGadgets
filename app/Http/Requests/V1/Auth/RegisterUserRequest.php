@@ -21,9 +21,12 @@ class RegisterUserRequest extends FormRequest
      */
     public function rules(): array
     {
-       return [
-            'email' => ['required', 'email' ,'unique:users,email'],
-            'password' => ['required', 'confirmed', 'string', 'min:8', 'max:255']
+        return [
+            'email' => ['required', 'email', 'unique:users,email'],
+            'password' => ['required', 'confirmed', 'string', 'min:8', 'max:255'],
+            'device_token' => ['nullable', 'string', 'max:255'],
+            'device_name' => ['nullable', 'string', 'max:100'],
+            'platform' => ['nullable', 'string', 'max:50']
         ];
     }
 }
