@@ -21,11 +21,13 @@ class LoginRequest extends FormRequest
      */
     public function rules(): array
     {
-       return [
+        return [
             'email' => ['required', 'email', 'max:255'],
             'password' => ['required', 'max:255'],
             'device_token' => ['nullable', 'string', 'max:255'],
             'device_name' => ['nullable', 'string', 'max:100'],
+            'platform' => ['nullable', 'string', 'max:50']
+
         ];
     }
 }
