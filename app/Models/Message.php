@@ -23,6 +23,6 @@ class Message extends Model
 
     public function media()
     {
-        return $this->hasMany(MessageMedia::class);
+        return $this->hasMany(MessageImage::class);
     }
 }
