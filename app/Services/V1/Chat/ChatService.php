@@ -7,7 +7,7 @@ use App\Models\Conversation;
 use App\Events\Chat\MessageSent;
 use Illuminate\Support\Facades\DB;
 
-class Chatservice
+class ChatService
 {
     /**
      * Create a new class instance.
