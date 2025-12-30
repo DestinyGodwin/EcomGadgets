@@ -37,18 +37,18 @@ class Chatservice
         Conversation $conversation,
         string $senderId,
         ?string $body,
-        array $files = []
+        array $images = []
     ): Message {
-        return DB::transaction(function () use ($conversation, $senderId, $body, $files) {
+        return DB::transaction(function () use ($conversation, $senderId, $body, $images) {
             $message = Message::create([
                 'conversation_id' => $conversation->id,
                 'sender_id' => $senderId,
                 'body' => $body,
-                'type' => $files ? 'media' : 'text',
+                'type' => $images ? 'media' : 'text',
             ]);
 
-            foreach ($files as $file) {
-                $path = $file->store('chat', 'public');
+            foreach ($images as $image) {
+                $path = $image->store('chat', 'public');
 
                 $message->media()->create([
                     'path' => $path,
