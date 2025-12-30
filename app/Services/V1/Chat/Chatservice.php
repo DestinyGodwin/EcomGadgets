@@ -4,6 +4,7 @@ namespace App\Services\V1\Chat;
 
 use App\Models\Message;
 use App\Models\Conversation;
+use App\Events\Chat\MessageSent;
 use Illuminate\Support\Facades\DB;
 
 class Chatservice
