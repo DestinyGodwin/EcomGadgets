@@ -6,6 +6,7 @@ use App\Models\Message;
 use App\Models\Conversation;
 use App\Events\Chat\MessageSent;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Crypt;
 
 class ChatService
 {
@@ -17,10 +18,10 @@ class ChatService
         //
     }
 
-     public function getOrCreateConversation(string $userA, string $userB): Conversation
+    public function getOrCreateConversation(string $userA, string $userB): Conversation
     {
-        $conversation = Conversation::whereHas('users', fn ($q) => $q->where('user_id', $userA))
-            ->whereHas('users', fn ($q) => $q->where('user_id', $userB))
+        $conversation = Conversation::whereHas('users', fn($q) => $q->where('user_id', $userA))
+            ->whereHas('users', fn($q) => $q->where('user_id', $userB))
             ->first();
 
         if ($conversation) {
@@ -43,6 +44,7 @@ class ChatService
             $message = Message::create([
                 'conversation_id' => $conversation->id,
                 'sender_id' => $senderId,
+                // 'body' => $body ? Crypt::encryptString($body) : null,
                 'body' => $body,
                 'type' => $images ? 'media' : 'text',
             ]);
@@ -52,7 +54,7 @@ class ChatService
 
                 $message->media()->create([
                     'path' => $path,
-    
+
                 ]);
             }
 
