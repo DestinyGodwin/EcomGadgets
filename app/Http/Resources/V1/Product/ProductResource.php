@@ -36,6 +36,12 @@ class ProductResource extends JsonResource
                 'store_image' => asset('storage/' . $this->store->store_image),
                 'store_state' => $this->store->state->name,
                 'phone_number' => $this->store->phone,
+                // 'user' => [
+                //     'id' => $this->store->user->id,
+                //     'name' => $this->store->user->name,
+                //     'email' => $this->store->user->email,
+                // ],
+                'user_id' => $this->store->user->id,
 
             ],
             'created_at' => $this->created_at->toDateTimeString(),

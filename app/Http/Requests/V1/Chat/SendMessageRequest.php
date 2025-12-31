@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\V1\Auth;
+namespace App\Http\Requests\V1\Chat;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterUserRequest extends FormRequest
+class SendMessageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,12 +21,11 @@ class RegisterUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'confirmed', 'string', 'min:8', 'max:255'],
-            'device_token' => ['nullable', 'string', 'max:255'],
-            'device_name' => ['nullable', 'string', 'max:100'],
-            'platform' => ['nullable', 'string', 'max:50']
+         return [
+            'receiver_id' => ['required', 'exists:users,id', 'different:auth'],
+            'body' => ['nullable', 'string', 'required_without:images', 'max:2500'],
+            'images' => ['nullable', 'array', 'min:1', `required_without:body`],
+            'images.*' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ];
     }
 }
