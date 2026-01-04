@@ -111,6 +111,7 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+   
     public function messages()
     {
         return $this->hasMany(Message::class);

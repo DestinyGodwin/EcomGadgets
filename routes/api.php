@@ -18,6 +18,7 @@ use App\Http\Controllers\V1\Admin\NotifyingController;
 use App\Http\Controllers\V1\Product\ProductController;
 use App\Http\Controllers\V1\Admin\AdvertPlanController;
 use App\Http\Controllers\V1\Product\WishlistController;
+use App\Http\Controllers\V1\Chat\ConversationController;
 use App\Http\Controllers\V1\Admin\AdminCategoryController;
 use App\Http\Controllers\V1\PaymentVerificationController;
 use App\Http\Controllers\V1\Admin\AdminTransactionController;
@@ -191,6 +192,7 @@ Route::prefix('v1/')->group(function () {
             Route::delete('/{id}', [ReviewController::class, 'destroy']);
         });
         Route::post('/messages', [MessageController::class, 'store']);
+        Route::get('/conversations', [ConversationController::class, 'index']);
         Route::get('/conversations/{conversation}/messages', [MessageController::class, 'index']);
     });
     Route::controller(ProductController::class)->group(function () {
