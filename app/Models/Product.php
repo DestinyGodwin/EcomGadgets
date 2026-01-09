@@ -6,13 +6,19 @@ use App\Models\Scopes\ActiveStoreScope;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
+use Spatie\Image\Enums\Fit;
 
-class Product extends Model
+class Product extends Model implements HasMedia
 {
-    use HasUuids, HasSlug;
-    protected $perPage  = 16;
+    use HasSlug, HasUuids, InteractsWithMedia;
+
+    protected $perPage = 16;
+
     protected $fillable = [
         'category_id',
         'name',
@@ -23,7 +29,7 @@ class Product extends Model
         'price',
         'wholesale_price',
         'is_featured',
-        'featured_expires_at'
+        'featured_expires_at',
     ];
 
     public function store(): BelongsTo
@@ -59,14 +65,16 @@ class Product extends Model
     }
 
     protected $casts = [
-        'specifications'      => 'array',
+        'specifications' => 'array',
         'featured_expires_at' => 'datetime',
 
     ];
+
     protected static function booted(): void
     {
         static::addGlobalScope(new ActiveStoreScope);
     }
+
     public function featuredLogs()
     {
         return $this->hasMany(FeaturedProductLog::class);
@@ -97,7 +105,6 @@ class Product extends Model
         return $this->wishlists()->count();
     }
 
-
     public function isWishlistedBy(User $user)
     {
         return $this->wishlists()->where('user_id', $user->id)->exists();
@@ -111,17 +118,39 @@ class Product extends Model
     {
         return $this->hasMany(FeaturedProduct::class);
     }
-public function scopeCurrentlyFeatured($query)
-{
-    return $query->whereHas('featuredProducts', function ($q) {
-        $q->where('expires_at', '>', now());
-    });
-}
 
-public function isCurrentlyFeatured(): bool
-{
-    return $this->featuredProducts()
-        ->where('expires_at', '>', now())
-        ->exists();
-}
+    public function scopeCurrentlyFeatured($query)
+    {
+        return $query->whereHas('featuredProducts', function ($q) {
+            $q->where('expires_at', '>', now());
+        });
+    }
+
+    public function isCurrentlyFeatured(): bool
+    {
+        return $this->featuredProducts()
+            ->where('expires_at', '>', now())
+            ->exists();
+    }
+
+    
+
+    
+
+     public function registerMediaCollections(): void
+    {
+        $this
+            ->addMediaCollection('images')
+            ->useDisk('public');
+            
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this
+            ->addMediaConversion('thumb')
+            ->fit(Fit::Crop, 400, 400)
+            ->performOnCollections('images')
+            ->queued();
+    }
 }

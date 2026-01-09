@@ -55,3 +55,10 @@ return new class extends Migration
         Schema::dropIfExists('failed_jobs');
     }
 };
+// mysqldump -u laravel -p old_db \
+//   --no-create-info \
+//   --skip-triggers \
+//   --complete-insert \
+//   > data_only.sql
+// mysql -u laravel -p stra < data_only.sql
+// mysql -u laravel -p stra < old_db.sql

@@ -17,6 +17,9 @@ return new class extends Migration
             $table->integer('duration_days');
             $table->decimal('price', 10, 2);
             $table->text('description')->nullable();
+            $table->integer('max_products')->nullable();
+            $table->unsignedInteger('featured_limit')->default(0);
+            $table->integer('refresh_interval_minutes')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

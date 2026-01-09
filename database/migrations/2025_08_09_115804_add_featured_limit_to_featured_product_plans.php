@@ -11,18 +11,28 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('featured_product_plans', function (Blueprint $table) {
-        $table->unsignedInteger('featured_limit')->default(0)->after('refresh_interval_minutes');
-        });
+        // Schema::table('featured_product_plans', function (Blueprint $table) {
+        // $table->unsignedInteger('featured_limit')->default(0)->after('refresh_interval_minutes');
+        // });
     }
 
     /**
      * Reverse the migrations.
      */
-    public function down(): void
-    {
-        Schema::table('featured_product_plans', function (Blueprint $table) {
-            //
-        });
-    }
+    // public function down(): void
+    // {
+    //     Schema::table('featured_product_plans', function (Blueprint $table) {
+    //         //
+    //     });
+    // }
 };
+
+
+// mysqldump -u laravel -p old_db \
+//   --no-create-info \
+//   --skip-triggers \
+//   --single-transaction \
+//   > old_db_data.sql
+
+
+//   mysql -u laravel -p stra < old_db.sql
