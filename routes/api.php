@@ -18,6 +18,7 @@ use App\Http\Controllers\V1\Admin\NotifyingController;
 use App\Http\Controllers\V1\Product\ProductController;
 use App\Http\Controllers\V1\Admin\AdvertPlanController;
 use App\Http\Controllers\V1\Product\WishlistController;
+use App\Http\Controllers\V1\Chat\ConversationController;
 use App\Http\Controllers\V1\Admin\AdminCategoryController;
 use App\Http\Controllers\V1\PaymentVerificationController;
 use App\Http\Controllers\V1\Admin\AdminTransactionController;
@@ -90,9 +91,9 @@ Route::prefix('v1/')->group(function () {
             Route::get('users/search', 'search');
         });
         Route::prefix('/products')->group(function () {
-            Route::get('/', [AdminProductController::class, 'index']);
+            Route::get('/', [AdminProductController::class, 'index'])->name('admin.products.index');
             Route::get('/filter', [AdminProductController::class, 'filter']);
-            Route::get('/{product}', [AdminProductController::class, 'show']);
+            Route::get('/{product}', [AdminProductController::class, 'show'])->name('admin.products.show');;
             Route::delete('/{product}/delete', [AdminProductController::class, 'destroy']);
         });
         Route::prefix('/transactions')->group(function () {
@@ -191,16 +192,17 @@ Route::prefix('v1/')->group(function () {
             Route::delete('/{id}', [ReviewController::class, 'destroy']);
         });
         Route::post('/messages', [MessageController::class, 'store']);
+        Route::get('/conversations', [ConversationController::class, 'index']);
         Route::get('/conversations/{conversation}/messages', [MessageController::class, 'index']);
     });
     Route::controller(ProductController::class)->group(function () {
-        Route::get('products/search', 'search');
-        Route::get('products', 'index');
-        Route::get('products/category/{categoryId}', 'byCategory');
-        Route::get('products/brand/{brand}', 'byBrand');
-        Route::get('products/by-state', 'byState');
-        Route::get('products/by-lga', 'byLga');
-        Route::get('products/{product}', 'show');
+       Route::get('products/search', 'search')->name('products.search');
+    Route::get('products', 'index')->name('products.index');
+    Route::get('products/category/{categoryId}', 'byCategory')->name('products.category');
+    Route::get('products/brand/{brand}', 'byBrand')->name('products.brand');
+    Route::get('products/by-state', 'byState')->name('products.byState');
+    Route::get('products/by-lga', 'byLga')->name('products.byLga');
+    Route::get('products/{product}', 'show')->name('products.show');
     });
     Route::prefix('/analytics/{product}')->group(function () {
         Route::get('/views', [ProductAnalyticsController::class, 'viewCount']);

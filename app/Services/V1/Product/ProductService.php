@@ -24,82 +24,153 @@ class ProductService
         //
     }
 
+    // public function create(array $data): Product
+    // {
+    //     return DB::transaction(function () use ($data) {
+    //         $store   = Auth::user()->store;
+    //         if (! $store || ! $store->is_active || $store->status !== 'approved') {
+    //             throw ValidationException::withMessages([
+    //                 'store' => ['Your store must be active and approved to create products.']
+    //             ]);
+    //         }
+    //         $product = $store->products()->create([
+    //             'category_id'     => $data['category_id'],
+    //             'name'            => $data['name'],
+    //             'description'     => $data['description'],
+    //             'specifications'  => $data['specifications'] ?? null,
+    //             'brand'           => $data['brand'] ?? null,
+    //             'price'           => $data['price'],
+    //             'wholesale_price' => $data['wholesale_price'],
+    //         ]);
+
+    //         foreach ($data['images'] as $image) {
+    //             $path = $image->store('products', 'public');
+    //             $product->images()->create(['image_path' => $path]);
+    //         }
+
+    //         return $product->load('images', 'store');
+    //     });
+    // }
+
     public function create(array $data): Product
-    {
-        return DB::transaction(function () use ($data) {
-            $store   = Auth::user()->store;
-            if (! $store || ! $store->is_active || $store->status !== 'approved') {
-                throw ValidationException::withMessages([
-                    'store' => ['Your store must be active and approved to create products.']
-                ]);
-            }
-            $product = $store->products()->create([
-                'category_id'     => $data['category_id'],
-                'name'            => $data['name'],
-                'description'     => $data['description'],
-                'specifications'  => $data['specifications'] ?? null,
-                'brand'           => $data['brand'] ?? null,
-                'price'           => $data['price'],
-                'wholesale_price' => $data['wholesale_price'],
+{
+    return DB::transaction(function () use ($data) {
+        $store = Auth::user()->store;
+
+        if (! $store || ! $store->is_active || $store->status !== 'approved') {
+            throw ValidationException::withMessages([
+                'store' => ['Your store must be active and approved.'],
             ]);
+        }
 
-            foreach ($data['images'] as $image) {
-                $path = $image->store('products', 'public');
-                $product->images()->create(['image_path' => $path]);
-            }
+        $product = $store->products()->create([
+            'category_id'     => $data['category_id'],
+            'name'            => $data['name'],
+            'description'     => $data['description'],
+            'specifications'  => $data['specifications'] ?? null,
+            'brand'           => $data['brand'] ?? null,
+            'price'           => $data['price'],
+            'wholesale_price' => $data['wholesale_price'],
+        ]);
 
-            return $product->load('images', 'store');
-        });
-    }
+        foreach ($data['images'] as $image) {
+            $product
+                ->addMedia($image)
+                ->toMediaCollection('images');
+        }
+
+        if ($product->getMedia('images')->isEmpty()) {
+            throw new Exception('Product must have at least one image.');
+        }
+
+        return $product->load('store');
+    });
+}
+
+
+    // public function update(Product $product, array $data): Product
+    // {
+    //     return DB::transaction(function () use ($product, $data) {
+    //         $product->update([
+    //             'category_id'     => $data['category_id'] ?? $product->category_id,
+    //             'name'            => $data['name'] ?? $product->name,
+    //             'description'     => $data['description'] ?? $product->description,
+    //             'specifications'  => $data['specifications'] ?? $product->specifications,
+    //             'brand'           => $data['brand'] ?? $product->brand,
+    //             'price'           => $data['price'] ?? $product->price,
+    //             'wholesale_price' => $data['wholesale_price'] ?? $product->wholesale_price,
+    //         ]);
+
+    //         $remainingImageCount = $product->images()->count();
+    //         $imagesToRemove      = $data['removed_images'] ?? [];
+
+    //         if (! empty($imagesToRemove)) {
+    //             $toDelete = $product->images()->whereIn('id', $imagesToRemove)->get();
+
+    //             if (($remainingImageCount - $toDelete->count()) + count($data['images'] ?? []) < 1) {
+    //                 throw new Exception('A product must have at least one image.');
+    //             }
+
+    //             foreach ($toDelete as $image) {
+    //                 Storage::disk('public')->delete($image->image_path);
+    //                 $image->delete();
+    //             }
+    //         }
+    //         if (! empty($data['images'])) {
+    //             foreach ($data['images'] as $image) {
+    //                 $path = $image->store('products', 'public');
+    //                 $product->images()->create(['image_path' => $path]);
+    //             }
+    //         }
+    //         if ($product->images()->count() < 1) {
+    //             throw new Exception('A product must have at least one image.');
+    //         }
+    //         return $product->load('images', 'store');
+    //     });
+    // }
 
     public function update(Product $product, array $data): Product
-    {
-        return DB::transaction(function () use ($product, $data) {
-            $product->update([
-                'category_id'     => $data['category_id'] ?? $product->category_id,
-                'name'            => $data['name'] ?? $product->name,
-                'description'     => $data['description'] ?? $product->description,
-                'specifications'  => $data['specifications'] ?? $product->specifications,
-                'brand'           => $data['brand'] ?? $product->brand,
-                'price'           => $data['price'] ?? $product->price,
-                'wholesale_price' => $data['wholesale_price'] ?? $product->wholesale_price,
-            ]);
+{
+    return DB::transaction(function () use ($product, $data) {
+        $product->update($data);
 
-            $remainingImageCount = $product->images()->count();
-            $imagesToRemove      = $data['removed_images'] ?? [];
+        if (!empty($data['removed_images'])) {
+            Media::whereIn('id', $data['removed_images'])->delete();
+        }
 
-            if (! empty($imagesToRemove)) {
-                $toDelete = $product->images()->whereIn('id', $imagesToRemove)->get();
-
-                if (($remainingImageCount - $toDelete->count()) + count($data['images'] ?? []) < 1) {
-                    throw new Exception('A product must have at least one image.');
-                }
-
-                foreach ($toDelete as $image) {
-                    Storage::disk('public')->delete($image->image_path);
-                    $image->delete();
-                }
+        if (!empty($data['images'])) {
+            foreach ($data['images'] as $image) {
+                $product
+                    ->addMedia($image)
+                    ->toMediaCollection('images');
             }
-            if (! empty($data['images'])) {
-                foreach ($data['images'] as $image) {
-                    $path = $image->store('products', 'public');
-                    $product->images()->create(['image_path' => $path]);
-                }
-            }
-            if ($product->images()->count() < 1) {
-                throw new Exception('A product must have at least one image.');
-            }
-            return $product->load('images', 'store');
-        });
-    }
+        }
+
+        if ($product->getMedia('images')->isEmpty()) {
+            throw new Exception('Product must have at least one image.');
+        }
+
+        return $product->load('store');
+    });
+}
+
+
+    // public function delete(Product $product): bool
+    // {
+    //     return DB::transaction(function () use ($product) {
+    //         $product->images()->delete();
+    //         return $product->delete();
+    //     });
+    // }
 
     public function delete(Product $product): bool
-    {
-        return DB::transaction(function () use ($product) {
-            $product->images()->delete();
-            return $product->delete();
-        });
-    }
+{
+    return DB::transaction(function () use ($product) {
+        $product->clearMediaCollection('images');
+        return $product->delete();
+    });
+}
+
 
   
 

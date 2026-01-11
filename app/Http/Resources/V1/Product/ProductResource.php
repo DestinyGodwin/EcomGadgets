@@ -14,6 +14,8 @@ class ProductResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $isSingle = $request->routeIs(['products.show', 'admin.products.show']);
+        
         return [
             'id' => $this->id,
             'category_id' => $this->category_id,
@@ -27,7 +29,13 @@ class ProductResource extends JsonResource
             'wholesale_price' => $this->wholesale_price,
             'average_rating'  => round($this->reviews->avg('rating'), 1),
 
-            'images' => ProductImageResource::collection($this->images),
+            // 'images' => ProductImageResource::collection($this->images),
+            'images' => $this->getMedia('images')->map(fn($media) => [
+                'id' => $media->id,
+                'url' => $isSingle
+                    ? $media->getUrl()
+                    : $media->getUrl('thumb'),
+            ]),
             'store' => [
                 'id' => $this->store->id,
                 'name' => $this->store->store_name,
