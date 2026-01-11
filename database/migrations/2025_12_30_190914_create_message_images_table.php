@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('message_images', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('product_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('message_id')->constrained()->cascadeOnDelete();
             $table->string('image_path');
             $table->timestamps();
         });
