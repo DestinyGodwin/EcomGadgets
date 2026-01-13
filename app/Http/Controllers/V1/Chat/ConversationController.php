@@ -10,11 +10,10 @@ class ConversationController extends Controller
 {
     public function index(Request $request)
     {
-        $userId = $request->user()->id;
+        $user = $request->user();
 
         return ConversationResource::collection(
-            $request->user()
-                ->conversations()
+            $user->conversations()
                 ->with([
                     'users:id,first_name,last_name,profile_picture',
                     'lastMessage.sender:id,first_name',
