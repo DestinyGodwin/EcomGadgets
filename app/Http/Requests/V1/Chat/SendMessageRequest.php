@@ -24,7 +24,7 @@ class SendMessageRequest extends FormRequest
          return [
             'receiver_id' => ['required', 'exists:users,id', 'different:auth'],
             'body' => ['nullable', 'string', 'required_without:images', 'max:2500'],
-            'images' => ['nullable', 'array', 'min:1', `required_without:body`],
+            'images' => ['nullable', 'array', 'min:1', 'required_without:body'],
             'images.*' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ];
     }
