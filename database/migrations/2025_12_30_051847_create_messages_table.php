@@ -18,6 +18,7 @@ return new class extends Migration
 
             $table->text('body')->nullable();
             $table->enum('type', ['text', 'media'])->default('text');
+            $table->timestamp('read_at')->nullable();
 
             $table->timestamps();
 

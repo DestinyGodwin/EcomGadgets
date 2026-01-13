@@ -2,11 +2,11 @@
 
 namespace App\Services\V1\Chat;
 
-use App\Models\Message;
-use App\Models\Conversation;
 use App\Events\Chat\MessageSent;
-use Illuminate\Support\Facades\DB;
+use App\Models\Conversation;
+use App\Models\Message;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 
 class ChatService
 {
@@ -20,8 +20,8 @@ class ChatService
 
     public function getOrCreateConversation(string $userA, string $userB): Conversation
     {
-        $conversation = Conversation::whereHas('users', fn($q) => $q->where('user_id', $userA))
-            ->whereHas('users', fn($q) => $q->where('user_id', $userB))
+        $conversation = Conversation::whereHas('users', fn ($q) => $q->where('user_id', $userA))
+            ->whereHas('users', fn ($q) => $q->where('user_id', $userB))
             ->first();
 
         if ($conversation) {

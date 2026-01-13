@@ -194,6 +194,11 @@ Route::prefix('v1/')->group(function () {
         Route::post('/messages', [MessageController::class, 'store']);
         Route::get('/conversations', [ConversationController::class, 'index']);
         Route::get('/conversations/{conversation}/messages', [MessageController::class, 'index']);
+         Route::get('/conversations/unread-count', [ConversationController::class, 'unreadCount']);
+    Route::get('/conversations/{conversation}/unread-count', [ConversationController::class, 'conversationUnreadCount']);
+    Route::post('/conversations/{conversation}/read', [ConversationController::class, 'markAsRead']);
+
+    Route::get('/messages/with/{user}', [MessageController::class, 'betweenUsers']);
     });
     Route::controller(ProductController::class)->group(function () {
        Route::get('products/search', 'search')->name('products.search');
