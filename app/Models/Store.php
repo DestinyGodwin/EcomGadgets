@@ -10,9 +10,15 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\Image\Enums\Fit;
 
-class Store extends Model {
-    use HasUuids, SoftDeletes, HasSlug, HasFactory;
+
+class Store extends Model implements HasMedia
+{
+    use HasUuids, SoftDeletes, HasSlug, HasFactory, InteractsWithMedia;
 
     protected $perPage = 16;
 
@@ -94,4 +100,23 @@ class Store extends Model {
     public function updateRequests() {
         return $this->hasMany( StoreUpdateRequest::class );
     }
+
+     public function registerMediaCollections(): void
+    {
+        $this
+            ->addMediaCollection('images')
+            ->useDisk('public');
+            
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this
+            ->addMediaConversion('thumb')
+            ->fit(Fit::Crop, 400, 400)
+            ->performOnCollections('images')
+            ->queued();
+    }
+
+
 }

@@ -6,10 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
+use Spatie\Image\Enums\Fit;
 
-class AdvertBooking extends Model
+
+class AdvertBooking extends Model  implements HasMedia
+
 {
-     use HasUuids, SoftDeletes;
+     use HasUuids, SoftDeletes, InteractsWithMedia;
 
        protected $fillable = ['store_id', 
        'state_id',
@@ -25,5 +33,24 @@ class AdvertBooking extends Model
        public function state():BelongsTo
        {
         return $this->belongsTo(State::class);
+
+
        }
+
+         public function registerMediaCollections(): void
+    {
+        $this
+            ->addMediaCollection('images')
+            ->useDisk('public');
+            
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this
+            ->addMediaConversion('thumb')
+            ->fit(Fit::Crop, 400, 400)
+            ->performOnCollections('images')
+            ->queued();
+    }
 }

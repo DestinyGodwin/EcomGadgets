@@ -95,46 +95,102 @@ class AuthServices
         $this->otpServices->sendOtp(Auth::user());
     }
 
+    // public function completeProfile(array $data)
+
+
+    // {
+    //     $user = Auth::user();
+    //     if (isset($data['profile_picture'])) {
+    //         $data['profile_picture'] = $data['profile_picture']->store('profile_pictures', 'public');
+    //     }
+    //     $user->update($data);
+    //     return [
+    //         'success' => true,
+    //         'user' => new UserResource($user),
+    //         'message' => 'Profile completed successfully'
+    //     ];
+    // }
+
     public function completeProfile(array $data)
-    {
-        $user = Auth::user();
-        if (isset($data['profile_picture'])) {
-            $data['profile_picture'] = $data['profile_picture']->store('profile_pictures', 'public');
-        }
-        $user->update($data);
-        return [
-            'success' => true,
-            'user' => new UserResource($user),
-            'message' => 'Profile completed successfully'
-        ];
+{
+    $user = Auth::user();
+
+    if (isset($data['profile_picture'])) {
+        $user->clearMediaCollection('profile_picture');
+
+        $user->addMedia($data['profile_picture'])
+            ->toMediaCollection('profile_picture');
+
+        unset($data['profile_picture']);
     }
+
+    $user->update($data);
+
+    return [
+        'success' => true,
+        'user' => new UserResource($user),
+        'message' => 'Profile completed successfully',
+    ];
+}
+
+    // public function updateProfile(array $validated)
+    // {
+    //     $user = Auth::user();
+    //     if (isset($validated['profile_picture'])) {
+    //         if ($user->profile_picture && Storage::disk('public')->exists($user->profile_picture)) {
+    //             Storage::disk('public')->delete($user->profile_picture);
+    //         }
+    //         $validated['profile_picture'] = $validated['profile_picture']->store('profile_pictures', 'public');
+    //     }
+
+    //     $emailChanged = isset($validated['email']) && $validated['email'] !== $user->email;
+
+    //     $user->fill($validated);
+
+    //     if ($emailChanged) {
+    //         $user->email_verified_at = null;
+    //         $this->otpServices->sendOtp($user);
+    //     }
+    //     $user->save();
+    //     return [
+    //         'success' => true,
+    //         'user' => new UserResource($user),
+    //         'message' => 'Profile updated successfully'
+    //     ];
+    // }
+
+
 
     public function updateProfile(array $validated)
-    {
-        $user = Auth::user();
-        if (isset($validated['profile_picture'])) {
-            if ($user->profile_picture && Storage::disk('public')->exists($user->profile_picture)) {
-                Storage::disk('public')->delete($user->profile_picture);
-            }
-            $validated['profile_picture'] = $validated['profile_picture']->store('profile_pictures', 'public');
-        }
+{
+    $user = Auth::user();
 
-        $emailChanged = isset($validated['email']) && $validated['email'] !== $user->email;
+    if (isset($validated['profile_picture'])) {
+        $user->clearMediaCollection('profile_picture');
 
-        $user->fill($validated);
+        $user->addMedia($validated['profile_picture'])
+            ->toMediaCollection('profile_picture');
 
-        if ($emailChanged) {
-            $user->email_verified_at = null;
-            $this->otpServices->sendOtp($user);
-        }
-        $user->save();
-        return [
-            'success' => true,
-            'user' => new UserResource($user),
-            'message' => 'Profile updated successfully'
-        ];
+        unset($validated['profile_picture']);
     }
 
+    $emailChanged = isset($validated['email']) && $validated['email'] !== $user->email;
+
+    $user->fill($validated);
+
+    if ($emailChanged) {
+        $user->email_verified_at = null;
+        $this->otpServices->sendOtp($user);
+    }
+
+    $user->save();
+
+    return [
+        'success' => true,
+        'user' => new UserResource($user),
+        'message' => 'Profile updated successfully',
+    ];
+}
 
     public function changePassword($validated)
     {
