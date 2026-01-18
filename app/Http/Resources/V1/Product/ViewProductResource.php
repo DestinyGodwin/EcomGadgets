@@ -35,6 +35,7 @@ class ViewProductResource extends JsonResource
                 'store_image'  => asset('storage/' . $this->store->store_image),
                 'store_state'  => $this->store->state->name,
                 'phone_number' => $this->store->phone,
+                'user_id'      => $this->store->user->id,
             ],
 
             'average_rating'  => round($this->reviews->avg('rating'), 1),
