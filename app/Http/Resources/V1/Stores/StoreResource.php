@@ -22,7 +22,7 @@ class StoreResource extends JsonResource
             'phone' => $this->phone,
             'email' => $this->email,
             // 'store_image' => asset('storage/'.$this->store_image),
-            'store_image' => $this->getFirstMediaUrl('store_image'),
+$this->getFirstMediaUrl('store_image', 'thumb'),
             'address' => $this->address,
 
         ];

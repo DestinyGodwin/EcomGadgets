@@ -33,7 +33,8 @@ class MigrateAdvertImagesToMediaLibrary extends Command
                     continue;
                 }
 
-                $path = storage_path('advert_images/' . $advert->image);
+                // $path = storage_path('advert_images/' . $advert->image);
+$path = storage_path('advert_images/' . basename($advert->image));
 
                 if (!is_file($path)) {
                     $this->warn("Missing file: {$path}");
