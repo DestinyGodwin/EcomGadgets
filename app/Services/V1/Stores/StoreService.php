@@ -22,99 +22,185 @@ class StoreService
         //
     }
 
-    public function create($request)
-    {
-        $user = Auth::user();
+    // public function create($request)
+    // {
+    //     $user = Auth::user();
 
-        if ($user->isVendor() && $user->store) {
-            throw ValidationException::withMessages([
-                'store' => ['You already have a store and cannot create another.'],
-            ]);
-        }
-        // $durationDays = (int) Setting::get('store_subscription_duration', 0);
-        // $expiresAt    = $durationDays > 0 ? now()->addDays($durationDays) : null;
+    //     if ($user->isVendor() && $user->store) {
+    //         throw ValidationException::withMessages([
+    //             'store' => ['You already have a store and cannot create another.'],
+    //         ]);
+    //     }
+    //     // $durationDays = (int) Setting::get('store_subscription_duration', 0);
+    //     // $expiresAt    = $durationDays > 0 ? now()->addDays($durationDays) : null;
 
-        $storeImagePath = $request->file('store_image')->store('stores', 'public');
-        $cacImagePath   = $request->file('store_cac_image')->store('stores/cac', 'public');
-        $idImagePath    = $request->file('store_id_image')->store('stores/id', 'public');
+    //     $storeImagePath = $request->file('store_image')->store('stores', 'public');
+    //     $cacImagePath   = $request->file('store_cac_image')->store('stores/cac', 'public');
+    //     $idImagePath    = $request->file('store_id_image')->store('stores/id', 'public');
 
-        $store = $user->store()->create([
-            'lga_id'                  => $request->lga_id,
-            'state_id'                => $request->state_id,
-            'address'                 => $request->address,
-            'phone'                   => $request->phone,
-            'email'                   => $request->email,
-            'store_name'              => $request->store_name,
-            'store_description'       => $request->store_description,
-            'store_image'             => $storeImagePath,
-            'store_cac_image'         => $cacImagePath,
-            'store_id_image'          => $idImagePath,
-            'subscription_expires_at' => null,
-            'is_active'               => false,
-            'status'                  => "pending",
+    //     $store = $user->store()->create([
+    //         'lga_id'                  => $request->lga_id,
+    //         'state_id'                => $request->state_id,
+    //         'address'                 => $request->address,
+    //         'phone'                   => $request->phone,
+    //         'email'                   => $request->email,
+    //         'store_name'              => $request->store_name,
+    //         'store_description'       => $request->store_description,
+    //         'store_image'             => $storeImagePath,
+    //         'store_cac_image'         => $cacImagePath,
+    //         'store_id_image'          => $idImagePath,
+    //         'subscription_expires_at' => null,
+    //         'is_active'               => false,
+    //         'status'                  => "pending",
+    //     ]);
+
+    //     $user->role = 'vendor';
+    //     $user->save();
+
+    //     try {
+    //         // Notification::route('mail', route: config('mail.admin_email'))
+    //         //     ->notify(new NewStoreAwaitingApprovalNotification($store));
+    //         Mail::to(config('mail.admin_email'))->send(new NewStoreAwaitingApprovalMail($store));
+
+    //         Mail::to($user->email)->send(new StoreUnderReviewMail($store));
+
+    //     } catch (\Throwable $e) {
+    //         Log::error('Failed to notify admin about new store: ' . $e->getMessage(), [
+    //             'store_id' => $store->id,
+    //         ]);
+    //     }
+
+    //     return $store;
+    // }
+
+
+public function create($request)
+{
+    $user = Auth::user();
+
+    if ($user->isVendor() && $user->store) {
+        throw ValidationException::withMessages([
+            'store' => ['You already have a store.'],
         ]);
-
-        $user->role = 'vendor';
-        $user->save();
-
-        try {
-            // Notification::route('mail', route: config('mail.admin_email'))
-            //     ->notify(new NewStoreAwaitingApprovalNotification($store));
-            Mail::to(config('mail.admin_email'))->send(new NewStoreAwaitingApprovalMail($store));
-
-            Mail::to($user->email)->send(new StoreUnderReviewMail($store));
-
-        } catch (\Throwable $e) {
-            Log::error('Failed to notify admin about new store: ' . $e->getMessage(), [
-                'store_id' => $store->id,
-            ]);
-        }
-
-        return $store;
     }
 
-    public function update($request, $store)
-    {
-        $user = Auth::user();
+    $store = $user->store()->create([
+        'lga_id'            => $request->lga_id,
+        'state_id'          => $request->state_id,
+        'address'           => $request->address,
+        'phone'             => $request->phone,
+        'email'             => $request->email,
+        'store_name'        => $request->store_name,
+        'store_description' => $request->store_description,
+        'subscription_expires_at' => null,
+        'is_active'         => false,
+        'status'            => 'pending',
+    ]);
 
-        if (! $user->isVendor() || $user->store->id !== $store->id) {
-            throw ValidationException::withMessages([
-                'store' => ['Unauthorized to update this store.'],
-            ]);
-        }
-        $data = $request->only([
-            'lga_id', 'state_id', 'address', 'phone', 'email', 'store_name', 'store_description',
+    $store->addMedia($request->file('store_image'))
+        ->toMediaCollection('store_image');
+
+    $store->addMedia($request->file('store_cac_image'))
+        ->toMediaCollection('store_cac');
+
+    $store->addMedia($request->file('store_id_image'))
+        ->toMediaCollection('store_id');
+
+    $user->update(['role' => 'vendor']);
+
+    $user->role = 'vendor';
+    Mail::to(config('mail.admin_email'))->send(new NewStoreAwaitingApprovalMail($store));
+    Mail::to($user->email)->send(new StoreUnderReviewMail($store));
+
+    return $store;
+}
+
+    // public function update($request, $store)
+    // {
+    //     $user = Auth::user();
+
+    //     if (! $user->isVendor() || $user->store->id !== $store->id) {
+    //         throw ValidationException::withMessages([
+    //             'store' => ['Unauthorized to update this store.'],
+    //         ]);
+    //     }
+    //     $data = $request->only([
+    //         'lga_id', 'state_id', 'address', 'phone', 'email', 'store_name', 'store_description',
+    //     ]);
+
+    //     if ($request->hasFile('store_image')) {
+    //         if ($store->store_image && Storage::disk('public')->exists($store->store_image)) {
+    //             Storage::disk('public')->delete($store->store_image);
+    //         }
+    //         $data['store_image'] = $request->file('store_image')->store('stores', 'public');
+    //     }
+    //     $store->update($data);
+    //     return $store;
+    // }
+
+public function update($request, $store)
+{
+    $user = Auth::user();
+
+    if (! $user->isVendor() || $user->store->id !== $store->id) {
+        throw ValidationException::withMessages([
+            'store' => ['Unauthorized.'],
         ]);
-
-        if ($request->hasFile('store_image')) {
-            if ($store->store_image && Storage::disk('public')->exists($store->store_image)) {
-                Storage::disk('public')->delete($store->store_image);
-            }
-            $data['store_image'] = $request->file('store_image')->store('stores', 'public');
-        }
-        $store->update($data);
-        return $store;
     }
+
+    $store->update($request->only([
+        'lga_id', 'state_id', 'address',
+        'phone', 'email', 'store_name', 'store_description',
+    ]));
+
+    if ($request->hasFile('store_image')) {
+        $store->clearMediaCollection('store_image');
+        $store->addMedia($request->file('store_image'))
+            ->toMediaCollection('store_image');
+    }
+
+    return $store;
+}
+
+
+    // public function delete($store)
+    // {
+    //     $user = Auth::user();
+    //     if (! $user->isVendor() || $user->store->id !== $store->id) {
+    //         throw ValidationException::withMessages([
+    //             'store' => ['Unauthorized to delete this store.'],
+    //         ]);
+    //     }
+
+    //     if ($store->store_image && Storage::disk('public')->exists($store->store_image)) {
+    //         Storage::disk('public')->delete($store->store_image);
+    //     }
+
+    //     $store->delete();
+    //     $user->role = 'customer';
+    //     $user->save();
+
+    //     return true;
+    // }
 
     public function delete($store)
-    {
-        $user = Auth::user();
-        if (! $user->isVendor() || $user->store->id !== $store->id) {
-            throw ValidationException::withMessages([
-                'store' => ['Unauthorized to delete this store.'],
-            ]);
-        }
+{
+    $user = Auth::user();
 
-        if ($store->store_image && Storage::disk('public')->exists($store->store_image)) {
-            Storage::disk('public')->delete($store->store_image);
-        }
-
-        $store->delete();
-        $user->role = 'customer';
-        $user->save();
-
-        return true;
+    if (! $user->isVendor() || $user->store->id !== $store->id) {
+        throw ValidationException::withMessages([
+            'store' => ['Unauthorized.'],
+        ]);
     }
+
+    $store->clearMediaCollection();
+    $store->delete();
+
+    $user->update(['role' => 'customer']);
+
+    return true;
+}
+
     public function getStoresByState(string $stateId)
     {
         return Store::where('state_id', $stateId)->paginate(50);
