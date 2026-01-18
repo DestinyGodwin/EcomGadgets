@@ -13,6 +13,7 @@ class MigrateProfilePicturesToMediaLibrary extends Command
      * @var string
      */
     protected $signature = 'media:migrate-profile-pictures {--force}';
+
     protected $description = 'Migrate user profile pictures to Spatie Media Library';
 
     public function handle(): int
@@ -24,7 +25,7 @@ class MigrateProfilePicturesToMediaLibrary extends Command
 
                 if (
                     $user->getMedia('profile_pictures')->isNotEmpty()
-                    && !$this->option('force')
+                    && ! $this->option('force')
                 ) {
                     continue;
                 }
@@ -33,10 +34,11 @@ class MigrateProfilePicturesToMediaLibrary extends Command
                     continue;
                 }
 
-                $path = storage_path('profile_pictures/' . $user->profile_picture);
+                $path = storage_path('profile_pictures/'.$user->profile_picture);
 
-                if (!is_file($path)) {
+                if (! is_file($path)) {
                     $this->warn("Missing file: {$path}");
+
                     continue;
                 }
 
