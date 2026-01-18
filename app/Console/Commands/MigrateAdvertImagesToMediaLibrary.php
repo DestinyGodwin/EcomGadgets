@@ -20,7 +20,7 @@ class MigrateAdvertImagesToMediaLibrary extends Command
         $this->info('Starting advert image migration...');
 
         AdvertBooking::chunk(50, function ($adverts) {
-            foreach ($advert as $advert) {
+            foreach ($adverts as $advert) {
 
                 if (
                     $advert->getMedia('images')->isNotEmpty()
