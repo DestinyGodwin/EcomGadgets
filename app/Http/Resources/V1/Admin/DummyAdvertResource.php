@@ -19,7 +19,9 @@ class DummyAdvertResource extends JsonResource
             'state_id' => $this->state_id,
             'title' => $this->title,
             'link' => $this->link,
-            'image_url' => $this->image ? asset('storage/' . $this->image) : null,
+            // 'image_url' => $this->image ? asset('storage/' . $this->image) : null,
+            'image_media_url' => $this->getFirstMediaUrl('advert_image', 'thumb'),
+
             'starts_at' => $this->starts_at,
             'ends_at' => $this->ends_at,
         ];
