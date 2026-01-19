@@ -9,7 +9,7 @@ use Throwable;
 class MigrateStoreImagesToMediaLibrary extends Command
 {
     protected $signature = 'media:migrate-store-images {--force}';
-    protected $description = 'Migrate old store images to Spatie Media Library';
+    protected $description = 'Migrate legacy store images to Spatie Media Library';
 
     public function handle(): int
     {
@@ -32,7 +32,7 @@ class MigrateStoreImagesToMediaLibrary extends Command
                 try {
                     if (
                         $store->getMedia('store_image')->isNotEmpty()
-                        && !$this->option('force')
+                        && ! $this->option('force')
                     ) {
                         $stats['skipped']++;
                         $bar->advance();
@@ -45,11 +45,12 @@ class MigrateStoreImagesToMediaLibrary extends Command
                         continue;
                     }
 
-                    $path = storage_path('app/public/' . $store->store_image);
+                    // 🔴 THIS IS THE FIX
+                    $path = storage_path('stores/' . basename($store->store_image));
 
-                    if (!is_file($path)) {
+                    if (! is_file($path)) {
                         $stats['missing']++;
-                        $this->warn("Missing file for store {$store->id}");
+                        $this->warn("Missing file for store {$store->id}: {$path}");
                         $bar->advance();
                         continue;
                     }
