@@ -101,13 +101,13 @@ class Store extends Model implements HasMedia
         return $this->hasMany( StoreUpdateRequest::class );
     }
 
-     public function registerMediaCollections(): void
+      public function registerMediaCollections(): void
     {
-        $this
-            ->addMediaCollection('images')
-            ->useDisk('public');
-            
+        $this->addMediaCollection('store_image')->useDisk('public');
+        $this->addMediaCollection('store_cac')->useDisk('public');
+        $this->addMediaCollection('store_id')->useDisk('public');
     }
+
 
     public function registerMediaConversions(?Media $media = null): void
     {
