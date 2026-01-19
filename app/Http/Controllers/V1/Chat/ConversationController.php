@@ -11,20 +11,38 @@ use App\Http\Resources\V1\Chat\ConversationResource;
 
 class ConversationController extends Controller
 {
-    public function index(Request $request)
-    {
-        $user = $request->user();
+    // public function index(Request $request)
+    // {
+    //     $user = $request->user();
 
-        return ConversationResource::collection(
-            $user->conversations()
-                ->with([
-                    'users:id,first_name,last_name,profile_picture',
-                    'lastMessage.sender:id,first_name',
-                ])
-                ->orderByDesc('last_message_at')
-                ->paginate(20)
-        );
-    }
+    //     return ConversationResource::collection(
+    //         $user->conversations()
+    //             ->with([
+    //                 'users:id,first_name,last_name,profile_picture',
+    //                 'lastMessage.sender:id,first_name',
+    //             ])
+    //             ->orderByDesc('last_message_at')
+    //             ->paginate(20)
+    //     );
+    // }
+
+    public function index(Request $request)
+{
+    $user = $request->user();
+
+    return ConversationResource::collection(
+        $user->conversations()
+            ->with([
+                'users:id,first_name,last_name,profile_picture',
+                'users.store', // eager load store
+                'lastMessage.sender:id,first_name,last_name,profile_picture',
+                'lastMessage.sender.store',
+            ])
+            ->orderByDesc('last_message_at')
+            ->paginate(20)
+    );
+}
+
 
     public function markAsRead(Request $request, Conversation $conversation)
     {
