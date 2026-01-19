@@ -16,6 +16,10 @@ class ConversationUserResource extends JsonResource
             'profile_picture' => $this->profile_picture
                 ? asset("storage/{$this->profile_picture}")
                 : null,
+                'store_name' => $this->when(
+                $this->relationLoaded('store') && $this->store,
+                fn () => $this->store->store_name
+            ),
         ];
     }
 }
