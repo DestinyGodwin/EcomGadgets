@@ -34,7 +34,7 @@ class ConversationController extends Controller
         $user->conversations()
             ->with([
                 'users:id,first_name,last_name,profile_picture',
-                'users.store', // eager load store
+                'users.store', 
                 'lastMessage.sender:id,first_name,last_name,profile_picture',
                 'lastMessage.sender.store',
             ])

@@ -48,9 +48,8 @@ class AdvertBooking extends Model  implements HasMedia
     public function registerMediaConversions(?Media $media = null): void
     {
         $this
-            ->addMediaConversion('thumb')
-            ->fit(Fit::Crop, 400, 400)
-            ->performOnCollections('images')
-            ->queued();
+    ->addMediaConversion('optimized')
+    ->optimize()
+    ->performOnCollections('images');
     }
 }
