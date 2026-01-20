@@ -149,7 +149,7 @@ class Product extends Model implements HasMedia
     {
         $this
             ->addMediaConversion('thumb')
-            ->fit(Fit::Crop, 400, 400)
+            ->fit(Fit::Max, 400, 400)
             ->performOnCollections('images')
             ->queued();
     }
