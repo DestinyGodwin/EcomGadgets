@@ -13,10 +13,8 @@ class ConversationUserResource extends JsonResource
             'id' => $this->id,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
-            'profile_picture' => $this->profile_picture
-                ? asset("storage/{$this->profile_picture}")
-                : null,
-                'store_name' => $this->when(
+            'profile_picture' => $this->getFirstMediaUrl('images', 'optimized'),
+            'store_name' => $this->when(
                 $this->relationLoaded('store') && $this->store,
                 fn () => $this->store->store_name
             ),
