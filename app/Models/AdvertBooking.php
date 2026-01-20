@@ -49,7 +49,7 @@ class AdvertBooking extends Model  implements HasMedia
     {
         $this
             ->addMediaConversion('thumb')
-            ->fit(Fit::crop, 100, 100) // adjust size as needed
+            ->fit(Fit::Crop, 100, 100) // adjust size as needed
             ->nonQueued();
         $this
     ->addMediaConversion('optimized')
