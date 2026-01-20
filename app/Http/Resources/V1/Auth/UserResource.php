@@ -22,7 +22,7 @@ class UserResource extends JsonResource
     'phone' => $this->phone,
     'state_id' => $this->state_id,
     'lga_id' => $this->lga_id,
-    'profile_picture' => $this->getFirstMediaUrl('images', 'optimized'),
+'profile_picture' => $this->getFirstMediaUrl('profile_pictures', 'optimized'),
 ];
 
     }
