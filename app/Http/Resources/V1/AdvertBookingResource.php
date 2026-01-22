@@ -22,7 +22,7 @@ class AdvertBookingResource extends JsonResource
             'starts_at' => $this->starts_at,
             'ends_at'   => $this->ends_at,
             // 'image'     => asset('storage/' . $this->image),
-                        'image_media_url' => $this->getFirstMediaUrl('images', 'thumb'),
+'image_media_url' => $this->getFirstMediaUrl('images', 'optimized'),
 
             'is_dummy'  => $this->is_dummy,
 
