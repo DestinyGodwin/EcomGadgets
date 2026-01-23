@@ -11,6 +11,8 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
+use Illuminate\Database\Eloquent\Collection;
+use NotificationChannels\Expo\ExpoPushToken;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
@@ -95,19 +97,19 @@ class User extends Authenticatable implements HasMedia
         return $this->hasManyThrough(Product::class, Store::class);
     }
 
-    public function devices()
-    {
-        return $this->hasMany(UserDevice::class);
-    }
+    // public function devices()
+    // {
+    //     return $this->hasMany(UserDevice::class);
+    // }
 
     /**
      * Route notifications for FCM channel.
      * Must return string or array of tokens.
      */
-    public function routeNotificationForFcm()
-    {
-        return $this->devices()->pluck('device_token')->toArray();
-    }
+    // public function routeNotificationForFcm()
+    // {
+    //     return $this->devices()->pluck('device_token')->toArray();
+    // }
 
      public function conversations()
     {
@@ -152,6 +154,19 @@ public function registerMediaConversions(?Media $media = null): void
         ->fit(Fit::Max, 100, 100)
         ->performOnCollections('profile_pictures')
         ->queued();
+}
+
+public function devices()
+{
+    return $this->hasMany(Device::class);
+}
+
+/**
+ * @return Collection<int, ExpoPushToken>
+ */
+public function routeNotificationForExpo(): Collection
+{
+    return $this->devices->pluck('expo_token');
 }
 
 }
