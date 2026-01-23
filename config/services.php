@@ -48,4 +48,9 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
+    'expo' => [
+    'access_token' => env('EXPO_ACCESS_TOKEN'),
+],
+
+
 ];
