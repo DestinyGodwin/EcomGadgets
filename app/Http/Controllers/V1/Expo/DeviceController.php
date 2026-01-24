@@ -8,6 +8,11 @@ use App\Http\Requests\V1\Expo\StoreDeviceRequest;
 
 class DeviceController extends Controller
 {
+
+    public function index(Request $request)
+    {
+        return $request->user()->devices;
+    }
     public function store(StoreDeviceRequest $request)
     {
         $user = $request->user();
@@ -18,5 +23,15 @@ class DeviceController extends Controller
         );
 
         return response()->json(['message' => 'Device registered']);
+    }
+
+    public function destroy(Request $request, string $deviceId)
+    {
+        $request->user()
+            ->devices()
+            ->where('device_id', $deviceId)
+            ->delete();
+
+        return response()->json(['message' => 'Device removed']);
     }
 }
