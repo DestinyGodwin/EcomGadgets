@@ -18,11 +18,14 @@ class DeviceController extends Controller
         $user = $request->user();
 
         $user->devices()->updateOrCreate(
-            ['device_id' => $request->device_id],
-            ['expo_token' => $request->token],
+            [
+                'user_id'   => $user->id,
+                'device_id' => $request->device_id,
+            ],
+            [
+                'expo_token' => $request->token,
+            ]
         );
-
-        return response()->json(['message' => 'Device registered']);
     }
 
     public function destroy(Request $request, string $deviceId)
