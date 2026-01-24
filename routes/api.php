@@ -180,8 +180,9 @@ Route::prefix('v1/')->group(function () {
             Route::get('{id}', [AdvertBookingController::class, 'show']);
             Route::put('{id}', [AdvertBookingController::class, 'update']);
         });
-Route::post('/devices', [DeviceController::class, 'store']);
-
+        Route::get('/devices', [DeviceController::class, 'index']);
+        Route::post('/devices', [DeviceController::class, 'store']);
+        Route::delete('/devices/{device_id}', [DeviceController::class, 'destroy']);
         Route::controller(WishlistController::class)->group(function () {
             Route::get('/wishlist', 'index');
             Route::post('/wishlist', 'store');
@@ -196,20 +197,20 @@ Route::post('/devices', [DeviceController::class, 'store']);
         Route::post('/messages', [MessageController::class, 'store']);
         Route::get('/conversations', [ConversationController::class, 'index']);
         Route::get('/conversations/{conversation}/messages', [MessageController::class, 'index']);
-         Route::get('/conversations/unread-count', [ConversationController::class, 'unreadCount']);
-    Route::get('/conversations/{conversation}/unread-count', [ConversationController::class, 'conversationUnreadCount']);
-    Route::post('/conversations/{conversation}/read', [ConversationController::class, 'markAsRead']);
+        Route::get('/conversations/unread-count', [ConversationController::class, 'unreadCount']);
+        Route::get('/conversations/{conversation}/unread-count', [ConversationController::class, 'conversationUnreadCount']);
+        Route::post('/conversations/{conversation}/read', [ConversationController::class, 'markAsRead']);
 
-    Route::get('/messages/with/{user}', [MessageController::class, 'betweenUsers']);
+        Route::get('/messages/with/{user}', [MessageController::class, 'betweenUsers']);
     });
     Route::controller(ProductController::class)->group(function () {
-       Route::get('products/search', 'search')->name('products.search');
-    Route::get('products', 'index')->name('products.index');
-    Route::get('products/category/{categoryId}', 'byCategory')->name('products.category');
-    Route::get('products/brand/{brand}', 'byBrand')->name('products.brand');
-    Route::get('products/by-state', 'byState')->name('products.byState');
-    Route::get('products/by-lga', 'byLga')->name('products.byLga');
-    Route::get('products/{product}', 'show')->name('products.show');
+        Route::get('products/search', 'search')->name('products.search');
+        Route::get('products', 'index')->name('products.index');
+        Route::get('products/category/{categoryId}', 'byCategory')->name('products.category');
+        Route::get('products/brand/{brand}', 'byBrand')->name('products.brand');
+        Route::get('products/by-state', 'byState')->name('products.byState');
+        Route::get('products/by-lga', 'byLga')->name('products.byLga');
+        Route::get('products/{product}', 'show')->name('products.show');
     });
     Route::prefix('/analytics/{product}')->group(function () {
         Route::get('/views', [ProductAnalyticsController::class, 'viewCount']);
