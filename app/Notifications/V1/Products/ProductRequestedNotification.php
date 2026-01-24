@@ -5,6 +5,7 @@ namespace App\Notifications\V1\Products;
 use Illuminate\Bus\Queueable;
 use App\Models\ProductRequest;
 use Illuminate\Notifications\Notification;
+use NotificationChannels\Expo\ExpoMessage;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Mail\V1\Products\ProductRequestedMail;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -15,12 +16,15 @@ class ProductRequestedNotification extends Notification implements ShouldQueue
 
     public function __construct(protected ProductRequest $productRequest) {}
 
+    // public function via($notifiable): array
+    // {
+    //     return ['mail', 'database', 'fcm'];
+    // }
     public function via($notifiable): array
     {
-        return ['mail', 'database', 'fcm'];
+        return ['mail', 'database', 'expo'];
     }
-
-     public function toMail($notifiable)
+    public function toMail($notifiable)
     {
         return (new ProductRequestedMail($this->productRequest, $notifiable->first_name))
             ->to($notifiable->email);
@@ -59,5 +63,21 @@ class ProductRequestedNotification extends Notification implements ShouldQueue
                 'url'                => $productUrl,
             ],
         ];
+    }
+
+    public function toExpo($notifiable): ExpoMessage
+    {
+        $url = config('frontend.url')
+            . "/product-requests/{$this->productRequest->id}";
+
+        return ExpoMessage::create('New Product Request')
+            ->body("A user requested \"{$this->productRequest->name}\".")
+            ->data([
+                'type'               => 'product_request',
+                'product_request_id' => $this->productRequest->id,
+                'url'                => $url,
+            ])
+            ->priority('high')
+            ->playSound();
     }
 }

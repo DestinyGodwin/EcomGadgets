@@ -6,6 +6,7 @@ use App\Http\Controllers\V1\CategoryController;
 use App\Http\Controllers\V1\LocationController;
 use App\Http\Controllers\V1\Auth\AuthController;
 use App\Http\Controllers\V1\Admin\UserController;
+use App\Http\Controllers\V1\Expo\DeviceController;
 use App\Http\Controllers\V1\TransactionController;
 use App\Http\Controllers\V1\Chat\MessageController;
 use App\Http\Controllers\V1\NotificationController;
@@ -179,6 +180,7 @@ Route::prefix('v1/')->group(function () {
             Route::get('{id}', [AdvertBookingController::class, 'show']);
             Route::put('{id}', [AdvertBookingController::class, 'update']);
         });
+Route::post('/devices', [DeviceController::class, 'store']);
 
         Route::controller(WishlistController::class)->group(function () {
             Route::get('/wishlist', 'index');
