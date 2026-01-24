@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -111,62 +112,60 @@ class User extends Authenticatable implements HasMedia
     //     return $this->devices()->pluck('device_token')->toArray();
     // }
 
-     public function conversations()
+    public function conversations()
     {
         return $this->belongsToMany(Conversation::class)
             ->withTimestamps();
     }
 
-   
+
     public function messages()
     {
         return $this->hasMany(Message::class);
     }
 
-     public function registerMediaCollections(): void
+    public function registerMediaCollections(): void
     {
         $this
             ->addMediaCollection('images')
             ->useDisk('public');
-            
     }
 
-//     public function registerMediaConversions(?Media $media = null): void
-// {
-//     $this
-//         ->addMediaConversion('optimized')
-//         ->fit(Fit::Max, 400, 400) 
-//         ->optimize()             
-//         ->performOnCollections('images')
-//         ->queued();
-// }
-public function registerMediaConversions(?Media $media = null): void
-{
-    $this
-        ->addMediaConversion('optimized')
-        ->fit(Fit::Max, 400, 400)
-        ->optimize()
-        ->performOnCollections('profile_pictures')
-        ->queued();
+    //     public function registerMediaConversions(?Media $media = null): void
+    // {
+    //     $this
+    //         ->addMediaConversion('optimized')
+    //         ->fit(Fit::Max, 400, 400) 
+    //         ->optimize()             
+    //         ->performOnCollections('images')
+    //         ->queued();
+    // }
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this
+            ->addMediaConversion('optimized')
+            ->fit(Fit::Max, 400, 400)
+            ->optimize()
+            ->performOnCollections('profile_pictures')
+            ->queued();
 
-    $this
-        ->addMediaConversion('thumb')
-        ->fit(Fit::Max, 100, 100)
-        ->performOnCollections('profile_pictures')
-        ->queued();
-}
+        $this
+            ->addMediaConversion('thumb')
+            ->fit(Fit::Max, 100, 100)
+            ->performOnCollections('profile_pictures')
+            ->queued();
+    }
 
-public function devices()
-{
-    return $this->hasMany(Device::class);
-}
+    public function devices()
+    {
+        return $this->hasMany(Device::class);
+    }
 
-/**
- * @return Collection<int, ExpoPushToken>
- */
-public function routeNotificationForExpo(): Collection
-{
-    return $this->devices->pluck('expo_token');
-}
-
+    /**
+     * @return Collection<int, ExpoPushToken>
+     */
+    public function routeNotificationForExpo(): Collection
+    {
+        return $this->devices->pluck('expo_token');
+    }
 }
