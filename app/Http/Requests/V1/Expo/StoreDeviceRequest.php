@@ -23,9 +23,9 @@ class StoreDeviceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'device_id' => ['required', 'string', 'max:255'],
-            'token'     => ['required', ExpoPushToken::rule()],
-        ];
+        'device_id' => ['required', 'string', 'max:255'],
+        'token'     => ['required', ExpoPushToken::rule()],
+    ];
     }
 }
 
