@@ -28,3 +28,5 @@ class StoreDeviceRequest extends FormRequest
         ];
     }
 }
+
+ 

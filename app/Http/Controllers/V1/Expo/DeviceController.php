@@ -26,6 +26,8 @@ class DeviceController extends Controller
                 'expo_token' => $request->token,
             ]
         );
+
+        return response()->json(['message' => 'Device registered/updated successfully']);
     }
 
     public function destroy(Request $request, string $deviceId)
