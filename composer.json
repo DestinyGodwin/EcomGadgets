@@ -20,7 +20,8 @@
         "spatie/image-optimizer": "^1.8",
         "spatie/laravel-medialibrary": "^11.17",
         "spatie/laravel-sluggable": "^3.7",
-        "syntech/syntechfcm": "^1.3"
+        "syntech/syntechfcm": "^1.3",
+        "yieldstudio/laravel-expo-notifier": "^0.0.17"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
