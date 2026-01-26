@@ -65,7 +65,7 @@ class User extends Authenticatable implements HasMedia
         return [
             'email_verified_at' => 'datetime',
             'password'          => 'hashed',
-                'expo_token' => ExpoPushToken::class
+            // 'expo_token' => ExpoPushToken::class
 
         ];
     }
@@ -168,8 +168,8 @@ class User extends Authenticatable implements HasMedia
      */
     public function routeNotificationForExpo(): Collection
     {
-        return $this->devices->pluck('expo_token');
+        return $this->devices()
+            ->whereNotNull('expo_token')
+            ->pluck('expo_token');
     }
-
-    
 }
