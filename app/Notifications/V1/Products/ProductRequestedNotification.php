@@ -82,4 +82,3 @@ class ProductRequestedNotification extends Notification implements ShouldQueue
     }
 }
 
-
