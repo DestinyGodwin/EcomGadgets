@@ -1,0 +1,22 @@
+[90m= [39m[34;4mApp\Models\User[39;24m {#6210
+    [34mid[39m: "[32m01980cab-5ab9-7307-86a6-4b73b8173885[39m",
+    [34mfirst_name[39m: "[32mAniekan[39m",
+    [34mlast_name[39m: "[32mDickson[39m",
+    [34memail[39m: "[32mdicksonaniekan00@gmail.com[39m",
+    [34mgoogle_id[39m: [36mnull[39m,
+    #[33memail_verified_at[39m: "[32m2025-07-15 07:00:45[39m",
+    [34mphone[39m: "[32m07087215290[39m",
+    [34mstate_id[39m: "[32m703ab422-3eb5-4402-a9c0-464760117192[39m",
+    [34mlga_id[39m: "[32m8ea5bb5d-2acb-4c7b-9f5a-23213af437cd[39m",
+    #[33mrole[39m: "[32mvendor[39m",
+    [34mstatus[39m: "[32mactive[39m",
+    #[33mpassword[39m: "[32m$2y$12$/4GC1wHLN8Wq5IVse.UBN.WFWFhWLCbNktcsxglq1ljQtQ2Vvb9VW[39m",
+    [34mprofile_picture[39m: "[32mprofile_pictures/QtHAYhG0nHhKgkuFYSayqNtqHmLl9SMxu5fduPKc.png[39m",
+    #[33motp[39m: [36mnull[39m,
+    #[33motp_expires_at[39m: [36mnull[39m,
+    #[33mremember_token[39m: [36mnull[39m,
+    #[33mcreated_at[39m: "[32m2025-07-15 07:00:13[39m",
+    #[33mupdated_at[39m: "[32m2025-07-15 07:17:08[39m",
+    #[33mdeleted_at[39m: [36mnull[39m,
+  }
+

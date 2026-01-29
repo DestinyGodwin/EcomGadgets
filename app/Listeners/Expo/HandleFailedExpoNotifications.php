@@ -20,20 +20,25 @@ class HandleFailedExpoNotifications
     /**
      * Handle the event.
      */
-        public function handle(NotificationFailed $event)
+      
+    public function handle(NotificationFailed $event): void
     {
         if ($event->channel !== 'expo') {
             return;
         }
 
-        /** @var ExpoError $error */
         $error = $event->data;
 
-        if ($error->type->isDeviceNotRegistered()) {
-            $event->notifiable
-                ->devices()
-                ->where('expo_token', (string) $error->token)
-                ->delete();
+        if (
+            ! is_array($error) ||
+            ($error['type'] ?? null) !== 'DeviceNotRegistered'
+        ) {
+            return;
         }
+
+        $event->notifiable
+            ->devices()
+            ->where('expo_token', (string) $error['token'])
+            ->delete();
     }
 }
