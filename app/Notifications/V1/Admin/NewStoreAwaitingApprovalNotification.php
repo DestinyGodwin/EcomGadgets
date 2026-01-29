@@ -3,8 +3,9 @@
 namespace App\Notifications\V1\Admin;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use NotificationChannels\Expo\ExpoMessage;
+use Illuminate\Notifications\Messages\MailMessage;
 
 class NewStoreAwaitingApprovalNotification extends Notification 
 {
@@ -22,7 +23,7 @@ public $store;
 
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['mail', 'expo', ];
     }
 
     public function toMail($notifiable)
@@ -54,5 +55,20 @@ public $store;
                 'url'        => $reviewUrl,
             ],
         ];
+    }
+
+    public function toExpo($notifiable): ExpoMessage
+    {
+        $url = config('frontend.url') . "/admin/stores/{$this->store->slug}";
+
+        return ExpoMessage::create('New Store Awaiting Approval')
+            ->body("{$this->store->store_name} is awaiting approval.")
+            ->data([
+                'type'     => 'new_store_awaiting_approval',
+                'store_id' => $this->store->id,
+                'slug'     => $this->store->slug,
+                'url'      => $url,
+            ])
+            ->priority('high');
     }
 }
