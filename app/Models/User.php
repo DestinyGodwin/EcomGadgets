@@ -12,10 +12,11 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
-use Illuminate\Database\Eloquent\Collection;
+// use Illuminate\Database\Eloquent\Collection;
 use NotificationChannels\Expo\ExpoPushToken;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Illuminate\Support\Collection;
 
 class User extends Authenticatable implements HasMedia
 {
@@ -166,10 +167,13 @@ class User extends Authenticatable implements HasMedia
     /**
      * @return Collection<int, ExpoPushToken>
      */
-    public function routeNotificationForExpo(): Collection
-    {
-        return $this->devices()
-            ->whereNotNull('expo_token')
-            ->pluck('expo_token');
-    }
+public function routeNotificationForExpo(): Collection
+{
+    return $this->devices()
+        ->whereNotNull('expo_token')
+        ->get()
+        ->map->expo_token;
+}
+
+
 }
