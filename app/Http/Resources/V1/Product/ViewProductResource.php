@@ -2,13 +2,15 @@
 
 namespace App\Http\Resources\V1\Product;
 
-use App\Http\Resources\V1\Product\ProductImageResource;
-use App\Http\Resources\V1\Product\ReviewResource;
 use Illuminate\Http\Request;
+use App\Http\Resources\Concerns\HasMedia;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\V1\Product\ReviewResource;
+use App\Http\Resources\V1\Product\ProductImageResource;
 
 class ViewProductResource extends JsonResource
 {
+    use HasMedia;
     /**
      * Transform the resource into an array.
      *
@@ -25,7 +27,8 @@ class ViewProductResource extends JsonResource
             'price'           => $this->price,
             'is_featured' => $this->isCurrentlyFeatured(),
             'wholesale_price' => $this->wholesale_price,
-            'images'          => ProductImageResource::collection($this->images),
+            // 'images'          => ProductImageResource::collection($this->images),
+            'images' => $this->media('images', 'thumb'),
 
             'store'           => [
                 'id'           => $this->store->id,
