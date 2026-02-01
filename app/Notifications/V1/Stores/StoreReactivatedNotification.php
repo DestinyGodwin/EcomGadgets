@@ -4,9 +4,10 @@ namespace App\Notifications\V1\Stores;
 
 use App\Models\Store;
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Notification;
+use NotificationChannels\Expo\ExpoMessage;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Notification;
 
 class StoreReactivatedNotification extends Notification implements ShouldQueue
 {
@@ -19,7 +20,7 @@ class StoreReactivatedNotification extends Notification implements ShouldQueue
 
     public function via($notifiable): array
     {
-        return ['mail', 'database', 'fcm'];
+        return ['mail', 'database', 'expo'];
     }
 
     public function toMail($notifiable)
@@ -45,25 +46,44 @@ class StoreReactivatedNotification extends Notification implements ShouldQueue
         ];
     }
 
-    public function toFcm($notifiable): array
-    {
-        $frontendUrl = config('frontend.url');
-        $editUrl = "{$frontendUrl}/store/edit/{$this->store->slug}";
+    // public function toFcm($notifiable): array
+    // {
+    //     $frontendUrl = config('frontend.url');
+    //     $editUrl = "{$frontendUrl}/store/edit/{$this->store->slug}";
 
-        return [
-            'to' => $notifiable->routeNotificationForFcm(),
-            'notification' => [
-                'title' => 'Store Reactivated',
-                'body'  => "Your store \"{$this->store->store_name}\" has been reactivated.",
-            ],
-            'data' => [
-                'store_id'   => $this->store->id,
-                'store_name' => $this->store->store_name,
-                'slug'       => $this->store->slug,
-                'admin_note' => $this->message,
-                'type'       => 'store_reactivated',
-                'url'        => $editUrl,
-            ],
-        ];
-    }
+    //     return [
+    //         'to' => $notifiable->routeNotificationForFcm(),
+    //         'notification' => [
+    //             'title' => 'Store Reactivated',
+    //             'body'  => "Your store \"{$this->store->store_name}\" has been reactivated.",
+    //         ],
+    //         'data' => [
+    //             'store_id'   => $this->store->id,
+    //             'store_name' => $this->store->store_name,
+    //             'slug'       => $this->store->slug,
+    //             'admin_note' => $this->message,
+    //             'type'       => 'store_reactivated',
+    //             'url'        => $editUrl,
+    //         ],
+    //     ];
+    // }
+
+    public function toExpo($notifiable): ExpoMessage
+{
+    $url = config('frontend.url') . "/store/edit/{$this->store->slug}";
+
+    return ExpoMessage::create('Store Reactivated')
+        ->body("Your store \"{$this->store->store_name}\" has been reactivated.")
+        ->data([
+            'type'       => 'store_reactivated',
+            'store_id'   => $this->store->id,
+            'store_name' => $this->store->store_name,
+            'slug'       => $this->store->slug,
+            'admin_note'=> $this->message,
+            'url'        => $url,
+        ])
+        ->priority('high')
+        ->playSound();
+}
+
 }

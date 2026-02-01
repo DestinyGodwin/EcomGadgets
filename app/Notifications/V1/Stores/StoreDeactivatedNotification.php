@@ -4,9 +4,10 @@ namespace App\Notifications\V1\Stores;
 
 use App\Models\Store;
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Notification;
+use NotificationChannels\Expo\ExpoMessage;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Notification;
 
 class StoreDeactivatedNotification extends Notification implements ShouldQueue
 {
@@ -19,7 +20,8 @@ class StoreDeactivatedNotification extends Notification implements ShouldQueue
 
     public function via($notifiable): array
     {
-        return ['mail', 'database', 'fcm'];
+        // return ['mail', 'database', 'fcm'];
+        return ['mail', 'database', 'expo'];
     }
 
     public function toMail($notifiable)
@@ -45,24 +47,43 @@ class StoreDeactivatedNotification extends Notification implements ShouldQueue
         ];
     }
 
-    public function toFcm($notifiable): array
-    {
-        $frontendUrl = config('frontend.url');
-        $storeUrl = "{$frontendUrl}/store/{$this->store->slug}";
+    // public function toFcm($notifiable): array
+    // {
+    //     $frontendUrl = config('frontend.url');
+    //     $storeUrl = "{$frontendUrl}/store/{$this->store->slug}";
 
-        return [
-            'to' => $notifiable->routeNotificationForFcm(),
-            'notification' => [
-                'title' => 'Store Deactivated',
-                'body'  => "Your store \"{$this->store->store_name}\" has been deactivated. Reason: {$this->message}",
-            ],
-            'data' => [
-                'store_id'   => $this->store->id,
-                'store_name' => $this->store->store_name,
-                'slug'       => $this->store->slug,
-                'reason'     => $this->message,
-                'type'       => 'store_deactivated',
-            ],
-        ];
-    }
+    //     return [
+    //         'to' => $notifiable->routeNotificationForFcm(),
+    //         'notification' => [
+    //             'title' => 'Store Deactivated',
+    //             'body'  => "Your store \"{$this->store->store_name}\" has been deactivated. Reason: {$this->message}",
+    //         ],
+    //         'data' => [
+    //             'store_id'   => $this->store->id,
+    //             'store_name' => $this->store->store_name,
+    //             'slug'       => $this->store->slug,
+    //             'reason'     => $this->message,
+    //             'type'       => 'store_deactivated',
+    //         ],
+    //     ];
+    // }
+
+    public function toExpo($notifiable): ExpoMessage
+{
+    $url = config('frontend.url') . "/store/{$this->store->slug}";
+
+    return ExpoMessage::create('Store Deactivated')
+        ->body("Your store \"{$this->store->store_name}\" was deactivated. Reason: {$this->message}")
+        ->data([
+            'type'      => 'store_deactivated',
+            'store_id'  => $this->store->id,
+            'store_name'=> $this->store->store_name,
+            'slug'      => $this->store->slug,
+            'reason'    => $this->message,
+            'url'       => $url,
+        ])
+        ->priority('high')
+        ->playSound();
+}
+
 }
