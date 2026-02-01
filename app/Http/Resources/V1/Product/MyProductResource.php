@@ -2,11 +2,13 @@
 
 namespace App\Http\Resources\V1\Product;
 
+use App\Http\Resources\Concerns\HasMedia;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class MyProductResource extends JsonResource
 {
+    use HasMedia;
     /**
      * Transform the resource into an array.
      *
@@ -27,7 +29,8 @@ class MyProductResource extends JsonResource
             'is_featured' => $this->isCurrentlyFeatured(),
             'featured_expires_at' => $this->featured_expires_at,
             'average_rating'  => round($this->reviews->avg('rating'), 1),
-            'images' => ProductImageResource::collection($this->images),
+            // 'images' => ProductImageResource::collection($this->images),
+            'images' => $this->media('images', 'thumb'),
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
         ];
