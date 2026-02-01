@@ -6,6 +6,7 @@ use App\Models\Store;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Notifications\Notification;
+use NotificationChannels\Expo\ExpoMessage;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
@@ -26,7 +27,9 @@ class StoreCreatedNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail', 'database', 'fcm'];
+        // return ['mail', 'database', 'fcm'];
+                return ['mail', 'database', 'expo'];
+
         }
 
     /**
@@ -56,23 +59,39 @@ class StoreCreatedNotification extends Notification implements ShouldQueue
         ];
     }
 
-    public function toFcm($notifiable): array
-{
-    $frontendUrl = config('frontend.url');
-    $storeUrl = "{$frontendUrl}/stores/{$this->store->id}";
+//     public function toFcm($notifiable): array
+// {
+//     $frontendUrl = config('frontend.url');
+//     $storeUrl = "{$frontendUrl}/stores/{$this->store->id}";
 
-    return [
-        'to' => $notifiable->routeNotificationForFcm(),
-        'notification' => [
-            'title' => 'Store Created Successfully',
-            'body'  => 'Your store "' . $this->store->name . '" has been created successfully.',
-        ],
-        'data' => [
-            'store_id' => $this->store->id,
-            'store_name' => $this->store->name,
-            'type' => 'store_created',
-        ],
-    ];
+//     return [
+//         'to' => $notifiable->routeNotificationForFcm(),
+//         'notification' => [
+//             'title' => 'Store Created Successfully',
+//             'body'  => 'Your store "' . $this->store->name . '" has been created successfully.',
+//         ],
+//         'data' => [
+//             'store_id' => $this->store->id,
+//             'store_name' => $this->store->name,
+//             'type' => 'store_created',
+//         ],
+//     ];
+// }
+
+public function toExpo($notifiable): ExpoMessage
+{
+    $url = config('frontend.url') . "/stores/{$this->store->id}";
+
+    return ExpoMessage::create('Store Created Successfully')
+        ->body("Your store \"{$this->store->name}\" has been created successfully.")
+        ->data([
+            'type'      => 'store_created',
+            'store_id'  => $this->store->id,
+            'store_name'=> $this->store->name,
+            'url'       => $url,
+        ])
+        ->priority('high')
+        ->playSound();
 }
 
 }
