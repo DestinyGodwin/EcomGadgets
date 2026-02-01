@@ -15,7 +15,7 @@ class ProductResource extends JsonResource
     public function toArray(Request $request): array
     {
         $isSingle = $request->routeIs(['products.show', 'admin.products.show']);
-        
+
         return [
             'id' => $this->id,
             'category_id' => $this->category_id,
@@ -42,7 +42,7 @@ class ProductResource extends JsonResource
                 'slug' => $this->store->slug,
                 'store_lga' =>  $this->store->lga->name,
                 // 'store_image' => asset('storage/' . $this->store->store_image),
-                'store_image' => $this->store->getFirstMediaUrl('store_image'),
+                'store_image' => $this->getFirstMediaUrl('store_image', 'thumb'),
 
                 'store_state' => $this->store->state->name,
                 'phone_number' => $this->store->phone,
