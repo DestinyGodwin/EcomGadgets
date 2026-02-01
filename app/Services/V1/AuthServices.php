@@ -112,26 +112,26 @@ class AuthServices
     // }
 
     public function completeProfile(array $data)
-{
-    $user = Auth::user();
+    {
+        $user = Auth::user();
 
-    if (isset($data['profile_picture'])) {
-        $user->clearMediaCollection('profile_picture');
+        if (isset($data['profile_picture'])) {
+            $user->clearMediaCollection('profile_picture');
 
-        $user->addMedia($data['profile_picture'])
-            ->toMediaCollection('profile_picture');
+            $user->addMedia($data['profile_picture'])
+                ->toMediaCollection('profile_picture');
 
-        unset($data['profile_picture']);
+            unset($data['profile_picture']);
+        }
+
+        $user->update($data);
+
+        return [
+            'success' => true,
+            'user' => new UserResource($user),
+            'message' => 'Profile completed successfully',
+        ];
     }
-
-    $user->update($data);
-
-    return [
-        'success' => true,
-        'user' => new UserResource($user),
-        'message' => 'Profile completed successfully',
-    ];
-}
 
     // public function updateProfile(array $validated)
     // {
@@ -162,35 +162,35 @@ class AuthServices
 
 
     public function updateProfile(array $validated)
-{
-    $user = Auth::user();
+    {
+        $user = Auth::user();
 
-    if (isset($validated['profile_picture'])) {
-        $user->clearMediaCollection('profile_picture');
+        if (isset($validated['profile_picture'])) {
+            $user->clearMediaCollection('profile_picture');
 
-        $user->addMedia($validated['profile_picture'])
-            ->toMediaCollection('profile_picture');
+            $user->addMedia($validated['profile_picture'])
+                ->toMediaCollection('profile_picture');
 
-        unset($validated['profile_picture']);
+            unset($validated['profile_picture']);
+        }
+
+        $emailChanged = isset($validated['email']) && $validated['email'] !== $user->email;
+
+        $user->fill($validated);
+
+        if ($emailChanged) {
+            $user->email_verified_at = null;
+            $this->otpServices->sendOtp($user);
+        }
+
+        $user->save();
+
+        return [
+            'success' => true,
+            'user' => new UserResource($user),
+            'message' => 'Profile updated successfully',
+        ];
     }
-
-    $emailChanged = isset($validated['email']) && $validated['email'] !== $user->email;
-
-    $user->fill($validated);
-
-    if ($emailChanged) {
-        $user->email_verified_at = null;
-        $this->otpServices->sendOtp($user);
-    }
-
-    $user->save();
-
-    return [
-        'success' => true,
-        'user' => new UserResource($user),
-        'message' => 'Profile updated successfully',
-    ];
-}
 
     public function changePassword($validated)
     {
@@ -334,6 +334,28 @@ class AuthServices
         return [
             'token' => $token,
             'role_code' => self::ROLE_CODES[$user->role] ?? null,
+        ];
+    }
+
+    public function deleteAccount(): array
+    {
+        $user = Auth::user();
+
+        $user->tokens()->delete();
+
+        UserDevice::where('user_id', $user->id)->delete();
+
+        if (method_exists($user, 'clearMediaCollection')) {
+            $user->clearMediaCollection('profile_picture');
+        }
+
+        Auth::logout();
+
+        $user->delete();
+
+        return [
+            'success' => true,
+            'message' => 'Account deleted successfully',
         ];
     }
 }
