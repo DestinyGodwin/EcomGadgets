@@ -50,6 +50,7 @@ Route::prefix('v1/')->group(function () {
             Route::get('get-profile', 'getProfile')->middleware(['auth:sanctum']);
             Route::post('forgot-password', 'forgotPassword');
             Route::post('reset-password', 'resetPassword');
+            Route::delete('delete-account', 'deleteAccount')->middleware(['auth:sanctum']);
             Route::post('logout', 'logout')->middleware(['auth:sanctum']);
         });
     });
