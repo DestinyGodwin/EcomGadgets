@@ -158,4 +158,13 @@ class AuthController extends Controller
             'role_code' => $data['role_code'],
         ]);
     }
+
+    public function deleteAccount()
+    {
+        $data = $this->authServices->deleteAccount();
+
+        return response()->json([
+            'message' => $data['message'],
+        ], 200);
+    }
 }
