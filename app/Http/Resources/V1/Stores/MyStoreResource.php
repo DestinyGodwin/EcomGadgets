@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Resources\V1\Stores;
 
 use Illuminate\Http\Request;
@@ -23,13 +24,12 @@ class MyStoreResource extends JsonResource
             'address'                 => $this->address,
             'lga_id'                  => $this->lga_id,
             'state_id'                => $this->state_id,
-            'store_image'             => asset('storage/' . $this->store_image),
+            'store_image' => $this->getFirstMediaUrl('store_image', 'thumb'),
             'subscription_expires_at' => $this->subscription_expires_at,
             'is_active'               => $this->is_active,
             'status'                  => $this->status,
             'updated_at'              => $this->updated_at,
             'created_at'              => $this->created_at,
         ];
-
     }
 }

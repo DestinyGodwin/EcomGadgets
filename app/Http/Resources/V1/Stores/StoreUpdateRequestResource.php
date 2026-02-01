@@ -14,7 +14,7 @@ class StoreUpdateRequestResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-              return [
+        return [
             'id'             => $this->id,
             'store_id'       => $this->store_id,
             'new_data'       => $this->new_data,
@@ -26,7 +26,7 @@ class StoreUpdateRequestResource extends JsonResource
                 'store_name'           => $this->store->store_name,
                 'slug'                 => $this->store->slug,
                 'store_description'    => $this->store->store_description,
-                'store_image'          => $this->store->store_image,
+                'store_image' => $this->getFirstMediaUrl('store_image', 'thumb'),
                 'store_cac_image'      => $this->store->store_cac_image,
                 'store_id_image'       => $this->store->store_id_image,
                 'phone'                => $this->store->phone,

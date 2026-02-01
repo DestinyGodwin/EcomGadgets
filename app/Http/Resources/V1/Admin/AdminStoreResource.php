@@ -14,7 +14,7 @@ class AdminStoreResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-     return [
+        return [
             'lga_id' => $this->lga_id,
             'state_id' => $this->state_id,
             'address' => $this->address,
@@ -22,9 +22,9 @@ class AdminStoreResource extends JsonResource
             'email' => $this->email,
             'store_name' => $this->store_name,
             'store_description' => $this->store_description,
-            'store_image' => asset('storage/' . $this->store_image),
-            'store_cac_image' => asset('storage/'  . $this->store_cac_image),
-            'store_id_image' => asset('storage/' . $this->store_id_image),
+            'store_image' => $this->getFirstMediaUrl('store_image', 'thumb'),
+            'store_cac_image' => $this->getFirstMediaUrl('store_cac_image', 'thumb'),
+            'store_id_image' => $this->getFirstMediaUrl('store_id_image', 'thumb'),
             'subscription_expires_at' => $this->subscription_expires_at,
             'is_active' => $this->is_active,
             'status' => $this->status,
