@@ -3,10 +3,12 @@
 namespace App\Http\Resources\V1\Product;
 
 use Illuminate\Http\Request;
+use App\Http\Resources\Concerns\HasMedia;
 use Illuminate\Http\Resources\Json\JsonResource;
-
 class ProductResource extends JsonResource
 {
+
+    use HasMedia;
     /**
      * Transform the resource into an array.
      *
@@ -30,12 +32,16 @@ class ProductResource extends JsonResource
             'average_rating'  => round($this->reviews->avg('rating'), 1),
 
             // 'images' => ProductImageResource::collection($this->images),
-            'images' => $this->getMedia('images')->map(fn($media) => [
-                'id' => $media->id,
-                'url' => $isSingle
-                    ? $media->getUrl()
-                    : $media->getUrl('thumb'),
-            ]),
+            // 'images' => $this->getMedia('images')->map(fn($media) => [
+            //     'id' => $media->id,
+            //     'url' => $isSingle
+            //         ? $media->getUrl()
+            //         : $media->getUrl('thumb'),
+            // ]),
+            'images' => $this->media(
+                'images',
+                $isSingle ? null : 'thumb'
+            ),
             'store' => [
                 'id' => $this->store->id,
                 'name' => $this->store->store_name,
