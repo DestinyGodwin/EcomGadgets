@@ -2,11 +2,13 @@
 
 namespace App\Services\V1\Chat;
 
-use App\Events\Chat\MessageSent;
-use App\Models\Conversation;
 use App\Models\Message;
-use Illuminate\Support\Facades\Crypt;
+use App\Models\Conversation;
+use App\Events\Chat\MessageSent;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\V1\Chat\NewMessageNotification;
 
 class ChatService
 {
@@ -34,6 +36,39 @@ class ChatService
         return $conversation;
     }
 
+    // public function sendMessage(
+    //     Conversation $conversation,
+    //     string $senderId,
+    //     ?string $body,
+    //     array $images = []
+    // ): Message {
+    //     return DB::transaction(function () use ($conversation, $senderId, $body, $images) {
+    //         $message = Message::create([
+    //             'conversation_id' => $conversation->id,
+    //             'sender_id' => $senderId,
+    //             // 'body' => $body ? Crypt::encryptString($body) : null,
+    //             'body' => $body,
+    //             'type' => $images ? 'media' : 'text',
+    //         ]);
+
+    //         foreach ($images as $image) {
+    //             $path = $image->store('chat', 'public');
+
+    //             $message->media()->create([
+    //                 'path' => $path,
+
+    //             ]);
+    //         }
+
+    //         $conversation->update(['last_message_at' => now()]);
+
+    //         broadcast(new MessageSent($message))->toOthers();
+
+    //         return $message;
+    //     });
+    // }
+
+
     public function sendMessage(
         Conversation $conversation,
         string $senderId,
@@ -41,12 +76,12 @@ class ChatService
         array $images = []
     ): Message {
         return DB::transaction(function () use ($conversation, $senderId, $body, $images) {
+
             $message = Message::create([
                 'conversation_id' => $conversation->id,
-                'sender_id' => $senderId,
-                // 'body' => $body ? Crypt::encryptString($body) : null,
-                'body' => $body,
-                'type' => $images ? 'media' : 'text',
+                'sender_id'       => $senderId,
+                'body'            => $body,
+                'type'            => $images ? 'media' : 'text',
             ]);
 
             foreach ($images as $image) {
@@ -54,11 +89,25 @@ class ChatService
 
                 $message->media()->create([
                     'path' => $path,
-
                 ]);
             }
 
-            $conversation->update(['last_message_at' => now()]);
+            $conversation->update([
+                'last_message_at' => now(),
+            ]);
+
+            $message->loadMissing('sender');
+            $conversation->loadMissing('users');
+
+            $recipients = $conversation->users
+                ->where('id', '!=', $senderId);
+
+            if ($recipients->isNotEmpty()) {
+                Notification::send(
+                    $recipients,
+                    new NewMessageNotification($message)
+                );
+            }
 
             broadcast(new MessageSent($message))->toOthers();
 
