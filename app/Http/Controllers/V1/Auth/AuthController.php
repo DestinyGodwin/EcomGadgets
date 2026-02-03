@@ -159,12 +159,28 @@ class AuthController extends Controller
         ]);
     }
 
-    public function deleteAccount()
-    {
-        $data = $this->authServices->deleteAccount();
+    public function requestDeleteAccount()
+{
+    $this->authServices->requestDeleteAccount();
 
-        return response()->json([
-            'message' => $data['message'],
-        ], 200);
+    return response()->json([
+        'message' => 'OTP sent to your email to confirm account deletion.',
+    ]);
+}
+
+public function confirmDeleteAccount(Request $request)
+{
+    $request->validate([
+        'otp' => 'required|string',
+    ]);
+
+    $data = $this->authServices->confirmDeleteAccount($request->otp);
+
+    if (! $data['success']) {
+        return response()->json(['message' => $data['message']], 422);
     }
+
+    return response()->json(['message' => $data['message']], 200);
+}
+
 }

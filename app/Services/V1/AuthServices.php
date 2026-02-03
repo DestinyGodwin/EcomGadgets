@@ -337,12 +337,27 @@ class AuthServices
         ];
     }
 
-    public function deleteAccount(): array
+    public function requestDeleteAccount(): void
     {
         $user = Auth::user();
 
-        $user->tokens()->delete();
+        $this->otpServices->sendOtp($user);
+    }
 
+    public function confirmDeleteAccount(string $otp): array
+    {
+        $user = Auth::user();
+
+        if (! $this->otpServices->verifyOtp($user, $otp)) {
+            return [
+                'success' => false,
+                'message' => 'Invalid or expired OTP.',
+            ];
+        }
+
+        $this->otpServices->clearOtp($user);
+
+        $user->tokens()->delete();
         UserDevice::where('user_id', $user->id)->delete();
 
         if (method_exists($user, 'clearMediaCollection')) {
@@ -350,12 +365,11 @@ class AuthServices
         }
 
         Auth::logout();
-
         $user->delete();
 
         return [
             'success' => true,
-            'message' => 'Account deleted successfully',
+            'message' => 'Account deleted successfully.',
         ];
     }
 }
