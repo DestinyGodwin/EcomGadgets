@@ -364,7 +364,6 @@ class AuthServices
             $user->clearMediaCollection('profile_picture');
         }
 
-        Auth::logout();
         $user->delete();
 
         return [
