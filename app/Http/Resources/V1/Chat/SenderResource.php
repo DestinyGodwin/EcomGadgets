@@ -7,11 +7,17 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class SenderResource extends JsonResource
 {
-    public function toArray(Request $request): array
+   public function toArray(Request $request): array
     {
         return [
             'id' => $this->id,
             'first_name' => $this->first_name,
+            'last_name'  => $this->last_name,
+
+            'store_name' => $this->when(
+                $this->relationLoaded('store') && $this->store,
+                fn () => $this->store->store_name
+            ),
         ];
     }
 }
