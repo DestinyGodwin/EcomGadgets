@@ -4,63 +4,51 @@ namespace App\Notifications\V1\Chat;
 
 use App\Models\Message;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 use NotificationChannels\Expo\ExpoMessage;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 
 class NewMessageNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    /**
-     * Create a new notification instance.
-     */
-    public function __construct(private Message $message)
-    {
-        //
-    }
+    public function __construct(
+        private readonly string $messageId
+    ) {}
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @return array<int, string>
-     */
     public function via(object $notifiable): array
     {
         return ['expo'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     */
-     public function toExpo($notifiable): ExpoMessage
+    public function toExpo(object $notifiable): ExpoMessage
     {
-        $sender = $this->message->sender;
+        $message = Message::with(['sender.store'])
+            ->findOrFail($this->messageId);
 
-        $body = $this->message->type === 'media'
+        $sender = $message->sender;
+
+        $displayName = $sender->store?->store_name
+            ?? $sender->first_name;
+
+        $body = $message->type === 'media'
             ? '📎 Sent you an attachment'
-            : $this->message->decrypted_body;
+            : $message->decrypted_body;
 
         return ExpoMessage::create('New Message')
-            ->body("{$sender->first_name}: {$body}")
+            ->body("{$displayName}: {$body}")
             ->data([
-                'type' => 'new_message',
-                'conversation_id' => $this->message->conversation_id,
-                'sender_id' => $sender->id,
+                'type'            => 'new_message',
+                'conversation_id' => $message->conversation_id,
+                'sender_id'       => $sender->id,
             ])
             ->priority('high');
     }
 
-    /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(object $notifiable): array
     {
         return [
-            //
+            'message_id' => $this->messageId,
         ];
     }
 }

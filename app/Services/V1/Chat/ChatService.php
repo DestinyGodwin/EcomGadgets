@@ -104,9 +104,9 @@ class ChatService
 
             if ($recipients->isNotEmpty()) {
                 Notification::send(
-                    $recipients,
-                    new NewMessageNotification($message)
-                );
+    $recipients,
+    new NewMessageNotification($message->id)
+);
             }
 
             broadcast(new MessageSent($message))->toOthers();
