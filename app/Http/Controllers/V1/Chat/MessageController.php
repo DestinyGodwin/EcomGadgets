@@ -11,38 +11,102 @@ use App\Services\V1\Chat\ChatService;
 use App\Http\Resources\V1\Chat\MessageResource;
 use App\Http\Requests\V1\Chat\SendMessageRequest;
 
+
 class MessageController extends Controller
 {
-    public function __construct(private readonly ChatService $chat) {}
+    // public function __construct(private readonly ChatService $chat) {}
+
+    // public function store(SendMessageRequest $request)
+    // {
+    //     $user = $request->user();
+
+    //     $conversation = $this->chat->getOrCreateConversation(
+    //         $user->id,
+    //         $request->receiver_id
+    //     );
+
+    //     $message = $this->chat->sendMessage(
+    //         $conversation,
+    //         $user->id,
+    //         $request->body,
+    //         $request->file('images', [])
+    //     );
+
+    //     return new MessageResource($message->load('media', 'sender.store'));
+    // }
+
+    // public function index(Request $request, Conversation $conversation)
+    // {
+    //     $messages = $conversation->messages()
+    //         ->with(['sender:id,first_name,last_name,profile_picture', 'sender.store'])
+    //         ->latest()
+    //         ->paginate(30);
+
+    //     return MessageResource::collection($messages)
+    //         ->additional(['auth_user_id' => $request->user()->id]);
+    // }
+
+    // public function betweenUsers(Request $request, User $user)
+    // {
+    //     $authUser = $request->user();
+
+    //     $conversation = Conversation::whereHas('users', fn ($q) =>
+    //             $q->whereIn('users.id', [$authUser->id, $user->id])
+    //         )
+    //         ->withCount('users')
+    //         ->having('users_count', 2)
+    //         ->with(['messages.sender.store'])
+    //         ->firstOrFail();
+
+    //     Gate::authorize('view', $conversation);
+
+    //     return MessageResource::collection(
+    //         $conversation->messages()
+    //             ->with('sender:id,first_name,last_name,profile_picture', 'sender.store')
+    //             ->latest()
+    //             ->paginate(30)
+    //     );
+    // }
+
+     public function __construct(
+        private readonly ChatService $chat
+    ) {}
 
     public function store(SendMessageRequest $request)
     {
-        $user = $request->user();
+        $authUser = $request->user();
 
         $conversation = $this->chat->getOrCreateConversation(
-            $user->id,
+            $authUser->id,
             $request->receiver_id
         );
 
         $message = $this->chat->sendMessage(
             $conversation,
-            $user->id,
+            $authUser->id,
             $request->body,
             $request->file('images', [])
         );
 
-        return new MessageResource($message->load('media', 'sender.store'));
+        return new MessageResource(
+            $message->load(['media', 'sender.store'])
+        );
     }
 
     public function index(Request $request, Conversation $conversation)
     {
+        Gate::authorize('view', $conversation);
+
         $messages = $conversation->messages()
-            ->with(['sender:id,first_name,last_name,profile_picture', 'sender.store'])
+            ->with([
+                'media',
+                'sender:id,first_name,last_name,profile_picture',
+                'sender.store'
+            ])
             ->latest()
             ->paginate(30);
 
-        return MessageResource::collection($messages)
-            ->additional(['auth_user_id' => $request->user()->id]);
+        return MessageResource::collection($messages);
     }
 
     public function betweenUsers(Request $request, User $user)
@@ -50,20 +114,26 @@ class MessageController extends Controller
         $authUser = $request->user();
 
         $conversation = Conversation::whereHas('users', fn ($q) =>
-                $q->whereIn('users.id', [$authUser->id, $user->id])
+                $q->where('users.id', $authUser->id)
+            )
+            ->whereHas('users', fn ($q) =>
+                $q->where('users.id', $user->id)
             )
             ->withCount('users')
             ->having('users_count', 2)
-            ->with(['messages.sender.store'])
             ->firstOrFail();
 
         Gate::authorize('view', $conversation);
 
-        return MessageResource::collection(
-            $conversation->messages()
-                ->with('sender:id,first_name,last_name,profile_picture', 'sender.store')
-                ->latest()
-                ->paginate(30)
-        );
+        $messages = $conversation->messages()
+            ->with([
+                'media',
+                'sender:id,first_name,last_name,profile_picture',
+                'sender.store'
+            ])
+            ->latest()
+            ->paginate(30);
+
+        return MessageResource::collection($messages);
     }
 }

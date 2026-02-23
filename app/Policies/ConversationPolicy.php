@@ -17,6 +17,8 @@ class ConversationPolicy
 
     public function view(User $user, Conversation $conversation): bool
     {
-        return $conversation->users()->where('users.id', $user->id)->exists();
+        return $conversation->users()
+            ->where('users.id', $user->id)
+            ->exists();
     }
 }
