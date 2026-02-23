@@ -19,6 +19,17 @@ class MessageResource extends JsonResource
             'sender_id' => $this->sender_id,
             'receiver_id' => $this->receiverId($authUserId),
             'created_at' => $this->created_at->toISOString(),
+            'media' => $this->when(
+            $this->relationLoaded('media'),
+            fn () => $this->getMedia('chat_media')->map(fn ($media) => [
+                'id'        => $media->id,
+                'url'       => $media->getUrl(),
+                'thumb'     => $media->getUrl('thumb'),
+                'optimized' => $media->getUrl('optimized'),
+                'mime_type' => $media->mime_type,
+            ])
+        ),
+
             'sender' => new SenderResource($this->whenLoaded('sender')),
         ];
     }
