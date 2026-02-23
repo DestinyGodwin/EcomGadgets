@@ -28,53 +28,99 @@ class ChatService
         return $conversation;
     }
 
+    // public function sendMessage(
+    //     Conversation $conversation,
+    //     string $senderId,
+    //     ?string $body,
+    //     array $images = []
+    // ): Message {
+
+    //     return DB::transaction(function () use ($conversation, $senderId, $body, $images) {
+
+    //         $message = Message::create([
+    //             'conversation_id' => $conversation->id,
+    //             'sender_id'       => $senderId,
+    //             'body'            => $body,
+    //             'type'            => $images ? 'media' : 'text',
+    //         ]);
+
+    //         foreach ($images as $image) {
+    //             $path = $image->store('chat', 'public');
+
+    //             $message->media()->create([
+    //                 'path' => $path,
+    //             ]);
+    //         }
+
+    //         $conversation->update([
+    //             'last_message_at' => now(),
+    //         ]);
+
+    //         // Get recipients directly from relationship query (cleaner & no eager load needed)
+    //         $recipients = $conversation->users()
+    //             ->where('users.id', '!=', $senderId)
+    //             ->get();
+
+    //         // Send notification ONLY after successful commit
+    //         DB::afterCommit(function () use ($recipients, $message) {
+
+    //             if ($recipients->isNotEmpty()) {
+    //                 Notification::send(
+    //                     $recipients,
+    //                     new NewMessageNotification($message->id)
+    //                 );
+    //             }
+
+    //             broadcast(new MessageSent($message))->toOthers();
+    //         });
+
+    //         return $message;
+    //     });
+    // }
+
     public function sendMessage(
-        Conversation $conversation,
-        string $senderId,
-        ?string $body,
-        array $images = []
-    ): Message {
+    Conversation $conversation,
+    string $senderId,
+    ?string $body,
+    array $images = []
+): Message {
 
-        return DB::transaction(function () use ($conversation, $senderId, $body, $images) {
+    return DB::transaction(function () use ($conversation, $senderId, $body, $images) {
 
-            $message = Message::create([
-                'conversation_id' => $conversation->id,
-                'sender_id'       => $senderId,
-                'body'            => $body,
-                'type'            => $images ? 'media' : 'text',
-            ]);
+        $message = Message::create([
+            'conversation_id' => $conversation->id,
+            'sender_id'       => $senderId,
+            'body'            => $body,
+            'type'            => $images ? 'media' : 'text',
+        ]);
 
-            foreach ($images as $image) {
-                $path = $image->store('chat', 'public');
+        foreach ($images as $file) {
+            $message
+                ->addMedia($file)
+                ->toMediaCollection('chat_media');
+        }
 
-                $message->media()->create([
-                    'path' => $path,
-                ]);
+        $conversation->update([
+            'last_message_at' => now(),
+        ]);
+
+        $recipients = $conversation->users()
+            ->where('users.id', '!=', $senderId)
+            ->get();
+
+        DB::afterCommit(function () use ($recipients, $message) {
+
+            if ($recipients->isNotEmpty()) {
+                Notification::send(
+                    $recipients,
+                    new NewMessageNotification($message->id)
+                );
             }
 
-            $conversation->update([
-                'last_message_at' => now(),
-            ]);
-
-            // Get recipients directly from relationship query (cleaner & no eager load needed)
-            $recipients = $conversation->users()
-                ->where('users.id', '!=', $senderId)
-                ->get();
-
-            // Send notification ONLY after successful commit
-            DB::afterCommit(function () use ($recipients, $message) {
-
-                if ($recipients->isNotEmpty()) {
-                    Notification::send(
-                        $recipients,
-                        new NewMessageNotification($message->id)
-                    );
-                }
-
-                broadcast(new MessageSent($message))->toOthers();
-            });
-
-            return $message;
+            broadcast(new MessageSent($message))->toOthers();
         });
-    }
+
+        return $message;
+    });
+}
 }
